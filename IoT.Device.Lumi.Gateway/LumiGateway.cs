@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Json;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -9,11 +11,17 @@ using System.Threading.Tasks;
 using CompletionDictionary =
     System.Collections.Concurrent.ConcurrentDictionary<string,
         System.Threading.Tasks.TaskCompletionSource<System.Json.JsonObject>>;
+using Cache = IoT.Device.ImplementationCache<
+    IoT.Device.Lumi.Gateway.SupportedSubDeviceAttribute,
+    IoT.Device.Lumi.Gateway.LumiSubDevice>;
+using IoT.Device.Lumi.Gateway.SubDevices;
 
 namespace IoT.Device.Lumi.Gateway
 {
     public sealed class LumiGateway : IDisposable
     {
+        private object syncRoot = new object();
+        private Dictionary<string, LumiSubDevice> children = new Dictionary<string, LumiSubDevice>();
         public LumiGateway(string address, ushort port, string sid)
         {
             Sid = sid;
@@ -42,6 +50,42 @@ namespace IoT.Device.Lumi.Gateway
                 CancellationToken cancellationToken = default, params object[] args)
         {
             return client.InvokeAsync(command, sid ?? Sid, cancellationToken, args);
+        }
+
+        public async Task<LumiSubDevice[]> GetChildrenAsync(CancellationToken cancellationToken = default)
+        {
+            var j = await InvokeAsync("get_id_list", Sid, cancellationToken);
+
+            var list = (JsonArray)JsonValue.Parse(j["data"]);
+
+            try
+            {
+                //Monitor.Enter(syncRoot);
+
+                foreach (string sid in list)
+                {
+                    var info = await InvokeAsync("read", sid, cancellationToken);
+                    JsonValue data = JsonValue.Parse(info["data"]);
+
+                    if (children.TryGetValue(sid, out var device))
+                    {
+                        device.UpdateState(data);
+                    }
+                    else
+                    {
+                        device = Cache.CreateInstance((string)info["model"], sid, (int)info["short_id"]) ??
+                            new GenericSubDevice(sid, info["short_id"]);
+                        device.UpdateState(data);
+                        children.Add(sid, device);
+                    }
+                }
+            }
+            finally
+            {
+                //Monitor.Exit(syncRoot);
+            }
+
+            return children.Values.ToArray();
         }
 
         public void Dispose()
@@ -126,10 +170,12 @@ namespace IoT.Device.Lumi.Gateway
 
         private class ListeningClient : UdpMessageDispatchingClient
         {
+            private readonly LumiGateway gateway;
             private IPEndPoint endpoint;
 
             public ListeningClient(LumiGateway lumiGateway, IPEndPoint groupEndpoint)
             {
+                gateway = lumiGateway;
                 endpoint = groupEndpoint;
             }
 
