@@ -4,14 +4,23 @@ namespace IoT.Device.Lumi.Gateway.SubDevices
 {
     public class HonneywellSmokeSensor : LumiSubDevice
     {
+        private bool alarm;
+
         public HonneywellSmokeSensor(string sid, int id) : base(sid, id)
         {
         }
 
         public override string ModelName { get; } = "lumi.sensor_smoke.v1";
-
-        protected internal override void UpdateState(JsonValue jsonValue)
+        public bool Alarm
         {
+            get { return alarm; }
+            private set { if (alarm != value) { alarm = value; OnPropertyChanged(); } }
+        }
+
+        protected internal override void UpdateState(JsonObject data)
+        {
+            if (data.TryGetValue("voltage", out var v)) Voltage = new decimal(v, 0, 0, false, 3);
+            if (data.TryGetValue("alarm", out var a)) Alarm = a == "1";
         }
     }
 }

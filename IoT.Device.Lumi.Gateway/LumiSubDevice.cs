@@ -10,8 +10,14 @@ namespace IoT.Device.Lumi.Gateway
         private string sid;
         private string model;
         private int id;
+        private decimal voltage;
 
-        public abstract string ModelName { get;}
+        public abstract string ModelName { get; }
+        public decimal Voltage
+        {
+            get { return voltage; }
+            protected set { if (voltage != value) { voltage = value; OnPropertyChanged(); } }
+        }
 
         public LumiSubDevice(string sid, int id)
         {
@@ -31,6 +37,6 @@ namespace IoT.Device.Lumi.Gateway
             return $"{{\"model\": \"{ModelName}\", \"sid\": \"{sid}\", \"short_id\": {id}}}";
         }
 
-        internal protected abstract void UpdateState(JsonValue jsonValue);
+        internal protected abstract void UpdateState(JsonObject data);
     }
 }

@@ -10,8 +10,9 @@ namespace IoT.Device.Lumi.Gateway.SubDevices
 
         public override string ModelName { get; } = "lumi.sensor_switch.v2";
 
-        protected internal override void UpdateState(JsonValue jsonValue)
+        protected internal override void UpdateState(JsonObject data)
         {
+            if (data.TryGetValue("voltage", out var v)) Voltage = new decimal(v, 0, 0, false, 3);
         }
     }
 }

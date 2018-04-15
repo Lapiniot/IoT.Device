@@ -65,16 +65,13 @@ namespace IoT.Device.Lumi.Gateway
                 foreach (string sid in list)
                 {
                     var info = await InvokeAsync("read", sid, cancellationToken);
-                    JsonValue data = JsonValue.Parse(info["data"]);
+                    var data = JsonValue.Parse(info["data"]) as JsonObject;
 
-                    if (children.TryGetValue(sid, out var device))
+                    if (data != null && !children.TryGetValue(sid, out var device))
                     {
-                        device.UpdateState(data);
-                    }
-                    else
-                    {
-                        device = Cache.CreateInstance((string)info["model"], sid, (int)info["short_id"]) ??
-                            new GenericSubDevice(sid, info["short_id"]);
+                        int id = (int)info["short_id"];
+                        string deviceModel = (string)info["model"];
+                        device = Cache.CreateInstance(deviceModel, sid, id) ?? new GenericSubDevice(sid, id);
                         device.UpdateState(data);
                         children.Add(sid, device);
                     }
