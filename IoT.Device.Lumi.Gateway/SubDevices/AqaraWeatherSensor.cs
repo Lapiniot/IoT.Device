@@ -1,3 +1,4 @@
+using System;
 using System.Json;
 
 namespace IoT.Device.Lumi.Gateway.SubDevices
@@ -13,6 +14,9 @@ namespace IoT.Device.Lumi.Gateway.SubDevices
         }
 
         public override string ModelName { get; } = "lumi.weather.v1";
+
+        protected override TimeSpan OfflineTimeout { get; } = TimeSpan.FromHours(1);
+
         public decimal Temperature
         {
             get { return temperature; }
@@ -29,6 +33,13 @@ namespace IoT.Device.Lumi.Gateway.SubDevices
         {
             get { return pressure; }
             private set { if (pressure != value) { pressure = value; OnPropertyChanged(); } }
+        }
+
+        protected internal override void Heartbeat(JsonObject data)
+        {
+            base.Heartbeat(data);
+
+            UpdateState(data);
         }
 
         protected internal override void UpdateState(JsonObject data)

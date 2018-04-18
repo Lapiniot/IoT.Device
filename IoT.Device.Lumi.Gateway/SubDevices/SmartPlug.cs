@@ -1,3 +1,4 @@
+using System;
 using System.Json;
 
 namespace IoT.Device.Lumi.Gateway.SubDevices
@@ -13,6 +14,8 @@ namespace IoT.Device.Lumi.Gateway.SubDevices
 
         public override string ModelName { get; } = "lumi.plug.v1";
 
+        protected override TimeSpan OfflineTimeout { get; } = TimeSpan.FromMinutes(10);
+
         public string Status
         {
             get { return status; }
@@ -23,6 +26,13 @@ namespace IoT.Device.Lumi.Gateway.SubDevices
         {
             get { return inuse; }
             set { if (inuse != value) { inuse = value; OnPropertyChanged(); } }
+        }
+
+        protected internal override void Heartbeat(JsonObject data)
+        {
+            base.Heartbeat(data);
+
+            UpdateState(data);
         }
 
         protected internal override void UpdateState(JsonObject data)
