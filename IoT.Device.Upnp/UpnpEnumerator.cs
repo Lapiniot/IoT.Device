@@ -39,9 +39,12 @@ namespace IoT.Device.Upnp
                         {
                             var line = reader.ReadLine();
 
-                            var index = line.IndexOf(": ", StringComparison.Ordinal);
+                            if (line != null)
+                            {
+                                var index = line.IndexOf(": ", StringComparison.Ordinal);
 
-                            if (index > 0) data[line.Substring(0, index)] = line.Substring(index + 2);
+                                if (index > 0) data[line.Substring(0, index)] = line.Substring(index + 2);
+                            }
                         }
 
                         return new UpnpDevice(new Uri(data["LOCATION"], UriKind.Absolute));
