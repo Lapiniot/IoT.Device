@@ -3,9 +3,11 @@ using System.Net;
 
 namespace IoT.Device.Lumi.Gateway
 {
-    public class GatewayEnumerator : UdpBroadcastEnumerator<LumiGateway>
+    public class LumiGatewayEnumerator : UdpBroadcastEnumerator<LumiGateway>
     {
-        public GatewayEnumerator() : base(new IPEndPoint(IPAddress.Parse("224.0.0.50"), 4321))
+        private readonly byte[] whoisMessage;
+
+        public LumiGatewayEnumerator() : base(new IPEndPoint(IPAddress.Parse("224.0.0.50"), 4321))
         {
             whoisMessage = new JsonObject {{"cmd", "whois"}}.Serialize();
         }
