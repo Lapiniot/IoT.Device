@@ -1,23 +1,27 @@
-using System;
-using System.ComponentModel;
-using System.Json;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Threading.Tasks;
-
 namespace IoT.Device.Lumi.Gateway
 {
     public abstract class LumiSubDevice : LumiThing
     {
-        private int id;
+        private readonly int id;
         private decimal voltage;
-        public decimal Voltage
+
+        protected LumiSubDevice(string sid, int id) : base(sid)
         {
-            get { return voltage; }
-            protected set { if (voltage != value) { voltage = value; OnPropertyChanged(); } }
+            this.id = id;
         }
 
-        public LumiSubDevice(string sid, int id) : base(sid) => this.id = id;
+        public decimal Voltage
+        {
+            get => voltage;
+            protected set
+            {
+                if (voltage != value)
+                {
+                    voltage = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         public override string ToString()
         {

@@ -12,8 +12,12 @@ namespace IoT.Device.Lumi.Gateway
     {
         private volatile CancellationTokenSource cancellationTokenSource;
         private bool isOnline;
-        private object syncRoot;
-        protected LumiThing(string sid) => (Sid, IsOnline, syncRoot) = (sid, true, new object());
+        private readonly object syncRoot;
+
+        protected LumiThing(string sid)
+        {
+            (Sid, IsOnline, syncRoot) = (sid, true, new object());
+        }
 
         public abstract string ModelName { get; }
 
@@ -23,12 +27,20 @@ namespace IoT.Device.Lumi.Gateway
 
         public bool IsOnline
         {
-            get { return isOnline; }
-            protected set { if (isOnline != value) { isOnline = value; OnPropertyChanged(); } }
+            get => isOnline;
+            protected set
+            {
+                if (isOnline != value)
+                {
+                    isOnline = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
-        internal protected abstract void UpdateState(JsonObject data);
-        internal protected virtual void Heartbeat(JsonObject data)
+        protected internal abstract void UpdateState(JsonObject data);
+
+        protected internal virtual void Heartbeat(JsonObject data)
         {
             lock (syncRoot)
             {
@@ -44,7 +56,8 @@ namespace IoT.Device.Lumi.Gateway
 
                 cancellationTokenSource = new CancellationTokenSource();
 
-                Task.Delay(OfflineTimeout, cancellationTokenSource.Token).ContinueWith(t => { IsOnline = false; }, OnlyOnRanToCompletion);
+                Task.Delay(OfflineTimeout, cancellationTokenSource.Token)
+                    .ContinueWith(t => { IsOnline = false; }, OnlyOnRanToCompletion);
             }
         }
 
@@ -52,7 +65,7 @@ namespace IoT.Device.Lumi.Gateway
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected void OnPropertyChanged([CallerMemberName]string name = null)
+        protected void OnPropertyChanged([CallerMemberName] string name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }

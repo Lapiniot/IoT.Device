@@ -3,9 +3,9 @@ using System.Json;
 
 namespace IoT.Device.Lumi.Gateway.SubDevices
 {
-    public class AqaraWaterLeakSensor : LumiSubDevice
+    public sealed class AqaraWaterLeakSensor : LumiSubDevice
     {
-        public AqaraWaterLeakSensor(string sid, int id) : base(sid, id)
+        internal AqaraWaterLeakSensor(string sid, int id) : base(sid, id)
         {
         }
 
@@ -16,7 +16,7 @@ namespace IoT.Device.Lumi.Gateway.SubDevices
         protected internal override void Heartbeat(JsonObject data)
         {
             base.Heartbeat(data);
-            
+
             UpdateState(data);
         }
 

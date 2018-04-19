@@ -15,9 +15,7 @@ namespace IoT.Device.Upnp
             base(groupEndpoint)
         {
             if (string.IsNullOrEmpty(searchTarget))
-            {
                 throw new ArgumentException("Parameter couldn't be null or empty.", nameof(searchTarget));
-            }
 
             this.searchTarget = searchTarget;
         }
@@ -43,10 +41,7 @@ namespace IoT.Device.Upnp
 
                             var index = line.IndexOf(": ", StringComparison.Ordinal);
 
-                            if (index > 0)
-                            {
-                                data[line.Substring(0, index)] = line.Substring(index + 2);
-                            }
+                            if (index > 0) data[line.Substring(0, index)] = line.Substring(index + 2);
                         }
 
                         return new UpnpDevice(new Uri(data["LOCATION"], UriKind.Absolute));

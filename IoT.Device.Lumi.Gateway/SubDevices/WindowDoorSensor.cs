@@ -7,16 +7,24 @@ namespace IoT.Device.Lumi.Gateway.SubDevices
     {
         private string status;
 
-        public WindowDoorSensor(string sid, int id) : base(sid, id)
+        internal WindowDoorSensor(string sid, int id) : base(sid, id)
         {
         }
 
         public override string ModelName { get; } = "lumi.sensor_magnet.v2";
         protected override TimeSpan OfflineTimeout { get; } = TimeSpan.FromHours(1);
+
         public string Status
         {
-            get { return status; }
-            set { if (status != value) { status = value; OnPropertyChanged(); } }
+            get => status;
+            set
+            {
+                if (status != value)
+                {
+                    status = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         protected internal override void Heartbeat(JsonObject data)

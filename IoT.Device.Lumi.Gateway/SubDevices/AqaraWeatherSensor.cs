@@ -3,13 +3,13 @@ using System.Json;
 
 namespace IoT.Device.Lumi.Gateway.SubDevices
 {
-    public class AqaraWeatherSensor : LumiSubDevice
+    public sealed class AqaraWeatherSensor : LumiSubDevice
     {
-        private decimal temperature;
         private decimal humidity;
         private decimal pressure;
+        private decimal temperature;
 
-        public AqaraWeatherSensor(string sid, int id) : base(sid, id)
+        internal AqaraWeatherSensor(string sid, int id) : base(sid, id)
         {
         }
 
@@ -19,20 +19,41 @@ namespace IoT.Device.Lumi.Gateway.SubDevices
 
         public decimal Temperature
         {
-            get { return temperature; }
-            private set { if (temperature != value) { temperature = value; OnPropertyChanged(); } }
+            get => temperature;
+            private set
+            {
+                if (temperature != value)
+                {
+                    temperature = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         public decimal Humidity
         {
-            get { return humidity; }
-            private set { if (humidity != value) { humidity = value; OnPropertyChanged(); } }
+            get => humidity;
+            private set
+            {
+                if (humidity != value)
+                {
+                    humidity = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         public decimal Pressure
         {
-            get { return pressure; }
-            private set { if (pressure != value) { pressure = value; OnPropertyChanged(); } }
+            get => pressure;
+            private set
+            {
+                if (pressure != value)
+                {
+                    pressure = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         protected internal override void Heartbeat(JsonObject data)

@@ -3,9 +3,9 @@ using System.Json;
 
 namespace IoT.Device.Lumi.Gateway.SubDevices
 {
-    public class SwitchButtonSensor : LumiSubDevice
+    public sealed class SwitchButtonSensor : LumiSubDevice
     {
-        public SwitchButtonSensor(string sid, int id) : base(sid, id)
+        internal SwitchButtonSensor(string sid, int id) : base(sid, id)
         {
         }
 

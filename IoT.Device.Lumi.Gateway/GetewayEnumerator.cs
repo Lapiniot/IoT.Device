@@ -7,7 +7,7 @@ namespace IoT.Device.Lumi.Gateway
     {
         public GatewayEnumerator() : base(new IPEndPoint(IPAddress.Parse("224.0.0.50"), 4321))
         {
-            whoisMessage = new JsonObject { { "cmd", "whois" } }.Serialize();
+            whoisMessage = new JsonObject {{"cmd", "whois"}}.Serialize();
         }
 
         protected override LumiGateway CreateInstance(byte[] buffer, IPEndPoint remoteEp)

@@ -3,15 +3,15 @@ using System.Json;
 
 namespace IoT.Device.Lumi.Gateway.SubDevices
 {
-    public class SmartPlug : LumiSubDevice
+    public sealed class SmartPlug : LumiSubDevice
     {
-        private string status;
         private bool inuse;
-        private decimal loadVoltage;
         private decimal loadPower;
+        private decimal loadVoltage;
         private decimal powerConsumed;
+        private string status;
 
-        public SmartPlug(string sid, int id) : base(sid, id)
+        internal SmartPlug(string sid, int id) : base(sid, id)
         {
         }
 
@@ -21,32 +21,67 @@ namespace IoT.Device.Lumi.Gateway.SubDevices
 
         public string Status
         {
-            get { return status; }
-            set { if (status != value) { status = value; OnPropertyChanged(); } }
+            get => status;
+            set
+            {
+                if (status != value)
+                {
+                    status = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         public bool InUse
         {
-            get { return inuse; }
-            set { if (inuse != value) { inuse = value; OnPropertyChanged(); } }
+            get => inuse;
+            set
+            {
+                if (inuse != value)
+                {
+                    inuse = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         public decimal LoadVoltage
         {
-            get { return loadVoltage; }
-            set { if (loadVoltage != value) { loadVoltage = value; OnPropertyChanged(); } }
+            get => loadVoltage;
+            set
+            {
+                if (loadVoltage != value)
+                {
+                    loadVoltage = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         public decimal LoadPower
         {
-            get { return loadPower; }
-            set { if (loadPower != value) { loadPower = value; OnPropertyChanged(); } }
+            get => loadPower;
+            set
+            {
+                if (loadPower != value)
+                {
+                    loadPower = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         public decimal PowerConsumed
         {
-            get { return powerConsumed; }
-            set { if (powerConsumed != value) { powerConsumed = value; OnPropertyChanged(); } }
+            get => powerConsumed;
+            set
+            {
+                if (powerConsumed != value)
+                {
+                    powerConsumed = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         protected internal override void Heartbeat(JsonObject data)
@@ -62,8 +97,8 @@ namespace IoT.Device.Lumi.Gateway.SubDevices
             if (data.TryGetValue("status", out var s)) Status = s;
             if (data.TryGetValue("inuse", out var i)) InUse = i == "1";
             if (data.TryGetValue("load_voltage", out var lv)) LoadVoltage = new decimal(lv, 0, 0, false, 3);
-            if (data.TryGetValue("load_power", out var lp)) LoadPower = (decimal)lp;
-            if (data.TryGetValue("power_consumed", out var pc)) PowerConsumed = (decimal)pc;
+            if (data.TryGetValue("load_power", out var lp)) LoadPower = (decimal) lp;
+            if (data.TryGetValue("power_consumed", out var pc)) PowerConsumed = (decimal) pc;
         }
     }
 }

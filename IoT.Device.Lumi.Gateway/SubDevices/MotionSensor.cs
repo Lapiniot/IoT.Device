@@ -4,12 +4,12 @@ using IoT.Device.Lumi.Gateway.Interfaces;
 
 namespace IoT.Device.Lumi.Gateway.SubDevices
 {
-    public class MotionSensor : LumiSubDevice, IProvideStatusInfo
+    public sealed class MotionSensor : LumiSubDevice, IProvideStatusInfo
     {
-        private string status;
         private int noMotionSeconds;
+        private string status;
 
-        public MotionSensor(string sid, int id) : base(sid, id)
+        internal MotionSensor(string sid, int id) : base(sid, id)
         {
             status = "nomotion";
         }
@@ -18,16 +18,30 @@ namespace IoT.Device.Lumi.Gateway.SubDevices
 
         protected override TimeSpan OfflineTimeout { get; } = TimeSpan.FromHours(1);
 
-        public string Status
-        {
-            get { return status; }
-            private set { if (status != value) { status = value; OnPropertyChanged(); } }
-        }
-
         public int NoMotionSeconds
         {
-            get { return noMotionSeconds; }
-            private set { if (noMotionSeconds != value) { noMotionSeconds = value; OnPropertyChanged(); } }
+            get => noMotionSeconds;
+            private set
+            {
+                if (noMotionSeconds != value)
+                {
+                    noMotionSeconds = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public string Status
+        {
+            get => status;
+            private set
+            {
+                if (status != value)
+                {
+                    status = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         protected internal override void Heartbeat(JsonObject data)
@@ -45,6 +59,7 @@ namespace IoT.Device.Lumi.Gateway.SubDevices
                 Status = s;
                 if (Status == "motion") NoMotionSeconds = 0;
             }
+
             if (data.TryGetValue("no_motion", out var nm))
             {
                 NoMotionSeconds = int.Parse(nm);

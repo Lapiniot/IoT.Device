@@ -3,11 +3,11 @@ using System.Json;
 
 namespace IoT.Device.Lumi.Gateway.SubDevices
 {
-    public class HonneywellSmokeSensor : LumiSubDevice
+    public sealed class HonneywellSmokeSensor : LumiSubDevice
     {
         private bool alarm;
 
-        public HonneywellSmokeSensor(string sid, int id) : base(sid, id)
+        internal HonneywellSmokeSensor(string sid, int id) : base(sid, id)
         {
         }
 
@@ -17,8 +17,15 @@ namespace IoT.Device.Lumi.Gateway.SubDevices
 
         public bool Alarm
         {
-            get { return alarm; }
-            private set { if (alarm != value) { alarm = value; OnPropertyChanged(); } }
+            get => alarm;
+            private set
+            {
+                if (alarm != value)
+                {
+                    alarm = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         protected internal override void Heartbeat(JsonObject data)
