@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
+using static System.Reflection.BindingFlags;
 using static System.StringComparison;
 
 namespace IoT.Device
@@ -31,14 +32,19 @@ namespace IoT.Device
                 .ToDictionary(a => a.ModelName, a => a.DeviceType);
         }
 
+        private static TImpl CreateInstance(Type type, params object[] args)
+        {
+            return (TImpl) Activator.CreateInstance(type, NonPublic | Instance, null, args, null, null);
+        }
+
         public static TImpl CreateInstance(uint deviceType, params object[] args)
         {
-            return Types.TryGetValue(deviceType, out var type) ? (TImpl) Activator.CreateInstance(type, args) : null;
+            return Types.TryGetValue(deviceType, out var type) ? CreateInstance(type, args) : null;
         }
 
         public static TImpl CreateInstance(string deviceModel, params object[] args)
         {
-            return Models.TryGetValue(deviceModel, out var type) ? (TImpl) Activator.CreateInstance(type, args) : null;
+            return Models.TryGetValue(deviceModel, out var type) ? CreateInstance(type, args) : null;
         }
 
         public static bool TryGetType(string model, out uint deviceType)

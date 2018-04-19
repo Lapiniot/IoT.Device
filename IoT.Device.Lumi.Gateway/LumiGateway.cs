@@ -130,12 +130,12 @@ namespace IoT.Device.Lumi.Gateway
         protected internal override void UpdateState(JsonObject data)
         {
             if (data.TryGetValue("rgb", out var rgb)) RgbValue = rgb;
+
             if (data.TryGetValue("illumination", out var i)) Illumination = i;
         }
 
-        protected internal override void Heartbeat(JsonObject data)
+        private void Heartbeat(JsonObject data)
         {
-            base.Heartbeat(data);
             Token = data["token"];
         }
 
@@ -266,7 +266,7 @@ namespace IoT.Device.Lumi.Gateway
                         {
                             if (IsGateway())
                                 gateway.Heartbeat(json);
-                            else if (gateway.children.TryGetValue(sid, out var device)) device.Heartbeat(data);
+                            else if (gateway.children.TryGetValue(sid, out var device)) device.UpdateState(data);
                             break;
                         }
                     }

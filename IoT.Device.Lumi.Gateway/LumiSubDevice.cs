@@ -1,6 +1,8 @@
+using IoT.Device.Lumi.Gateway.Interfaces;
+
 namespace IoT.Device.Lumi.Gateway
 {
-    public abstract class LumiSubDevice : LumiThing
+    public abstract class LumiSubDevice : LumiThing, IProvideVoltageInfo
     {
         private readonly int id;
         private decimal voltage;

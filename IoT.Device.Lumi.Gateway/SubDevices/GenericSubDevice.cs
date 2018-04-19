@@ -1,5 +1,6 @@
 using System;
 using System.Json;
+using static System.TimeSpan;
 
 namespace IoT.Device.Lumi.Gateway.SubDevices
 {
@@ -11,17 +12,12 @@ namespace IoT.Device.Lumi.Gateway.SubDevices
 
         public override string ModelName => "generic.unknown";
 
-        protected override TimeSpan OfflineTimeout { get; } = TimeSpan.FromHours(1);
-
-        protected internal override void Heartbeat(JsonObject data)
-        {
-            base.Heartbeat(data);
-
-            UpdateState(data);
-        }
+        protected override TimeSpan OfflineTimeout { get; } = FromHours(1);
 
         protected internal override void UpdateState(JsonObject data)
         {
+            base.UpdateState(data);
+
             if (data.TryGetValue("voltage", out var v)) Voltage = new decimal(v, 0, 0, false, 3);
         }
     }

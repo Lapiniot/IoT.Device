@@ -1,6 +1,7 @@
 using System;
 using System.Json;
 using IoT.Device.Lumi.Gateway.Interfaces;
+using static System.TimeSpan;
 
 namespace IoT.Device.Lumi.Gateway.SubDevices
 {
@@ -9,14 +10,14 @@ namespace IoT.Device.Lumi.Gateway.SubDevices
         private int noMotionSeconds;
         private string status;
 
-        internal MotionSensor(string sid, int id) : base(sid, id)
+        private MotionSensor(string sid, int id) : base(sid, id)
         {
             status = "nomotion";
         }
 
         public override string ModelName { get; } = "lumi.sensor_motion.v2";
 
-        protected override TimeSpan OfflineTimeout { get; } = TimeSpan.FromHours(1);
+        protected override TimeSpan OfflineTimeout { get; } = FromHours(1);
 
         public int NoMotionSeconds
         {
@@ -44,16 +45,12 @@ namespace IoT.Device.Lumi.Gateway.SubDevices
             }
         }
 
-        protected internal override void Heartbeat(JsonObject data)
-        {
-            base.Heartbeat(data);
-
-            UpdateState(data);
-        }
-
         protected internal override void UpdateState(JsonObject data)
         {
+            base.UpdateState(data);
+
             if (data.TryGetValue("voltage", out var v)) Voltage = new decimal(v, 0, 0, false, 3);
+
             if (data.TryGetValue("status", out var s))
             {
                 Status = s;

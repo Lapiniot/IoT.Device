@@ -4,20 +4,18 @@ using System.Json;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using IoT.Device.Lumi.Gateway.Interfaces;
 using static System.Threading.Tasks.TaskContinuationOptions;
 
 namespace IoT.Device.Lumi.Gateway
 {
-    public abstract class LumiThing : INotifyPropertyChanged, IDisposable
+    public abstract class LumiThing : INotifyPropertyChanged, IDisposable, IProvideOnlineInfo
     {
+        private readonly object syncRoot;
         private volatile CancellationTokenSource cancellationTokenSource;
         private bool isOnline;
-        private readonly object syncRoot;
 
-        protected LumiThing(string sid)
-        {
-            (Sid, IsOnline, syncRoot) = (sid, true, new object());
-        }
+        protected LumiThing(string sid) => (Sid, IsOnline, syncRoot) = (sid, true, new object());
 
         public abstract string ModelName { get; }
 
@@ -38,26 +36,26 @@ namespace IoT.Device.Lumi.Gateway
             }
         }
 
-        protected internal abstract void UpdateState(JsonObject data);
+        protected internal virtual void UpdateState(JsonObject data)
+        {
+            StartOnlineWatch();
+        }
 
-        protected internal virtual void Heartbeat(JsonObject data)
+        private void StartOnlineWatch()
         {
             lock (syncRoot)
             {
                 IsOnline = true;
 
-                var source = cancellationTokenSource;
-
-                if (source != null)
+                using (var source = cancellationTokenSource)
                 {
-                    source.Cancel();
-                    source.Dispose();
+                    source?.Cancel();
                 }
 
                 cancellationTokenSource = new CancellationTokenSource();
 
                 Task.Delay(OfflineTimeout, cancellationTokenSource.Token)
-                    .ContinueWith(t => { IsOnline = false; }, OnlyOnRanToCompletion);
+                    .ContinueWith(t => IsOnline = false, OnlyOnRanToCompletion);
             }
         }
 

@@ -1,5 +1,6 @@
 using System;
 using System.Json;
+using static System.TimeSpan;
 
 namespace IoT.Device.Lumi.Gateway.SubDevices
 {
@@ -9,13 +10,13 @@ namespace IoT.Device.Lumi.Gateway.SubDevices
         private decimal pressure;
         private decimal temperature;
 
-        internal AqaraWeatherSensor(string sid, int id) : base(sid, id)
+        private AqaraWeatherSensor(string sid, int id) : base(sid, id)
         {
         }
 
         public override string ModelName { get; } = "lumi.weather.v1";
 
-        protected override TimeSpan OfflineTimeout { get; } = TimeSpan.FromHours(1);
+        protected override TimeSpan OfflineTimeout { get; } = FromHours(1);
 
         public decimal Temperature
         {
@@ -56,18 +57,16 @@ namespace IoT.Device.Lumi.Gateway.SubDevices
             }
         }
 
-        protected internal override void Heartbeat(JsonObject data)
-        {
-            base.Heartbeat(data);
-
-            UpdateState(data);
-        }
-
         protected internal override void UpdateState(JsonObject data)
         {
+            base.UpdateState(data);
+
             if (data.TryGetValue("voltage", out var v)) Voltage = new decimal(v, 0, 0, false, 3);
+
             if (data.TryGetValue("temperature", out var t)) Temperature = new decimal(t, 0, 0, false, 2);
+
             if (data.TryGetValue("humidity", out var h)) Humidity = new decimal(h, 0, 0, false, 2);
+
             if (data.TryGetValue("pressure", out var p)) Pressure = new decimal(p, 0, 0, false, 3);
         }
     }
