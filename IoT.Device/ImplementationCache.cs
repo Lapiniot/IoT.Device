@@ -34,7 +34,7 @@ namespace IoT.Device
 
         private static TImpl CreateInstance(Type type, params object[] args)
         {
-            return (TImpl) Activator.CreateInstance(type, NonPublic | Instance, null, args, null, null);
+            return (TImpl) Activator.CreateInstance(type, Public | NonPublic | Instance, null, args, null, null);
         }
 
         public static TImpl CreateInstance(uint deviceType, params object[] args)
