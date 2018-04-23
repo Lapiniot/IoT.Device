@@ -7,9 +7,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using IoT.Device.Lumi.Gateway.SubDevices;
-using CompletionDictionary =
-    System.Collections.Concurrent.ConcurrentDictionary<string,
-        System.Threading.Tasks.TaskCompletionSource<System.Json.JsonObject>>;
+using CompletionDictionary = System.Collections.Concurrent.ConcurrentDictionary<string, System.Threading.Tasks.TaskCompletionSource<System.Json.JsonObject>>;
 using Cache = IoT.Device.ImplementationCache<
     IoT.Device.Lumi.Gateway.SupportedSubDeviceAttribute,
     IoT.Device.Lumi.Gateway.LumiSubDevice>;
@@ -19,25 +17,26 @@ namespace IoT.Device.Lumi.Gateway
     public sealed class LumiGateway : LumiThing
     {
         private readonly Dictionary<string, LumiSubDevice> children;
-        private readonly CommandDispatchingClient client;
+        private readonly CommandEndpoint client;
         private readonly ListeningClient listener;
         private readonly SemaphoreSlim semaphore;
         private bool disposed;
         private int illumination;
         private int rgbValue;
-        public string Token { get; private set; }
 
         public LumiGateway(string address, ushort port, string sid) : base(sid)
         {
             semaphore = new SemaphoreSlim(1, 1);
             children = new Dictionary<string, LumiSubDevice>();
-            client = new CommandDispatchingClient(new IPEndPoint(IPAddress.Parse(address), port));
+            client = new CommandEndpoint(new IPEndPoint(IPAddress.Parse(address), port));
             listener = new ListeningClient(this, new IPEndPoint(IPAddress.Parse("224.0.0.50"), port));
         }
 
+        public string Token { get; private set; }
+
         public int RgbValue
         {
-            get => rgbValue;
+            get { return rgbValue; }
             private set
             {
                 if (rgbValue != value)
@@ -50,7 +49,7 @@ namespace IoT.Device.Lumi.Gateway
 
         public int Illumination
         {
-            get => illumination;
+            get { return illumination; }
             private set
             {
                 if (illumination != value)
@@ -112,12 +111,14 @@ namespace IoT.Device.Lumi.Gateway
                 }
 
                 foreach (var sid in removes)
+                {
                     if (children.TryGetValue(sid, out var device))
                     {
                         children.Remove(sid);
 
                         device.Dispose();
                     }
+                }
             }
             finally
             {
@@ -158,61 +159,30 @@ namespace IoT.Device.Lumi.Gateway
             }
         }
 
-        private class CommandDispatchingClient : UdpMessageDispatchingClient
+        private class CommandEndpoint : UdpMessageDispatchingEndpoint<JsonObject, JsonObject>
         {
             private readonly CompletionDictionary completions = new CompletionDictionary();
-            private readonly IPEndPoint endpoint;
 
-            public CommandDispatchingClient(IPEndPoint remoteEndpoint)
+            public CommandEndpoint(IPEndPoint endpoint) : base(endpoint)
             {
-                endpoint = remoteEndpoint;
             }
 
             private TimeSpan CommandTimeout { get; } = TimeSpan.FromSeconds(10);
 
-            protected override UdpClient CreateUdpClient()
+            public override async Task<JsonObject> InvokeAsync(JsonObject message, CancellationToken cancellationToken)
             {
-                var client = new UdpClient {EnableBroadcast = false};
-                client.Connect(endpoint);
-                return client;
-            }
-
-            protected override void ProcessResponseBytes(byte[] bytes)
-            {
-                var json = JsonExtensions.Deserialize(bytes);
-
-                //Trace.TraceInformation(json.ToString());
-
-                if (json is JsonObject j && j.TryGetValue("cmd", out var cmd) && j.TryGetValue("sid", out var sid) &&
-                    completions.TryRemove(GetCommandKey(GetCmdName(cmd), sid), out var completionSource))
-                    completionSource.TrySetResult(j);
-            }
-
-            private string GetCommandKey(string command, string sid)
-            {
-                return $"{command}.{sid}";
-            }
-
-            private string GetCmdName(string command)
-            {
-                return command.EndsWith("_ack") ? command.Substring(0, command.Length - 4) : command;
-            }
-
-            public async Task<JsonObject> InvokeAsync(string command, string sid,
-                CancellationToken cancellationToken = default)
-            {
-                var commandKey = GetCommandKey(command, sid);
+                var commandKey = GetCommandKey(message["cmd"], message["sid"]);
 
                 var completionSource = new TaskCompletionSource<JsonObject>();
 
                 try
                 {
-                    var json = new JsonObject {{"cmd", command}, {"sid", sid}};
-
                     if (!completions.TryAdd(commandKey, completionSource))
+                    {
                         throw new InvalidOperationException("Error scheduling new command completion task");
+                    }
 
-                    await SendDatagramAsync(json.Serialize(), cancellationToken).ConfigureAwait(false);
+                    await SendDatagramAsync(message.Serialize(), cancellationToken).ConfigureAwait(false);
 
                     using (var timeoutSource = new CancellationTokenSource(CommandTimeout))
                     using (completionSource.Bind(cancellationToken, timeoutSource.Token))
@@ -225,14 +195,49 @@ namespace IoT.Device.Lumi.Gateway
                     completions.TryRemove(commandKey, out _);
                 }
             }
+
+            protected override UdpClient CreateUdpClient()
+            {
+                var client = new UdpClient {EnableBroadcast = false};
+
+                client.Connect(Endpoint);
+
+                return client;
+            }
+
+            protected override void OnDataAvailable(IPEndPoint remoteEndPoint, byte[] bytes)
+            {
+                var json = JsonExtensions.Deserialize(bytes);
+
+                if (json is JsonObject j && j.TryGetValue("cmd", out var cmd) && j.TryGetValue("sid", out var sid) &&
+                    completions.TryRemove(GetCommandKey(GetCmdName(cmd), sid), out var completionSource))
+                {
+                    completionSource.TrySetResult(j);
+                }
+            }
+
+            private string GetCommandKey(string command, string sid)
+            {
+                return $"{command}.{sid}";
+            }
+
+            private string GetCmdName(string command)
+            {
+                return command.EndsWith("_ack") ? command.Substring(0, command.Length - 4) : command;
+            }
+
+            public Task<JsonObject> InvokeAsync(string command, string sid, CancellationToken cancellationToken = default)
+            {
+                return InvokeAsync(new JsonObject {{"cmd", command}, {"sid", sid}}, cancellationToken);
+            }
         }
 
-        private class ListeningClient : UdpMessageDispatchingClient
+        private class ListeningClient : UdpListener
         {
             private readonly IPEndPoint endpoint;
             private readonly LumiGateway gateway;
 
-            public ListeningClient(LumiGateway lumiGateway, IPEndPoint groupEndpoint)
+            public ListeningClient(LumiGateway lumiGateway, IPEndPoint groupEndpoint) : base(groupEndpoint)
             {
                 gateway = lumiGateway;
                 endpoint = groupEndpoint;
@@ -246,7 +251,7 @@ namespace IoT.Device.Lumi.Gateway
                 return client;
             }
 
-            protected override void ProcessResponseBytes(byte[] bytes)
+            protected override void OnDataAvailable(IPEndPoint remoteEndPoint, byte[] bytes)
             {
                 var json = (JsonObject) JsonExtensions.Deserialize(bytes);
 
@@ -258,15 +263,21 @@ namespace IoT.Device.Lumi.Gateway
                         case "report":
                         {
                             if (IsGateway())
+                            {
                                 gateway.UpdateState(data);
+                            }
                             else if (gateway.children.TryGetValue(sid, out var device)) device.UpdateState(data);
+
                             break;
                         }
                         case "heartbeat":
                         {
                             if (IsGateway())
+                            {
                                 gateway.Heartbeat(json);
+                            }
                             else if (gateway.children.TryGetValue(sid, out var device)) device.UpdateState(data);
+
                             break;
                         }
                     }
