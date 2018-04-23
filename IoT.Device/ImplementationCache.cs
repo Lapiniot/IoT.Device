@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
+using static System.AppDomain;
 using static System.Reflection.BindingFlags;
 using static System.StringComparison;
 
@@ -18,8 +19,19 @@ namespace IoT.Device
 
         static ImplementationCache()
         {
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies()
-                .Where(a => a.GetName().Name.StartsWith("IoT.Device.", OrdinalIgnoreCase));
+            var baseName = typeof(TAttr).Assembly.GetName().Name;
+
+            var prefix = baseName + ".";
+
+            bool Predicate(Assembly assembly)
+            {
+                var name = assembly.GetName().Name;
+
+                return string.Equals(name, baseName, OrdinalIgnoreCase) ||
+                       name.StartsWith(prefix, OrdinalIgnoreCase);
+            }
+
+            var assemblies = CurrentDomain.GetAssemblies().Where(Predicate);
 
             var attributes = assemblies.SelectMany(CustomAttributeExtensions.GetCustomAttributes<TAttr>).ToArray();
 
