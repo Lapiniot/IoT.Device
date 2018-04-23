@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using IoT.Device.Interfaces;
 
-namespace IoT.Device
+namespace IoT.Device.Protocol.Udp
 {
     /// <summary>
     /// Base abstract type for IoT device controlled via UDP datagram messaging with dispatching queue support.

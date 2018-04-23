@@ -4,7 +4,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace IoT.Device
+namespace IoT.Device.Protocol.Udp
 {
     /// <summary>
     /// Simple <see cref="AsyncEnumerator{T}" /> implementation which receives UDP datagram asynchronously

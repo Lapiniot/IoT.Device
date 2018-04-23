@@ -1,5 +1,6 @@
 using System.Json;
 using System.Net;
+using IoT.Device.Protocol.Udp;
 
 namespace IoT.Device.Lumi.Gateway
 {

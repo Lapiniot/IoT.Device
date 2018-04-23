@@ -7,6 +7,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using IoT.Device.Lumi.Gateway.SubDevices;
+using IoT.Device.Protocol.Udp;
 using CompletionDictionary = System.Collections.Concurrent.ConcurrentDictionary<string, System.Threading.Tasks.TaskCompletionSource<System.Json.JsonObject>>;
 using Cache = IoT.Device.ImplementationCache<
     IoT.Device.Lumi.Gateway.SupportedSubDeviceAttribute,
