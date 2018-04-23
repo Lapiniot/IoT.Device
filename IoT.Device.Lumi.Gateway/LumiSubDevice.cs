@@ -14,10 +14,10 @@ namespace IoT.Device.Lumi.Gateway
 
         public decimal Voltage
         {
-            get => voltage;
+            get { return voltage; }
             protected set
             {
-                if (voltage != value)
+                if(voltage != value)
                 {
                     voltage = value;
                     OnPropertyChanged();

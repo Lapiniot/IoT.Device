@@ -23,10 +23,10 @@ namespace IoT.Device.Lumi.Gateway.SubDevices
 
         public bool InUse
         {
-            get => inuse;
+            get { return inuse; }
             set
             {
-                if (inuse != value)
+                if(inuse != value)
                 {
                     inuse = value;
                     OnPropertyChanged();
@@ -36,10 +36,10 @@ namespace IoT.Device.Lumi.Gateway.SubDevices
 
         public decimal LoadVoltage
         {
-            get => loadVoltage;
+            get { return loadVoltage; }
             set
             {
-                if (loadVoltage != value)
+                if(loadVoltage != value)
                 {
                     loadVoltage = value;
                     OnPropertyChanged();
@@ -49,10 +49,10 @@ namespace IoT.Device.Lumi.Gateway.SubDevices
 
         public decimal LoadPower
         {
-            get => loadPower;
+            get { return loadPower; }
             set
             {
-                if (loadPower != value)
+                if(loadPower != value)
                 {
                     loadPower = value;
                     OnPropertyChanged();
@@ -62,10 +62,10 @@ namespace IoT.Device.Lumi.Gateway.SubDevices
 
         public decimal PowerConsumed
         {
-            get => powerConsumed;
+            get { return powerConsumed; }
             set
             {
-                if (powerConsumed != value)
+                if(powerConsumed != value)
                 {
                     powerConsumed = value;
                     OnPropertyChanged();
@@ -75,10 +75,10 @@ namespace IoT.Device.Lumi.Gateway.SubDevices
 
         public string Status
         {
-            get => status;
+            get { return status; }
             set
             {
-                if (status != value)
+                if(status != value)
                 {
                     status = value;
                     OnPropertyChanged();
@@ -90,12 +90,12 @@ namespace IoT.Device.Lumi.Gateway.SubDevices
         {
             base.UpdateState(data);
 
-            if (data.TryGetValue("voltage", out var v)) Voltage = new decimal(v, 0, 0, false, 3);
-            if (data.TryGetValue("status", out var s)) Status = s;
-            if (data.TryGetValue("inuse", out var i)) InUse = i == "1";
-            if (data.TryGetValue("load_voltage", out var lv)) LoadVoltage = new decimal(lv, 0, 0, false, 3);
-            if (data.TryGetValue("load_power", out var lp)) LoadPower = (decimal) lp;
-            if (data.TryGetValue("power_consumed", out var pc)) PowerConsumed = (decimal) pc;
+            if(data.TryGetValue("voltage", out var v)) Voltage = new decimal(v, 0, 0, false, 3);
+            if(data.TryGetValue("status", out var s)) Status = s;
+            if(data.TryGetValue("inuse", out var i)) InUse = i == "1";
+            if(data.TryGetValue("load_voltage", out var lv)) LoadVoltage = new decimal(lv, 0, 0, false, 3);
+            if(data.TryGetValue("load_power", out var lp)) LoadPower = (decimal) lp;
+            if(data.TryGetValue("power_consumed", out var pc)) PowerConsumed = (decimal) pc;
         }
     }
 }

@@ -19,10 +19,10 @@ namespace IoT.Device.Lumi.Gateway.SubDevices
 
         public string Status
         {
-            get => status;
+            get { return status; }
             set
             {
-                if (status != value)
+                if(status != value)
                 {
                     status = value;
                     OnPropertyChanged();
@@ -34,9 +34,9 @@ namespace IoT.Device.Lumi.Gateway.SubDevices
         {
             base.UpdateState(data);
 
-            if (data.TryGetValue("voltage", out var v)) Voltage = new decimal(v, 0, 0, false, 3);
+            if(data.TryGetValue("voltage", out var v)) Voltage = new decimal(v, 0, 0, false, 3);
 
-            if (data.TryGetValue("status", out var s)) Status = s;
+            if(data.TryGetValue("status", out var s)) Status = s;
         }
     }
 }

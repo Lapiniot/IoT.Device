@@ -36,11 +36,11 @@ namespace IoT.Device
         {
             CheckDisposed();
 
-            if (client == null)
+            if(client == null)
             {
-                lock (syncRoot)
+                lock(syncRoot)
                 {
-                    if (client == null)
+                    if(client == null)
                     {
                         client = CreateUdpClient();
 
@@ -55,7 +55,7 @@ namespace IoT.Device
         /// </summary>
         public void Close()
         {
-            lock (syncRoot)
+            lock(syncRoot)
             {
                 OnClose();
 
@@ -73,19 +73,19 @@ namespace IoT.Device
 
         protected void CheckConnected()
         {
-            if (client == null) throw new InvalidOperationException("Not connected");
+            if(client == null) throw new InvalidOperationException("Not connected");
         }
 
         protected void CheckDisposed()
         {
-            if (disposed) throw new ObjectDisposedException("this");
+            if(disposed) throw new ObjectDisposedException("this");
         }
 
         protected virtual void Dispose(bool disposing)
         {
-            if (disposing)
+            if(disposing)
             {
-                if (!disposed)
+                if(!disposed)
                 {
                     Close();
 

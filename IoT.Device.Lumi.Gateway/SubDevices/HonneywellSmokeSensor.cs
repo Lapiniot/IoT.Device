@@ -18,10 +18,10 @@ namespace IoT.Device.Lumi.Gateway.SubDevices
 
         public bool Alarm
         {
-            get => alarm;
+            get { return alarm; }
             private set
             {
-                if (alarm != value)
+                if(alarm != value)
                 {
                     alarm = value;
                     OnPropertyChanged();
@@ -33,9 +33,9 @@ namespace IoT.Device.Lumi.Gateway.SubDevices
         {
             base.UpdateState(data);
 
-            if (data.TryGetValue("voltage", out var v)) Voltage = new decimal(v, 0, 0, false, 3);
+            if(data.TryGetValue("voltage", out var v)) Voltage = new decimal(v, 0, 0, false, 3);
 
-            if (data.TryGetValue("alarm", out var a)) Alarm = a == "1";
+            if(data.TryGetValue("alarm", out var a)) Alarm = a == "1";
         }
     }
 }

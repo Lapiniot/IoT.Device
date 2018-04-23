@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace IoT.Device
 {
     /// <summary>
-    ///     Base abstaract class for IoT devices enumerator which uses network discovery via UDP datagram broadcasting
+    /// Base abstaract class for IoT devices enumerator which uses network discovery via UDP datagram broadcasting
     /// </summary>
     /// <typeparam name="TThing">Type of the 'thing' discoverable by concrete implementations</typeparam>
     public abstract class UdpBroadcastEnumerator<TThing> where TThing : class
@@ -17,7 +17,7 @@ namespace IoT.Device
         protected readonly IPEndPoint GroupEndpoint;
 
         /// <summary>
-        ///     Type initializer
+        /// Type initializer
         /// </summary>
         /// <param name="groupEndpoint">Group endpoint for broadcasting</param>
         protected UdpBroadcastEnumerator(IPEndPoint groupEndpoint)
@@ -26,7 +26,7 @@ namespace IoT.Device
         }
 
         /// <summary>
-        ///     Enumerates network devices by sending discovery datagrams to the <see cref="GroupEndpoint" /> broadcast group
+        /// Enumerates network devices by sending discovery datagrams to the <see cref="GroupEndpoint" /> broadcast group
         /// </summary>
         /// <param name="cancellationToken">Cancelation token</param>
         /// <returns>Enumerable sequence of IoT devices that responded to discovery message </returns>
@@ -36,12 +36,12 @@ namespace IoT.Device
         }
 
         /// <summary>
-        ///     Start enumerating asynchronously.
+        /// Start enumerating asynchronously.
         /// </summary>
         /// <param name="cancellationToken">Cancellation token to control external cancellation</param>
         /// <returns>Instance of <see cref="AsyncEnumerator{T}" /></returns>
         /// <exception cref="OperationCanceledException">
-        ///     On cancellation requested via <paramref name="cancellationToken" />
+        /// On cancellation requested via <paramref name="cancellationToken" />
         /// </exception>
         public async Task<AsyncEnumerator<TThing>> GetEnumeratorAsync(CancellationToken cancellationToken)
         {
@@ -69,8 +69,8 @@ namespace IoT.Device
         }
 
         /// <summary>
-        ///     Provides generic abstract discovery logic by listening for incoming response datagrams
-        ///     until <see cref="Timeout" /> time ellapses during receive operation
+        /// Provides generic abstract discovery logic by listening for incoming response datagrams
+        /// until <see cref="Timeout" /> time ellapses during receive operation
         /// </summary>
         /// <typeparam name="TResult">Response datagram parsing result</typeparam>
         /// <param name="endpont">Group endpoint for broadcasting</param>
@@ -81,19 +81,19 @@ namespace IoT.Device
             Func<byte[], IPEndPoint, TResult> parser,
             CancellationToken cancellationToken = default)
         {
-            using (var client = CreateUdpClient(true))
+            using(var client = CreateUdpClient(true))
             {
                 var datagram = GetDiscoveryDatagram();
 
-                if (cancellationToken.IsCancellationRequested) yield break;
+                if(cancellationToken.IsCancellationRequested) yield break;
 
                 var send = client.SendAsync(datagram, datagram.Length, endpont);
 
                 send.Wait(cancellationToken);
 
-                if (cancellationToken.IsCancellationRequested) yield break;
+                if(cancellationToken.IsCancellationRequested) yield break;
 
-                while (!cancellationToken.IsCancellationRequested)
+                while(!cancellationToken.IsCancellationRequested)
                 {
                     TResult instance;
 
@@ -103,15 +103,15 @@ namespace IoT.Device
 
                         receive.Wait(cancellationToken);
 
-                        if (cancellationToken.IsCancellationRequested) yield break;
+                        if(cancellationToken.IsCancellationRequested) yield break;
 
                         instance = parser(receive.Result.Buffer, receive.Result.RemoteEndPoint);
                     }
-                    catch (OperationCanceledException)
+                    catch(OperationCanceledException)
                     {
                         yield break;
                     }
-                    catch (Exception exception)
+                    catch(Exception exception)
                     {
                         Debug.Write($"Error creating device instance: {exception.Message}", "UDPDeviceEnumerator");
 
@@ -125,7 +125,7 @@ namespace IoT.Device
         }
 
         /// <summary>
-        ///     Provides generic abstract peer-to-peer discovery for single device hosted at the <paramref name="endpont" />
+        /// Provides generic abstract peer-to-peer discovery for single device hosted at the <paramref name="endpont" />
         /// </summary>
         /// <typeparam name="TResult">Response datagram parsing result</typeparam>
         /// <param name="endpont">Peer endpoint to be discovered</param>
@@ -135,7 +135,7 @@ namespace IoT.Device
         protected TResult Discover<TResult>(IPEndPoint endpont, Func<byte[], IPEndPoint, TResult> parser,
             CancellationToken cancellationToken = default)
         {
-            using (var client = CreateUdpClient(false))
+            using(var client = CreateUdpClient(false))
             {
                 var datagram = GetDiscoveryDatagram();
 
@@ -154,7 +154,7 @@ namespace IoT.Device
         }
 
         /// <summary>
-        ///     Provides generic abstract peer-to-peer discovery for single device hosted at the <paramref name="endpont" />
+        /// Provides generic abstract peer-to-peer discovery for single device hosted at the <paramref name="endpont" />
         /// </summary>
         /// <typeparam name="TResult">Response datagram parsing result</typeparam>
         /// <param name="endpont">Peer endpoint to be discovered</param>
@@ -164,7 +164,7 @@ namespace IoT.Device
         protected async Task<TResult> DiscoverAsync<TResult>(IPEndPoint endpont,
             Func<byte[], IPEndPoint, TResult> parser, CancellationToken cancellationToken = default)
         {
-            using (var client = CreateUdpClient(false))
+            using(var client = CreateUdpClient(false))
             {
                 var datagram = GetDiscoveryDatagram();
 
@@ -178,7 +178,7 @@ namespace IoT.Device
         }
 
         /// <summary>
-        ///     Creates and configures instance of the <seealso cref="UdpClient" /> suitable for UDP discovery
+        /// Creates and configures instance of the <seealso cref="UdpClient" /> suitable for UDP discovery
         /// </summary>
         /// <param name="enableBroadcast">Should the broadcast mode be enabled</param>
         /// <returns>Instance of <seealso cref="UdpClient" /></returns>
@@ -188,18 +188,18 @@ namespace IoT.Device
         }
 
         /// <summary>
-        ///     Factory method to create IoT device instance by parsing discovery response datagram bytes
+        /// Factory method to create IoT device instance by parsing discovery response datagram bytes
         /// </summary>
         /// <param name="buffer">Discovery message response bytes</param>
         /// <param name="remoteEp">Responder's endpoint information</param>
         /// <returns>
-        ///     Instance of type
-        ///     <typeparam name="TThing"></typeparam>
+        /// Instance of type
+        /// <typeparam name="TThing"></typeparam>
         /// </returns>
         protected abstract TThing CreateInstance(byte[] buffer, IPEndPoint remoteEp);
 
         /// <summary>
-        ///     Returns datagram bytes to be send over the network for discovery
+        /// Returns datagram bytes to be send over the network for discovery
         /// </summary>
         /// <returns>Raw datagram bytes</returns>
         protected abstract byte[] GetDiscoveryDatagram();

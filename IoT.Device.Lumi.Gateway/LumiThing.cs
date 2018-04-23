@@ -15,7 +15,10 @@ namespace IoT.Device.Lumi.Gateway
         private volatile CancellationTokenSource cancellationTokenSource;
         private bool isOnline;
 
-        protected LumiThing(string sid) => (Sid, IsOnline, syncRoot) = (sid, true, new object());
+        protected LumiThing(string sid)
+        {
+            (Sid, IsOnline, syncRoot) = (sid, true, new object());
+        }
 
         public abstract string ModelName { get; }
 
@@ -25,10 +28,10 @@ namespace IoT.Device.Lumi.Gateway
 
         public bool IsOnline
         {
-            get => isOnline;
+            get { return isOnline; }
             protected set
             {
-                if (isOnline != value)
+                if(isOnline != value)
                 {
                     isOnline = value;
                     OnPropertyChanged();
@@ -43,11 +46,11 @@ namespace IoT.Device.Lumi.Gateway
 
         private void StartOnlineWatch()
         {
-            lock (syncRoot)
+            lock(syncRoot)
             {
                 IsOnline = true;
 
-                using (var source = cancellationTokenSource)
+                using(var source = cancellationTokenSource)
                 {
                     source?.Cancel();
                 }
@@ -76,9 +79,9 @@ namespace IoT.Device.Lumi.Gateway
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposed)
+            if(!disposed)
             {
-                if (disposing)
+                if(disposing)
                 {
                     cancellationTokenSource?.Cancel();
                     cancellationTokenSource?.Dispose();

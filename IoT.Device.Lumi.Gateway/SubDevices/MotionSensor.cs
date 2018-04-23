@@ -21,10 +21,10 @@ namespace IoT.Device.Lumi.Gateway.SubDevices
 
         public int NoMotionSeconds
         {
-            get => noMotionSeconds;
+            get { return noMotionSeconds; }
             private set
             {
-                if (noMotionSeconds != value)
+                if(noMotionSeconds != value)
                 {
                     noMotionSeconds = value;
                     OnPropertyChanged();
@@ -34,10 +34,10 @@ namespace IoT.Device.Lumi.Gateway.SubDevices
 
         public string Status
         {
-            get => status;
+            get { return status; }
             private set
             {
-                if (status != value)
+                if(status != value)
                 {
                     status = value;
                     OnPropertyChanged();
@@ -49,15 +49,15 @@ namespace IoT.Device.Lumi.Gateway.SubDevices
         {
             base.UpdateState(data);
 
-            if (data.TryGetValue("voltage", out var v)) Voltage = new decimal(v, 0, 0, false, 3);
+            if(data.TryGetValue("voltage", out var v)) Voltage = new decimal(v, 0, 0, false, 3);
 
-            if (data.TryGetValue("status", out var s))
+            if(data.TryGetValue("status", out var s))
             {
                 Status = s;
-                if (Status == "motion") NoMotionSeconds = 0;
+                if(Status == "motion") NoMotionSeconds = 0;
             }
 
-            if (data.TryGetValue("no_motion", out var nm))
+            if(data.TryGetValue("no_motion", out var nm))
             {
                 NoMotionSeconds = int.Parse(nm);
                 Status = "nomotion";

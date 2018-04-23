@@ -20,10 +20,10 @@ namespace IoT.Device.Lumi.Gateway.SubDevices
 
         public decimal Temperature
         {
-            get => temperature;
+            get { return temperature; }
             private set
             {
-                if (temperature != value)
+                if(temperature != value)
                 {
                     temperature = value;
                     OnPropertyChanged();
@@ -33,10 +33,10 @@ namespace IoT.Device.Lumi.Gateway.SubDevices
 
         public decimal Humidity
         {
-            get => humidity;
+            get { return humidity; }
             private set
             {
-                if (humidity != value)
+                if(humidity != value)
                 {
                     humidity = value;
                     OnPropertyChanged();
@@ -46,10 +46,10 @@ namespace IoT.Device.Lumi.Gateway.SubDevices
 
         public decimal Pressure
         {
-            get => pressure;
+            get { return pressure; }
             private set
             {
-                if (pressure != value)
+                if(pressure != value)
                 {
                     pressure = value;
                     OnPropertyChanged();
@@ -61,13 +61,13 @@ namespace IoT.Device.Lumi.Gateway.SubDevices
         {
             base.UpdateState(data);
 
-            if (data.TryGetValue("voltage", out var v)) Voltage = new decimal(v, 0, 0, false, 3);
+            if(data.TryGetValue("voltage", out var v)) Voltage = new decimal(v, 0, 0, false, 3);
 
-            if (data.TryGetValue("temperature", out var t)) Temperature = new decimal(t, 0, 0, false, 2);
+            if(data.TryGetValue("temperature", out var t)) Temperature = new decimal(t, 0, 0, false, 2);
 
-            if (data.TryGetValue("humidity", out var h)) Humidity = new decimal(h, 0, 0, false, 2);
+            if(data.TryGetValue("humidity", out var h)) Humidity = new decimal(h, 0, 0, false, 2);
 
-            if (data.TryGetValue("pressure", out var p)) Pressure = new decimal(p, 0, 0, false, 3);
+            if(data.TryGetValue("pressure", out var p)) Pressure = new decimal(p, 0, 0, false, 3);
         }
     }
 }

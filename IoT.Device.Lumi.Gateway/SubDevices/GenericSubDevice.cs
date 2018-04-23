@@ -10,7 +10,7 @@ namespace IoT.Device.Lumi.Gateway.SubDevices
         {
         }
 
-        public override string ModelName => "generic.unknown";
+        public override string ModelName { get; } = "generic.unknown";
 
         protected override TimeSpan OfflineTimeout { get; } = FromHours(1);
 
@@ -18,7 +18,7 @@ namespace IoT.Device.Lumi.Gateway.SubDevices
         {
             base.UpdateState(data);
 
-            if (data.TryGetValue("voltage", out var v)) Voltage = new decimal(v, 0, 0, false, 3);
+            if(data.TryGetValue("voltage", out var v)) Voltage = new decimal(v, 0, 0, false, 3);
         }
     }
 }

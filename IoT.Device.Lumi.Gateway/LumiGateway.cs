@@ -39,7 +39,7 @@ namespace IoT.Device.Lumi.Gateway
             get { return rgbValue; }
             private set
             {
-                if (rgbValue != value)
+                if(rgbValue != value)
                 {
                     rgbValue = value;
                     OnPropertyChanged();
@@ -52,7 +52,7 @@ namespace IoT.Device.Lumi.Gateway
             get { return illumination; }
             private set
             {
-                if (illumination != value)
+                if(illumination != value)
                 {
                     illumination = value;
                     OnPropertyChanged();
@@ -96,11 +96,11 @@ namespace IoT.Device.Lumi.Gateway
                 var adds = sids.Except(children.Keys).ToArray();
                 var removes = children.Keys.Except(sids).ToArray();
 
-                foreach (var sid in adds)
+                foreach(var sid in adds)
                 {
                     var info = await InvokeAsync("read", sid, cancellationToken);
 
-                    if (JsonValue.Parse(info["data"]) is JsonObject data && !children.TryGetValue(sid, out var device))
+                    if(JsonValue.Parse(info["data"]) is JsonObject data && !children.TryGetValue(sid, out var device))
                     {
                         var id = (int) info["short_id"];
                         var deviceModel = info["model"];
@@ -110,9 +110,9 @@ namespace IoT.Device.Lumi.Gateway
                     }
                 }
 
-                foreach (var sid in removes)
+                foreach(var sid in removes)
                 {
-                    if (children.TryGetValue(sid, out var device))
+                    if(children.TryGetValue(sid, out var device))
                     {
                         children.Remove(sid);
 
@@ -130,9 +130,9 @@ namespace IoT.Device.Lumi.Gateway
 
         protected internal override void UpdateState(JsonObject data)
         {
-            if (data.TryGetValue("rgb", out var rgb)) RgbValue = rgb;
+            if(data.TryGetValue("rgb", out var rgb)) RgbValue = rgb;
 
-            if (data.TryGetValue("illumination", out var i)) Illumination = i;
+            if(data.TryGetValue("illumination", out var i)) Illumination = i;
         }
 
         private void Heartbeat(JsonObject data)
@@ -144,15 +144,15 @@ namespace IoT.Device.Lumi.Gateway
         {
             base.Dispose(disposing);
 
-            if (!disposed)
+            if(!disposed)
             {
-                if (disposing)
+                if(disposing)
                 {
                     client.Dispose();
                     listener.Dispose();
                     semaphore.Dispose();
 
-                    foreach (var c in children) c.Value.Dispose();
+                    foreach(var c in children) c.Value.Dispose();
                 }
 
                 disposed = true;
@@ -177,15 +177,15 @@ namespace IoT.Device.Lumi.Gateway
 
                 try
                 {
-                    if (!completions.TryAdd(commandKey, completionSource))
+                    if(!completions.TryAdd(commandKey, completionSource))
                     {
                         throw new InvalidOperationException("Error scheduling new command completion task");
                     }
 
                     await SendDatagramAsync(message.Serialize(), cancellationToken).ConfigureAwait(false);
 
-                    using (var timeoutSource = new CancellationTokenSource(CommandTimeout))
-                    using (completionSource.Bind(cancellationToken, timeoutSource.Token))
+                    using(var timeoutSource = new CancellationTokenSource(CommandTimeout))
+                    using(completionSource.Bind(cancellationToken, timeoutSource.Token))
                     {
                         return await completionSource.Task.ConfigureAwait(false);
                     }
@@ -209,8 +209,8 @@ namespace IoT.Device.Lumi.Gateway
             {
                 var json = JsonExtensions.Deserialize(bytes);
 
-                if (json is JsonObject j && j.TryGetValue("cmd", out var cmd) && j.TryGetValue("sid", out var sid) &&
-                    completions.TryRemove(GetCommandKey(GetCmdName(cmd), sid), out var completionSource))
+                if(json is JsonObject j && j.TryGetValue("cmd", out var cmd) && j.TryGetValue("sid", out var sid) &&
+                   completions.TryRemove(GetCommandKey(GetCmdName(cmd), sid), out var completionSource))
                 {
                     completionSource.TrySetResult(j);
                 }
@@ -255,28 +255,28 @@ namespace IoT.Device.Lumi.Gateway
             {
                 var json = (JsonObject) JsonExtensions.Deserialize(bytes);
 
-                if (json.TryGetValue("sid", out var sid) && json.TryGetValue("data", out var v) &&
-                    JsonValue.Parse(v) is JsonObject data)
+                if(json.TryGetValue("sid", out var sid) && json.TryGetValue("data", out var v) &&
+                   JsonValue.Parse(v) is JsonObject data)
                 {
-                    switch ((string) json["cmd"])
+                    switch((string) json["cmd"])
                     {
                         case "report":
                         {
-                            if (IsGateway())
+                            if(IsGateway())
                             {
                                 gateway.UpdateState(data);
                             }
-                            else if (gateway.children.TryGetValue(sid, out var device)) device.UpdateState(data);
+                            else if(gateway.children.TryGetValue(sid, out var device)) device.UpdateState(data);
 
                             break;
                         }
                         case "heartbeat":
                         {
-                            if (IsGateway())
+                            if(IsGateway())
                             {
                                 gateway.Heartbeat(json);
                             }
-                            else if (gateway.children.TryGetValue(sid, out var device)) device.UpdateState(data);
+                            else if(gateway.children.TryGetValue(sid, out var device)) device.UpdateState(data);
 
                             break;
                         }

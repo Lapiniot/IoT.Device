@@ -34,7 +34,7 @@ namespace IoT.Device
 
         private async Task DispatchAsync(CancellationToken cancellationToken)
         {
-            while (!cancellationToken.IsCancellationRequested)
+            while(!cancellationToken.IsCancellationRequested)
             {
                 try
                 {
@@ -42,11 +42,11 @@ namespace IoT.Device
 
                     OnDataAvailable(result.RemoteEndPoint, result.Buffer);
                 }
-                catch (OperationCanceledException)
+                catch(OperationCanceledException)
                 {
                     Trace.TraceInformation("Cancelling message dispatching loop...");
                 }
-                catch (Exception e)
+                catch(Exception e)
                 {
                     Trace.TraceError($"Error in mesaage dispatch: {e.Message}");
                 }

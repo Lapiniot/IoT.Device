@@ -14,8 +14,10 @@ namespace IoT.Device.Upnp
         public UpnpEnumerator(IPEndPoint groupEndpoint, string searchTarget = SearchTargets.All) :
             base(groupEndpoint)
         {
-            if (string.IsNullOrEmpty(searchTarget))
+            if(string.IsNullOrEmpty(searchTarget))
+            {
                 throw new ArgumentException("Parameter couldn't be null or empty.", nameof(searchTarget));
+            }
 
             this.searchTarget = searchTarget;
         }
@@ -28,22 +30,22 @@ namespace IoT.Device.Upnp
 
         protected override UpnpDevice CreateInstance(byte[] buffer, IPEndPoint remoteEp)
         {
-            using (var stream = new MemoryStream(buffer))
+            using(var stream = new MemoryStream(buffer))
             {
-                using (var reader = new StreamReader(stream, Encoding.ASCII))
+                using(var reader = new StreamReader(stream, Encoding.ASCII))
                 {
-                    if (reader.ReadLine() == "HTTP/1.1 200 OK")
+                    if(reader.ReadLine() == "HTTP/1.1 200 OK")
                     {
                         var data = new Dictionary<string, string>();
-                        while (!reader.EndOfStream)
+                        while(!reader.EndOfStream)
                         {
                             var line = reader.ReadLine();
 
-                            if (line != null)
+                            if(line != null)
                             {
                                 var index = line.IndexOf(": ", StringComparison.Ordinal);
 
-                                if (index > 0) data[line.Substring(0, index)] = line.Substring(index + 2);
+                                if(index > 0) data[line.Substring(0, index)] = line.Substring(index + 2);
                             }
                         }
 
@@ -57,9 +59,9 @@ namespace IoT.Device.Upnp
 
         protected override byte[] GetDiscoveryDatagram()
         {
-            using (var stream = new MemoryStream())
+            using(var stream = new MemoryStream())
             {
-                using (var writer = new StreamWriter(stream, Encoding.ASCII, 2048) {NewLine = "\r\n"})
+                using(var writer = new StreamWriter(stream, Encoding.ASCII, 2048) {NewLine = "\r\n"})
                 {
                     writer.WriteLine("M-SEARCH * HTTP/1.1");
                     writer.WriteLine("HOST: {0}:{1}", GroupEndpoint.Address, GroupEndpoint.Port);

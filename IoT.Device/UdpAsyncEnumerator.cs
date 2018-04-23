@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 namespace IoT.Device
 {
     /// <summary>
-    ///     Simple <see cref="AsyncEnumerator{T}" /> implementation which receives UDP datagram asynchronously
-    ///     via provided instance of <seealso cref="UdpClient" /> and converts received data into a
-    ///     <typeparamref name="TThing" /> instance using parser function provided
+    /// Simple <see cref="AsyncEnumerator{T}" /> implementation which receives UDP datagram asynchronously
+    /// via provided instance of <seealso cref="UdpClient" /> and converts received data into a
+    /// <typeparamref name="TThing" /> instance using parser function provided
     /// </summary>
     /// <typeparam name="TThing">Type of the parsing result</typeparam>
     public sealed class UdpAsyncEnumerator<TThing> : AsyncEnumerator<TThing> where TThing : class
@@ -18,7 +18,7 @@ namespace IoT.Device
         private readonly Func<byte[], IPEndPoint, TThing> factory;
 
         /// <summary>
-        ///     Type initializer
+        /// Type initializer
         /// </summary>
         /// <param name="udpClient"><see cref="UdpClient" /> instance to read data from</param>
         /// <param name="parser">UDP datagrams parser implementation</param>
@@ -31,7 +31,7 @@ namespace IoT.Device
         }
 
         /// <summary>
-        ///     Disposes instance
+        /// Disposes instance
         /// </summary>
         public override void Dispose()
         {
@@ -39,12 +39,12 @@ namespace IoT.Device
         }
 
         /// <summary>
-        ///     Receives and parses next available UDP datagram
+        /// Receives and parses next available UDP datagram
         /// </summary>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Instance of <typeparamref name="TThing" /></returns>
         /// <exception cref="TaskCanceledException">
-        ///     On external cancellation requested via <paramref name="cancellationToken" />
+        /// On external cancellation requested via <paramref name="cancellationToken" />
         /// </exception>
         public override async Task<TThing> GetNextAsync(CancellationToken cancellationToken)
         {
