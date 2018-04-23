@@ -2,8 +2,7 @@
 
 namespace IoT.Device.Interfaces
 {
-    public interface IJsonCommunicationEndpoint :
-        ICommunicationEndpoint<JsonObject, JsonValue>
+    public interface IJsonCommunicationEndpoint : ICommunicationEndpoint<JsonObject, JsonValue>
     {
     }
 }
