@@ -1,6 +1,6 @@
-using IoT.Device.Lumi.Gateway.Interfaces;
+using IoT.Device.Lumi.Interfaces;
 
-namespace IoT.Device.Lumi.Gateway
+namespace IoT.Device.Lumi
 {
     public abstract class LumiSubDevice : LumiThing, IProvideVoltageInfo
     {

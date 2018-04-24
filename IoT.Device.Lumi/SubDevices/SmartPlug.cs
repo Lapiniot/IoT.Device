@@ -1,9 +1,8 @@
 using System;
 using System.Json;
-using IoT.Device.Lumi.Gateway.Interfaces;
-using static System.TimeSpan;
+using IoT.Device.Lumi.Interfaces;
 
-namespace IoT.Device.Lumi.Gateway.SubDevices
+namespace IoT.Device.Lumi.SubDevices
 {
     public sealed class SmartPlug : LumiSubDevice, IProvideStatusInfo
     {
@@ -19,7 +18,7 @@ namespace IoT.Device.Lumi.Gateway.SubDevices
 
         public override string ModelName { get; } = "lumi.plug.v1";
 
-        protected override TimeSpan OfflineTimeout { get; } = FromMinutes(10);
+        protected override TimeSpan OfflineTimeout { get; } = TimeSpan.FromMinutes(10);
 
         public bool InUse
         {

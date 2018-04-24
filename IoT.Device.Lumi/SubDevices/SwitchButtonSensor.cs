@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Json;
-using static System.TimeSpan;
 
-namespace IoT.Device.Lumi.Gateway.SubDevices
+namespace IoT.Device.Lumi.SubDevices
 {
     public sealed class SwitchButtonSensor : LumiSubDevice
     {
@@ -12,7 +11,7 @@ namespace IoT.Device.Lumi.Gateway.SubDevices
 
         public override string ModelName { get; } = "lumi.sensor_switch.v2";
 
-        protected override TimeSpan OfflineTimeout { get; } = FromHours(1);
+        protected override TimeSpan OfflineTimeout { get; } = TimeSpan.FromHours(1);
 
         protected internal override void UpdateState(JsonObject data)
         {

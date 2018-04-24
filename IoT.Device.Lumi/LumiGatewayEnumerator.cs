@@ -1,8 +1,8 @@
 using System.Json;
 using System.Net;
-using IoT.Device.Protocol.Udp;
+using IoT.Protocol.Udp;
 
-namespace IoT.Device.Lumi.Gateway
+namespace IoT.Device.Lumi
 {
     public class LumiGatewayEnumerator : UdpBroadcastEnumerator<LumiGateway>
     {

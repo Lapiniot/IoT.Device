@@ -1,4 +1,4 @@
-namespace IoT.Device.Lumi.Gateway.Interfaces
+namespace IoT.Device.Lumi.Interfaces
 {
     public interface IProvideVoltageInfo
     {

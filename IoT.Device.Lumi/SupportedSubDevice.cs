@@ -1,6 +1,6 @@
 using System;
 
-namespace IoT.Device.Lumi.Gateway
+namespace IoT.Device.Lumi
 {
     public class SupportedSubDeviceAttribute : SupportedDeviceAttributeBase
     {

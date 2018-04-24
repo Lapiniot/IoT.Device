@@ -1,9 +1,8 @@
 using System;
 using System.Json;
-using IoT.Device.Lumi.Gateway.Interfaces;
-using static System.TimeSpan;
+using IoT.Device.Lumi.Interfaces;
 
-namespace IoT.Device.Lumi.Gateway.SubDevices
+namespace IoT.Device.Lumi.SubDevices
 {
     public sealed class MotionSensor : LumiSubDevice, IProvideStatusInfo
     {
@@ -17,7 +16,7 @@ namespace IoT.Device.Lumi.Gateway.SubDevices
 
         public override string ModelName { get; } = "lumi.sensor_motion.v2";
 
-        protected override TimeSpan OfflineTimeout { get; } = FromHours(1);
+        protected override TimeSpan OfflineTimeout { get; } = TimeSpan.FromHours(1);
 
         public int NoMotionSeconds
         {

@@ -4,10 +4,9 @@ using System.Json;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using IoT.Device.Lumi.Gateway.Interfaces;
-using static System.Threading.Tasks.TaskContinuationOptions;
+using IoT.Device.Lumi.Interfaces;
 
-namespace IoT.Device.Lumi.Gateway
+namespace IoT.Device.Lumi
 {
     public abstract class LumiThing : INotifyPropertyChanged, IDisposable, IProvideOnlineInfo
     {
@@ -58,7 +57,7 @@ namespace IoT.Device.Lumi.Gateway
                 cancellationTokenSource = new CancellationTokenSource();
 
                 Task.Delay(OfflineTimeout, cancellationTokenSource.Token)
-                    .ContinueWith(t => IsOnline = false, OnlyOnRanToCompletion);
+                    .ContinueWith(t => IsOnline = false, TaskContinuationOptions.OnlyOnRanToCompletion);
             }
         }
 

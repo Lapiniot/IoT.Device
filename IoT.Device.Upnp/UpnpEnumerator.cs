@@ -4,7 +4,7 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using IoT.Device.Protocol.Udp;
+using IoT.Protocol.Udp;
 
 namespace IoT.Device.Upnp
 {

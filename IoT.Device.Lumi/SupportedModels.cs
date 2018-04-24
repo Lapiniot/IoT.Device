@@ -1,5 +1,5 @@
-﻿using IoT.Device.Lumi.Gateway;
-using IoT.Device.Lumi.Gateway.SubDevices;
+﻿using IoT.Device.Lumi;
+using IoT.Device.Lumi.SubDevices;
 
 [assembly: SupportedSubDevice("switch", typeof(SwitchButtonSensor))]
 [assembly: SupportedSubDevice("motion", typeof(MotionSensor))]

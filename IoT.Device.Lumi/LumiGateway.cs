@@ -6,14 +6,14 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
-using IoT.Device.Lumi.Gateway.SubDevices;
-using IoT.Device.Protocol.Udp;
+using IoT.Device.Lumi.SubDevices;
+using IoT.Protocol.Udp;
 using CompletionDictionary = System.Collections.Concurrent.ConcurrentDictionary<string, System.Threading.Tasks.TaskCompletionSource<System.Json.JsonObject>>;
 using Cache = IoT.Device.ImplementationCache<
-    IoT.Device.Lumi.Gateway.SupportedSubDeviceAttribute,
-    IoT.Device.Lumi.Gateway.LumiSubDevice>;
+    IoT.Device.Lumi.SupportedSubDeviceAttribute,
+    IoT.Device.Lumi.LumiSubDevice>;
 
-namespace IoT.Device.Lumi.Gateway
+namespace IoT.Device.Lumi
 {
     public sealed class LumiGateway : LumiThing
     {
