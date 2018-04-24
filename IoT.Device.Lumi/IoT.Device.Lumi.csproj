@@ -7,10 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Composition" Version="1.1.0" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <ProjectReference Include="..\IoT.Protocol.Lumi\IoT.Protocol.Lumi.csproj" />
     <ProjectReference Include="..\IoT.Protocol.Udp\IoT.Protocol.Udp.csproj" />
     <ProjectReference Include="..\System.Common\System.Common.csproj" />
     <ProjectReference Include="..\IoT.Device\IoT.Device.csproj" />
