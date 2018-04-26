@@ -27,7 +27,7 @@ namespace IoT.Device.Upnp
             this.searchTarget = searchTarget;
         }
 
-        protected override UpnpDevice CreateInstance(byte[] buffer, IPEndPoint remoteEp)
+        protected override UpnpDevice ParseResponse(byte[] buffer, IPEndPoint remoteEp)
         {
             using (var stream = new MemoryStream(buffer))
             {

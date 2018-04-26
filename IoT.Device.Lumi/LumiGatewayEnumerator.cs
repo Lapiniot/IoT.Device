@@ -13,7 +13,7 @@ namespace IoT.Device.Lumi
             whoisMessage = new JsonObject {{"cmd", "whois"}}.Serialize();
         }
 
-        protected override LumiGateway CreateInstance(byte[] buffer, IPEndPoint remoteEp)
+        protected override LumiGateway ParseResponse(byte[] buffer, IPEndPoint remoteEp)
         {
             var j = JsonExtensions.Deserialize(buffer);
 
