@@ -1,28 +1,28 @@
-using System.Json;
+using System;
 using System.Net;
-using IoT.Protocol.Udp;
+using IoT.Protocol;
+using IoT.Protocol.Lumi;
 
 namespace IoT.Device.Lumi
 {
-    public class LumiGatewayEnumerator : UdpBroadcastEnumerator<LumiGateway>
+    public class LumiGatewayEnumerator : ConvertingEnumerator<(IPAddress Address, ushort Port, string Sid), LumiGateway>
     {
-        private readonly byte[] whoisMessage;
-
-        public LumiGatewayEnumerator() : base(new IPEndPoint(IPAddress.Parse("224.0.0.50"), 4321))
+        public LumiGatewayEnumerator() : base(new LumiEnumerator())
         {
-            whoisMessage = new JsonObject {{"cmd", "whois"}}.Serialize();
         }
 
-        protected override LumiGateway ParseResponse(byte[] buffer, IPEndPoint remoteEp)
-        {
-            var j = JsonExtensions.Deserialize(buffer);
+        #region Overrides of ConvertingEnumerator<(IPAddress Address, ushort Port, string Sid),LumiGateway>
 
-            return j["cmd"] == "iam" ? new LumiGateway(j["ip"], ushort.Parse(j["port"]), j["sid"]) : null;
+        public override LumiGateway Convert((IPAddress Address, ushort Port, string Sid) thing)
+        {
+            if(thing.Address == null || thing.Sid == string.Empty)
+            {
+                throw new ApplicationException("Lumi gateway device doesn\'t exist or didn\'t respond properly.");
+            }
+
+            return new LumiGateway(thing.Address, thing.Port, thing.Sid);
         }
 
-        protected override byte[] GetDiscoveryDatagram()
-        {
-            return Encoding.ASCII.GetBytes("{\"cmd\":\"whois\"}");
-        }
+        #endregion
     }
 }

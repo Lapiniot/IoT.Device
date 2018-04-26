@@ -24,11 +24,11 @@ namespace IoT.Device.Lumi
         private LumiEventListener listener;
         private int rgbValue;
 
-        public LumiGateway(string address, ushort port, string sid) : base(sid)
+        public LumiGateway(IPAddress address, ushort port, string sid) : base(sid)
         {
             semaphore = new SemaphoreSlim(1, 1);
             children = new Dictionary<string, LumiSubDevice>();
-            client = new LumiControlEndpoint(new IPEndPoint(IPAddress.Parse(address), port));
+            client = new LumiControlEndpoint(new IPEndPoint(address, port));
             listener = new LumiEventListener(this, new IPEndPoint(IPAddress.Parse("224.0.0.50"), port));
         }
 
