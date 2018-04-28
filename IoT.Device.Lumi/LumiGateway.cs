@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 using IoT.Device.Lumi.SubDevices;
 using IoT.Protocol.Lumi;
 using IoT.Protocol.Lumi.Interfaces;
-using Cache = IoT.Device.ImplementationCache<
-    IoT.Device.Lumi.SupportedSubDeviceAttribute,
+using Cache = IoT.Device.Container<
+    IoT.Device.Lumi.ExportSubDeviceAttribute,
     IoT.Device.Lumi.LumiSubDevice>;
 
 namespace IoT.Device.Lumi

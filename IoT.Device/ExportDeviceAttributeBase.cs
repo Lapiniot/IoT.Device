@@ -1,11 +1,11 @@
-using System;
+﻿using System;
 
 namespace IoT.Device
 {
     [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true)]
-    public abstract class SupportedDeviceAttributeBase : Attribute
+    public abstract class ExportDeviceAttributeBase : Attribute
     {
-        protected SupportedDeviceAttributeBase(uint deviceType, Type implementation, string modelName)
+        protected ExportDeviceAttributeBase(uint deviceType, Type implementation, string modelName)
         {
             ModelName = modelName;
             DeviceType = deviceType;

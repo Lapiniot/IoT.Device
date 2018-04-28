@@ -9,17 +9,17 @@ using static System.StringComparison;
 
 namespace IoT.Device
 {
-    public static class ImplementationCache<TAttr, TImpl>
-        where TAttr : SupportedDeviceAttributeBase
+    public static class Container<TAttr, TImpl>
+        where TAttr : ExportDeviceAttributeBase
         where TImpl : class
     {
         private static readonly Dictionary<string, Type> Models;
         private static readonly Dictionary<uint, Type> Types;
         private static readonly Dictionary<string, uint> Map;
 
-        static ImplementationCache()
+        static Container()
         {
-            var baseName = typeof(ImplementationCache<,>).Assembly.GetName().Name;
+            var baseName = typeof(Container<,>).Assembly.GetName().Name;
 
             var prefix = baseName + ".";
 
