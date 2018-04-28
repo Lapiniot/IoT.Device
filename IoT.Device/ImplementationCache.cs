@@ -19,7 +19,7 @@ namespace IoT.Device
 
         static ImplementationCache()
         {
-            var baseName = typeof(TAttr).Assembly.GetName().Name;
+            var baseName = typeof(ImplementationCache<,>).Assembly.GetName().Name;
 
             var prefix = baseName + ".";
 

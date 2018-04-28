@@ -7,8 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/IoT.Essentials.sln",
-                "--no-restore"
+                "${workspaceFolder}/IoT.Essentials.sln"
             ],
             "problemMatcher": "$msCompile",
             "group": {
