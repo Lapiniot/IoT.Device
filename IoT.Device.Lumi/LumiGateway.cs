@@ -7,14 +7,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using IoT.Device.Lumi.SubDevices;
 using IoT.Protocol.Lumi;
-using IoT.Protocol.Lumi.Interfaces;
 using Cache = IoT.Device.Container<
     IoT.Device.Lumi.ExportSubDeviceAttribute,
     IoT.Device.Lumi.LumiSubDevice>;
+using ILumiObserver = System.IObserver<(string Command, string Sid, System.Json.JsonObject Data, System.Json.JsonObject Message)>;
 
 namespace IoT.Device.Lumi
 {
-    public sealed class LumiGateway : LumiThing, ILumiEventListener
+    public sealed class LumiGateway : LumiThing, ILumiObserver
     {
         private readonly Dictionary<string, LumiSubDevice> children;
         private readonly SemaphoreSlim semaphore;
@@ -22,6 +22,7 @@ namespace IoT.Device.Lumi
         private bool disposed;
         private int illumination;
         private LumiEventListener listener;
+        private readonly IDisposable subscription;
         private int rgbValue;
 
         public LumiGateway(IPAddress address, ushort port, string sid) : base(sid)
@@ -29,7 +30,8 @@ namespace IoT.Device.Lumi
             semaphore = new SemaphoreSlim(1, 1);
             children = new Dictionary<string, LumiSubDevice>();
             client = new LumiControlEndpoint(new IPEndPoint(address, port));
-            listener = new LumiEventListener(this, new IPEndPoint(IPAddress.Parse("224.0.0.50"), port));
+            listener = new LumiEventListener(new IPEndPoint(IPAddress.Parse("224.0.0.50"), port));
+            subscription = listener.Subscribe(this);
         }
 
         public string Token { get; private set; }
@@ -110,8 +112,8 @@ namespace IoT.Device.Lumi
         {
             var j = await InvokeAsync("get_id_list", Sid, cancellationToken);
 
-            var sids = ((JsonArray) JsonValue.Parse(j["data"]) ?? throw new InvalidOperationException())
-                .Select(s => (string) s).ToArray();
+            var sids = ((JsonArray)JsonValue.Parse(j["data"]) ?? throw new InvalidOperationException())
+                .Select(s => (string)s).ToArray();
 
             await semaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
 
@@ -126,9 +128,9 @@ namespace IoT.Device.Lumi
 
                     if(JsonValue.Parse(info["data"]) is JsonObject data && !children.TryGetValue(sid, out var device))
                     {
-                        var id = (int) info["short_id"];
+                        var id = (int)info["short_id"];
                         var deviceModel = info["model"];
-                        device = Cache.CreateInstance((string) deviceModel, sid, id) ?? new GenericSubDevice(sid, id);
+                        device = Cache.CreateInstance((string)deviceModel, sid, id) ?? new GenericSubDevice(sid, id);
                         device.UpdateState(data);
                         children.Add(sid, device);
                     }
@@ -175,10 +177,31 @@ namespace IoT.Device.Lumi
 
                     semaphore.Dispose();
 
+                    subscription.Dispose();
+
                     foreach(var c in children) c.Value.Dispose();
                 }
 
                 disposed = true;
+            }
+        }
+
+        void ILumiObserver.OnCompleted()
+        {
+            // Empty by design
+        }
+
+        void ILumiObserver.OnError(Exception error)
+        {
+            // Empty by design
+        }
+
+        void ILumiObserver.OnNext((string Command, string Sid, JsonObject Data, JsonObject Message) value)
+        {
+            switch(value.Command)
+            {
+                case "heartbeat": OnHeartbeatMessage(value.Sid, value.Data, value.Message); break;
+                case "report": OnReportMessage(value.Sid, value.Data, value.Message); break;
             }
         }
     }
