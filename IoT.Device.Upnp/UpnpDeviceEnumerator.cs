@@ -13,7 +13,9 @@ namespace IoT.Device.Upnp
 
         public override UpnpDevice Convert(IDictionary<string, string> thing)
         {
-            return new UpnpDevice(new Uri(thing["location"]));
+            var usn = thing["USN"];
+
+            return new UpnpDevice(new Uri(thing["LOCATION"]), usn);
         }
     }
 }

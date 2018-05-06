@@ -8,17 +8,22 @@ namespace IoT.Device.Upnp
 {
     public class UpnpDevice
     {
-        public UpnpDevice(Uri location)
+        public string Usn { get; }
+        public UpnpDevice(Uri descriptionUri, string usn)
         {
-            Location = location;
+            DescriptionUri = descriptionUri ?? throw new ArgumentNullException(nameof(descriptionUri));
+
+            if(string.IsNullOrWhiteSpace(usn)) throw new ArgumentException("valid USN must be provided", nameof(usn));
+            
+            Usn = usn;
         }
 
-        public Uri Location { get; }
+        public Uri DescriptionUri { get; }
 
         public Task<UpnpDeviceDescription> GetDescriptionAsync(CancellationToken cancellationToken = default)
         {
-            return UpnpDeviceDescription.LoadAsync(Location, cancellationToken);
-            
+            return UpnpDeviceDescription.LoadAsync(DescriptionUri, cancellationToken);
+
         }
     }
 }
