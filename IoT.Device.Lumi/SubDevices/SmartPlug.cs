@@ -93,8 +93,8 @@ namespace IoT.Device.Lumi.SubDevices
             if(data.TryGetValue("status", out var s)) Status = s;
             if(data.TryGetValue("inuse", out var i)) InUse = i == "1";
             if(data.TryGetValue("load_voltage", out var lv)) LoadVoltage = new decimal(lv, 0, 0, false, 3);
-            if(data.TryGetValue("load_power", out var lp)) LoadPower = (decimal) lp;
-            if(data.TryGetValue("power_consumed", out var pc)) PowerConsumed = (decimal) pc;
+            if(data.TryGetValue("load_power", out var lp)) LoadPower = (decimal)lp;
+            if(data.TryGetValue("power_consumed", out var pc)) PowerConsumed = (decimal)pc;
         }
     }
 }

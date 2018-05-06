@@ -18,11 +18,11 @@ namespace IoT.Device.Lumi
     {
         private readonly Dictionary<string, LumiSubDevice> children;
         private readonly SemaphoreSlim semaphore;
+        private readonly IDisposable subscription;
         private LumiControlEndpoint client;
         private bool disposed;
         private int illumination;
         private LumiEventListener listener;
-        private readonly IDisposable subscription;
         private int rgbValue;
 
         public LumiGateway(IPAddress address, ushort port, string sid) : base(sid)
@@ -65,6 +65,29 @@ namespace IoT.Device.Lumi
         public override string ModelName { get; } = "gateway";
 
         protected override TimeSpan OfflineTimeout { get; } = TimeSpan.FromSeconds(15);
+
+        void ILumiObserver.OnCompleted()
+        {
+            // Empty by design
+        }
+
+        void ILumiObserver.OnError(Exception error)
+        {
+            // Empty by design
+        }
+
+        void ILumiObserver.OnNext((string Command, string Sid, JsonObject Data, JsonObject Message) value)
+        {
+            switch(value.Command)
+            {
+                case "heartbeat":
+                    OnHeartbeatMessage(value.Sid, value.Data, value.Message);
+                    break;
+                case "report":
+                    OnReportMessage(value.Sid, value.Data, value.Message);
+                    break;
+            }
+        }
 
         public void OnReportMessage(string sid, JsonObject data, JsonObject message)
         {
@@ -183,25 +206,6 @@ namespace IoT.Device.Lumi
                 }
 
                 disposed = true;
-            }
-        }
-
-        void ILumiObserver.OnCompleted()
-        {
-            // Empty by design
-        }
-
-        void ILumiObserver.OnError(Exception error)
-        {
-            // Empty by design
-        }
-
-        void ILumiObserver.OnNext((string Command, string Sid, JsonObject Data, JsonObject Message) value)
-        {
-            switch(value.Command)
-            {
-                case "heartbeat": OnHeartbeatMessage(value.Sid, value.Data, value.Message); break;
-                case "report": OnReportMessage(value.Sid, value.Data, value.Message); break;
             }
         }
     }
