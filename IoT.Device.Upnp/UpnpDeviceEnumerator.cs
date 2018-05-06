@@ -5,17 +5,15 @@ using IoT.Protocol.Upnp;
 
 namespace IoT.Device.Upnp
 {
-    public class UpnpDeviceEnumerator : ConvertingEnumerator<IDictionary<string, string>, UpnpDevice>
+    public class UpnpDeviceEnumerator : ConvertingEnumerator<SsdpReply, UpnpDevice>
     {
-        public UpnpDeviceEnumerator(string searchTarget = "ssdp:all") : base(new UpnpEnumerator(searchTarget))
+        public UpnpDeviceEnumerator(string searchTarget = "ssdp:all") : base(new SsdpEnumerator(searchTarget))
         {
         }
 
-        public override UpnpDevice Convert(IDictionary<string, string> thing)
+        public override UpnpDevice Convert(SsdpReply reply)
         {
-            var usn = thing["USN"];
-
-            return new UpnpDevice(new Uri(thing["LOCATION"]), usn);
+            return new UpnpDevice(new Uri(reply.Location), reply.UniqueServiceName);
         }
     }
 }
