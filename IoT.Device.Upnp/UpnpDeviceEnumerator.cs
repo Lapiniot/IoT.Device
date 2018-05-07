@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using IoT.Protocol;
 using IoT.Protocol.Upnp;
 
