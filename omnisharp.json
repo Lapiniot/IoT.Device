@@ -28,7 +28,7 @@
             "SpaceBeforeDot": false,
             "SpaceBeforeSemicolonsInForStatement": false,
             "SpacingAroundBinaryOperator": "single",
-            "IndentBraces": true,
+            "IndentBraces": false,
             "IndentBlock": true,
             "IndentSwitchSection": true,
             "IndentSwitchCaseSection": true,
