@@ -8,7 +8,7 @@ using IoT.Device.Lumi.Interfaces;
 
 namespace IoT.Device.Lumi
 {
-    public abstract class LumiThing : INotifyPropertyChanged, IDisposable, IProvideOnlineInfo
+    public abstract class LumiThing : ConnectedObject, INotifyPropertyChanged, IProvideOnlineInfo
     {
         private readonly object syncRoot;
         private volatile CancellationTokenSource cancellationTokenSource;
@@ -61,6 +61,32 @@ namespace IoT.Device.Lumi
             }
         }
 
+        protected override void OnConnect()
+        {
+            // Empty by design
+        }
+
+        protected override void OnClose()
+        {
+            // Empty by design
+        }
+
+        #region IDisposable Support
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            if(disposing)
+            {
+                cancellationTokenSource?.Cancel();
+                cancellationTokenSource?.Dispose();
+                cancellationTokenSource = null;
+            }
+        }
+
+        #endregion
+
         #region INotifyPropertyChanged Support
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -68,32 +94,6 @@ namespace IoT.Device.Lumi
         protected void OnPropertyChanged([CallerMemberName] string name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-
-        #endregion
-
-        #region IDisposable Support
-
-        private bool disposed;
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if(!disposed)
-            {
-                if(disposing)
-                {
-                    cancellationTokenSource?.Cancel();
-                    cancellationTokenSource?.Dispose();
-                    cancellationTokenSource = null;
-                }
-
-                disposed = true;
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
         }
 
         #endregion

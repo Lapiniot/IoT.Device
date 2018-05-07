@@ -17,12 +17,11 @@ namespace IoT.Device.Lumi
     public sealed class LumiGateway : LumiThing, ILumiObserver
     {
         private readonly Dictionary<string, LumiSubDevice> children;
+        private readonly LumiControlEndpoint client;
+        private readonly LumiEventListener listener;
         private readonly SemaphoreSlim semaphore;
         private readonly IDisposable subscription;
-        private LumiControlEndpoint client;
-        private bool disposed;
         private int illumination;
-        private LumiEventListener listener;
         private int rgbValue;
 
         public LumiGateway(IPAddress address, ushort port, string sid) : base(sid)
@@ -113,18 +112,6 @@ namespace IoT.Device.Lumi
             }
         }
 
-        public void Connect()
-        {
-            client.Connect();
-            listener.Connect();
-        }
-
-        public void Close()
-        {
-            client.Close();
-            listener.Close();
-        }
-
         public Task<JsonObject> InvokeAsync(string command, string sid = null,
             CancellationToken cancellationToken = default)
         {
@@ -184,29 +171,40 @@ namespace IoT.Device.Lumi
             if(data.TryGetValue("illumination", out var i)) Illumination = i;
         }
 
+        #region Overrides of LumiThing
+
+        protected override void OnConnect()
+        {
+            base.OnConnect();
+
+            client.Connect();
+            listener.Connect();
+        }
+
+        protected override void OnClose()
+        {
+            base.OnClose();
+
+            client.Close();
+            listener.Close();
+        }
+
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
 
-            if(!disposed)
+            if(disposing)
             {
-                if(disposing)
-                {
-                    client.Dispose();
-                    client = null;
+                semaphore?.Dispose();
 
-                    listener.Dispose();
-                    listener = null;
+                subscription.Dispose();
 
-                    semaphore.Dispose();
+                foreach(var c in children) c.Value.Dispose();
 
-                    subscription.Dispose();
-
-                    foreach(var c in children) c.Value.Dispose();
-                }
-
-                disposed = true;
+                children.Clear();
             }
         }
+
+        #endregion
     }
 }
