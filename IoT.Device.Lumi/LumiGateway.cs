@@ -120,7 +120,7 @@ namespace IoT.Device.Lumi
 
         public async Task<LumiSubDevice[]> GetChildrenAsync(CancellationToken cancellationToken = default)
         {
-            var j = await InvokeAsync("get_id_list", Sid, cancellationToken);
+            var j = await InvokeAsync("get_id_list", Sid, cancellationToken).ConfigureAwait(false);
 
             var sids = ((JsonArray)JsonValue.Parse(j["data"]) ?? throw new InvalidOperationException())
                 .Select(s => (string)s).ToArray();
@@ -134,7 +134,7 @@ namespace IoT.Device.Lumi
 
                 foreach(var sid in adds)
                 {
-                    var info = await InvokeAsync("read", sid, cancellationToken);
+                    var info = await InvokeAsync("read", sid, cancellationToken).ConfigureAwait(false);
 
                     if(JsonValue.Parse(info["data"]) is JsonObject data && !children.TryGetValue(sid, out var device))
                     {
