@@ -5,7 +5,7 @@ using IoT.Protocol.Upnp;
 
 namespace IoT.Device.Upnp
 {
-    public class UpnpDevice
+    public class UpnpDevice : ConnectedObject
     {
         public UpnpDevice(Uri descriptionUri, string usn)
         {
@@ -23,6 +23,14 @@ namespace IoT.Device.Upnp
         public Task<UpnpDeviceDescription> GetDescriptionAsync(CancellationToken cancellationToken = default)
         {
             return UpnpDeviceDescription.LoadAsync(DescriptionUri, cancellationToken);
+        }
+
+        protected override void OnClose()
+        {
+        }
+
+        protected override void OnConnect()
+        {
         }
     }
 }

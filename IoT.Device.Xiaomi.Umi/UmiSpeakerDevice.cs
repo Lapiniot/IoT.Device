@@ -14,11 +14,15 @@ namespace IoT.Device.Xiaomi.Umi
         private readonly Lazy<ContentDirectoryService> contentDirectoryLazy;
         private readonly Lazy<PlaylistService> playlistLazy;
         private readonly Lazy<SystemPropertiesService> systemPropertiesLazy;
+        private readonly Lazy<ConnectionManagerService> connectionManagerLazy;
+        private readonly Lazy<RenderingControlService> renderingControlLazy;
         private Lazy<SoapControlEndpoint> endpointLazy;
 
         public UmiSpeakerDevice(Uri descriptionUri, string usn) : base(descriptionUri, usn)
         {
-            BaseUri = new Uri(new Uri(descriptionUri.GetLeftPart(Authority), Absolute), descriptionUri.Segments[0]);
+            DeviceId = usn.Split(new[] { ':' }, 3)[1];
+
+            BaseUri = new Uri(descriptionUri.GetLeftPart(Authority));
 
             endpointLazy = new Lazy<SoapControlEndpoint>(() => new SoapControlEndpoint(BaseUri), ExecutionAndPublication);
 
@@ -26,7 +30,11 @@ namespace IoT.Device.Xiaomi.Umi
             playlistLazy = new Lazy<PlaylistService>(() => new PlaylistService(this));
             avtransportLazy = new Lazy<AVTransportService>(() => new AVTransportService(this));
             systemPropertiesLazy = new Lazy<SystemPropertiesService>(() => new SystemPropertiesService(this));
+            connectionManagerLazy = new Lazy<ConnectionManagerService>(() => new ConnectionManagerService(this));
+            renderingControlLazy = new Lazy<RenderingControlService>(() => new RenderingControlService(this));
         }
+
+        public string DeviceId { get; }
 
         public Uri BaseUri { get; }
 
@@ -55,17 +63,26 @@ namespace IoT.Device.Xiaomi.Umi
             get { return systemPropertiesLazy.Value; }
         }
 
-        #region Implementation of IDisposable
-
-        public void Dispose()
+        public ConnectionManagerService ConnectionManager
         {
-            if(endpointLazy != null && endpointLazy.IsValueCreated)
-            {
-                endpointLazy.Value.Dispose();
-                endpointLazy = null;
-            }
+            get { return connectionManagerLazy.Value; }
         }
 
-        #endregion
+        public RenderingControlService RenderingControl
+        {
+            get { return renderingControlLazy.Value; }
+        }
+
+        protected override void OnConnect()
+        {
+            base.OnConnect();
+            Endpoint.Connect();
+        }
+
+        protected override void OnClose()
+        {
+            base.OnClose();
+            Endpoint.Close();
+        }
     }
 }

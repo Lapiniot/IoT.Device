@@ -4,7 +4,9 @@ namespace IoT.Device.Xiaomi.Umi.Services
 {
     public sealed class SystemPropertiesService : SoapActionInvoker
     {
-        internal SystemPropertiesService(UmiSpeakerDevice parent) : base(parent.Endpoint, "", "")
+        internal SystemPropertiesService(UmiSpeakerDevice parent) : base(parent.Endpoint,
+            $"{parent.DeviceId}/xiaomi.com-SystemProperties-1/control",
+            "urn:xiaomi-com:service:SystemProperties:1")
         {
         }
     }
