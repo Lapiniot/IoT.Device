@@ -3,24 +3,23 @@ using IoT.Device.Upnp;
 using IoT.Device.Xiaomi.Umi.Services;
 using IoT.Protocol.Soap;
 using static System.Threading.LazyThreadSafetyMode;
-using static System.UriKind;
 using static System.UriPartial;
 
 namespace IoT.Device.Xiaomi.Umi
 {
-    public class UmiSpeakerDevice : UpnpDevice, IDisposable
+    public class UmiSpeakerDevice : UpnpDevice
     {
         private readonly Lazy<AVTransportService> avtransportLazy;
-        private readonly Lazy<ContentDirectoryService> contentDirectoryLazy;
-        private readonly Lazy<PlaylistService> playlistLazy;
-        private readonly Lazy<SystemPropertiesService> systemPropertiesLazy;
         private readonly Lazy<ConnectionManagerService> connectionManagerLazy;
+        private readonly Lazy<ContentDirectoryService> contentDirectoryLazy;
+        private readonly Lazy<SoapControlEndpoint> endpointLazy;
+        private readonly Lazy<PlaylistService> playlistLazy;
         private readonly Lazy<RenderingControlService> renderingControlLazy;
-        private Lazy<SoapControlEndpoint> endpointLazy;
+        private readonly Lazy<SystemPropertiesService> systemPropertiesLazy;
 
         public UmiSpeakerDevice(Uri descriptionUri, string usn) : base(descriptionUri, usn)
         {
-            DeviceId = usn.Split(new[] { ':' }, 3)[1];
+            DeviceId = usn.Split(new[] {':'}, 3)[1];
 
             BaseUri = new Uri(descriptionUri.GetLeftPart(Authority));
 
