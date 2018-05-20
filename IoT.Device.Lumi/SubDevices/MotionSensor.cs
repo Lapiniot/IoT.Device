@@ -9,10 +9,7 @@ namespace IoT.Device.Lumi.SubDevices
         private int noMotionSeconds;
         private string status;
 
-        private MotionSensor(string sid, int id) : base(sid, id)
-        {
-            status = "nomotion";
-        }
+        private MotionSensor(string sid, int id) : base(sid, id) => status = "nomotion";
 
         public override string ModelName { get; } = "lumi.sensor_motion.v2";
 
