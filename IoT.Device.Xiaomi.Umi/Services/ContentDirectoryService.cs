@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using IoT.Protocol.Soap;
 using IoT.Protocol.Upnp;
@@ -16,10 +15,10 @@ namespace IoT.Device.Xiaomi.Umi.Services
         public async Task<string> BrowseAsync(string parent, string filter = null, uint index = 0, uint count = 50,
             string sortCriteria = null, CancellationToken cancellationToken = default)
         {
-            return (string)(await InvokeAsync("Browse", cancellationToken,
+            return (await InvokeAsync("Browse", cancellationToken,
                 ("ObjectID", parent), ("BrowseFlag", "BrowseDirectChildren"),
                 ("Filter", filter ?? "*"), ("StartingIndex", index),
-                ("RequestedCount", count), ("SortCriteria", sortCriteria ?? "")))["Result"];
+                ("RequestedCount", count), ("SortCriteria", sortCriteria ?? "")).ConfigureAwait(false))["Result"];
         }
     }
 }

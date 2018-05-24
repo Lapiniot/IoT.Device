@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Common.Collections;
-using System.Dynamic;
 using System.Threading;
 using System.Threading.Tasks;
 using IoT.Protocol.Soap;
