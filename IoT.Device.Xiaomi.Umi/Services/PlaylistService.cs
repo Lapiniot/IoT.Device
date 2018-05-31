@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using IoT.Protocol.Soap;
@@ -7,8 +8,8 @@ namespace IoT.Device.Xiaomi.Umi.Services
 {
     public sealed class PlaylistService : SoapActionInvoker
     {
-        internal PlaylistService(UmiSpeakerDevice parent) : base(parent.Endpoint,
-            $"{parent.DeviceId}-MR/xiaomi.com-Playlist-1/control",
+        internal PlaylistService(SoapControlEndpoint endpoint, string deviceId) :
+            base(endpoint, new Uri($"{deviceId}-MR/xiaomi.com-Playlist-1/control", UriKind.Relative),
             "urn:xiaomi-com:service:Playlist:1")
         {
         }

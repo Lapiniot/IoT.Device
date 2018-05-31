@@ -2,6 +2,7 @@
 using IoT.Device.Upnp;
 using IoT.Device.Xiaomi.Umi.Services;
 using IoT.Protocol.Soap;
+using IoT.Protocol.Upnp.Services;
 using static System.Threading.LazyThreadSafetyMode;
 using static System.UriPartial;
 
@@ -25,12 +26,12 @@ namespace IoT.Device.Xiaomi.Umi
 
             endpointLazy = new Lazy<SoapControlEndpoint>(() => new SoapControlEndpoint(BaseUri), ExecutionAndPublication);
 
-            contentDirectoryLazy = new Lazy<ContentDirectoryService>(() => new ContentDirectoryService(this));
-            playlistLazy = new Lazy<PlaylistService>(() => new PlaylistService(this));
-            avtransportLazy = new Lazy<AVTransportService>(() => new AVTransportService(this));
-            systemPropertiesLazy = new Lazy<SystemPropertiesService>(() => new SystemPropertiesService(this));
-            connectionManagerLazy = new Lazy<ConnectionManagerService>(() => new ConnectionManagerService(this));
-            renderingControlLazy = new Lazy<RenderingControlService>(() => new RenderingControlService(this));
+            contentDirectoryLazy = new Lazy<ContentDirectoryService>(() => new ContentDirectoryService(Endpoint, DeviceId));
+            playlistLazy = new Lazy<PlaylistService>(() => new PlaylistService(Endpoint, DeviceId));
+            avtransportLazy = new Lazy<AVTransportService>(() => new AVTransportService(Endpoint, DeviceId));
+            systemPropertiesLazy = new Lazy<SystemPropertiesService>(() => new SystemPropertiesService(Endpoint, DeviceId));
+            connectionManagerLazy = new Lazy<ConnectionManagerService>(() => new ConnectionManagerService(Endpoint, DeviceId));
+            renderingControlLazy = new Lazy<RenderingControlService>(() => new RenderingControlService(Endpoint, DeviceId));
         }
 
         public string DeviceId { get; }
