@@ -4,6 +4,6 @@
         "**/.DS_Store": true,
         ".gitignore": true,
         "**/bin/": true,
-        "**/obj/": true,
+        "**/obj/": true
     }
 }
