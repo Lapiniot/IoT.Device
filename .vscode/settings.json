@@ -2,7 +2,7 @@
     "files.exclude": {
         "**/.git": true,
         "**/.DS_Store": true,
-        ".gitignore": true,
+        "**/.gitignore": true,
         "**/bin/": true,
         "**/obj/": true
     }
