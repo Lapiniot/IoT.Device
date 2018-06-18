@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using IoT.Protocol.Soap;
+using static System.UriKind;
 
 namespace IoT.Device.Xiaomi.Umi.Services
 {
     public sealed class PlaylistService : SoapActionInvoker
     {
         internal PlaylistService(SoapControlEndpoint endpoint, string deviceId) :
-            base(endpoint, new Uri($"{deviceId}-MR/xiaomi.com-Playlist-1/control", UriKind.Relative),
-            "urn:xiaomi-com:service:Playlist:1")
+            base(endpoint, new Uri($"{deviceId}-MR/xiaomi.com-Playlist-1/control", Relative),
+                "urn:xiaomi-com:service:Playlist:1")
         {
         }
 
