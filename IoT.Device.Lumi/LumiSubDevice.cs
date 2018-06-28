@@ -7,7 +7,10 @@ namespace IoT.Device.Lumi
         private readonly int id;
         private decimal voltage;
 
-        protected LumiSubDevice(string sid, int id) : base(sid) => this.id = id;
+        protected LumiSubDevice(string sid, int id) : base(sid)
+        {
+            this.id = id;
+        }
 
         public decimal Voltage
         {

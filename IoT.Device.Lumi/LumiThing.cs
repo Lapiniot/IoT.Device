@@ -14,7 +14,10 @@ namespace IoT.Device.Lumi
         private volatile CancellationTokenSource cancellationTokenSource;
         private bool isOnline;
 
-        protected LumiThing(string sid) => (Sid, IsOnline, syncRoot) = (sid, true, new object());
+        protected LumiThing(string sid)
+        {
+            (Sid, IsOnline, syncRoot) = (sid, true, new object());
+        }
 
         public abstract string ModelName { get; }
 
