@@ -4,6 +4,7 @@ using IoT.Device.Xiaomi.Umi.Services;
 using IoT.Protocol.Soap;
 using IoT.Protocol.Upnp.Services;
 using static System.Threading.LazyThreadSafetyMode;
+using static System.UriKind;
 using static System.UriPartial;
 
 namespace IoT.Device.Xiaomi.Umi
@@ -26,7 +27,8 @@ namespace IoT.Device.Xiaomi.Umi
 
             endpointLazy = new Lazy<SoapControlEndpoint>(() => new SoapControlEndpoint(BaseUri), ExecutionAndPublication);
 
-            contentDirectoryLazy = new Lazy<ContentDirectoryService>(() => new ContentDirectoryService(Endpoint, DeviceId));
+            contentDirectoryLazy = new Lazy<ContentDirectoryService>(() =>
+                new ContentDirectoryService(Endpoint, new Uri($"{DeviceId}-MS/upnp.org-ContentDirectory-1/control", Relative)));
             playlistLazy = new Lazy<PlaylistService>(() => new PlaylistService(Endpoint, DeviceId));
             avtransportLazy = new Lazy<AVTransportService>(() => new AVTransportService(Endpoint, DeviceId));
             systemPropertiesLazy = new Lazy<SystemPropertiesService>(() => new SystemPropertiesService(Endpoint, DeviceId));
