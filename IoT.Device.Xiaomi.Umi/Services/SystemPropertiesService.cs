@@ -2,14 +2,22 @@
 using System.Threading;
 using System.Threading.Tasks;
 using IoT.Protocol.Soap;
+using IoT.Protocol.Upnp.Services;
 
 namespace IoT.Device.Xiaomi.Umi.Services
 {
+    [ServiceSchema(ServiceSchema)]
     public sealed class SystemPropertiesService : SoapActionInvoker
     {
-        internal SystemPropertiesService(SoapControlEndpoint endpoint, string deviceId) : base(endpoint,
-            new Uri($"{deviceId}/xiaomi.com-SystemProperties-1/control", UriKind.Relative),
-            "urn:xiaomi-com:service:SystemProperties:1")
+        public const string ServiceSchema = "urn:xiaomi-com:service:SystemProperties:1";
+
+        public SystemPropertiesService(SoapControlEndpoint endpoint, Uri controlUri) :
+            base(endpoint, controlUri, ServiceSchema)
+        {
+        }
+
+        public SystemPropertiesService(SoapControlEndpoint endpoint) :
+            base(endpoint, ServiceSchema)
         {
         }
 
