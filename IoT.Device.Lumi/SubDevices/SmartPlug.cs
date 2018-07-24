@@ -6,7 +6,7 @@ namespace IoT.Device.Lumi.SubDevices
 {
     public sealed class SmartPlug : LumiSubDevice, IProvideStatusInfo
     {
-        private bool inuse;
+        private bool inUse;
         private decimal loadPower;
         private decimal loadVoltage;
         private decimal powerConsumed;
@@ -22,12 +22,12 @@ namespace IoT.Device.Lumi.SubDevices
 
         public bool InUse
         {
-            get { return inuse; }
+            get { return inUse; }
             set
             {
-                if(inuse != value)
+                if(inUse != value)
                 {
-                    inuse = value;
+                    inUse = value;
                     OnPropertyChanged();
                 }
             }

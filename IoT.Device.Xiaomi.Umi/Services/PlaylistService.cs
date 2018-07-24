@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using IoT.Protocol.Soap;
 using IoT.Protocol.Upnp.Services;
-using static System.UriKind;
 
 namespace IoT.Device.Xiaomi.Umi.Services
 {
@@ -12,6 +11,7 @@ namespace IoT.Device.Xiaomi.Umi.Services
     public sealed class PlaylistService : SoapActionInvoker
     {
         public const string ServiceSchema = "urn:xiaomi-com:service:Playlist:1";
+
         public PlaylistService(SoapControlEndpoint endpoint, Uri controlUri) :
             base(endpoint, controlUri, ServiceSchema)
         {
@@ -31,13 +31,14 @@ namespace IoT.Device.Xiaomi.Umi.Services
         }
 
         public Task<IDictionary<string, string>> DeleteAsync(uint instanceId = 0, string updateId = "0",
-            int[] indeces = null, CancellationToken cancellationToken = default)
+            int[] indices = null, CancellationToken cancellationToken = default)
         {
-            if(indeces == null) throw new ArgumentNullException(nameof(indeces));
-            if(indeces.Length == 0) throw new ArgumentException("Must not be empty!", nameof(indeces));
+            if(indices == null) throw new ArgumentNullException(nameof(indices));
+            if(indices.Length == 0) throw new ArgumentException("Must not be empty!", nameof(indices));
+
             return InvokeAsync("ReorderPlaylists", cancellationToken,
                 ("InstanceID", instanceId), ("ObjectID", "PL:"), ("UpdateID", updateId),
-                ("Playlists", string.Join(',', indeces)), ("NewPositionList", "".PadRight(indeces.Length - 1, ',')));
+                ("Playlists", string.Join(',', indices)), ("NewPositionList", "".PadRight(indices.Length - 1, ',')));
         }
 
         public Task<IDictionary<string, string>> AddUriAsync(uint instanceId = 0, string objectId = "", uint updateId = 0,

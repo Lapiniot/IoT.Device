@@ -11,7 +11,7 @@ namespace IoT.Device.Xiaomi.Umi
 {
     public class UmiSpeakerDevice : UpnpDevice
     {
-        private readonly Lazy<AVTransportService> avtransportLazy;
+        private readonly Lazy<AVTransportService> avTransportLazy;
         private readonly Lazy<ConnectionManagerService> connectionManagerLazy;
         private readonly Lazy<ContentDirectoryService> contentDirectoryLazy;
         private readonly Lazy<SoapControlEndpoint> endpointLazy;
@@ -21,30 +21,30 @@ namespace IoT.Device.Xiaomi.Umi
 
         public UmiSpeakerDevice(Uri descriptionUri, string usn) : base(descriptionUri, usn)
         {
-            DeviceId = usn.Split(new[] { ':' }, 3)[1];
+            DeviceId = usn.Split(new[] {':'}, 3)[1];
 
             BaseUri = new Uri(descriptionUri.GetLeftPart(Authority));
 
             endpointLazy = new Lazy<SoapControlEndpoint>(() => new SoapControlEndpoint(BaseUri), ExecutionAndPublication);
 
             contentDirectoryLazy = new Lazy<ContentDirectoryService>(() =>
-                new ContentDirectoryService(Endpoint, 
+                new ContentDirectoryService(Endpoint,
                     new Uri($"{DeviceId}-MS/upnp.org-ContentDirectory-1/control", Relative)));
             playlistLazy = new Lazy<PlaylistService>(() =>
-                new PlaylistService(Endpoint, 
+                new PlaylistService(Endpoint,
                     new Uri($"{DeviceId}-MR/xiaomi.com-Playlist-1/control", Relative)));
-            avtransportLazy = new Lazy<AVTransportService>(() =>
-                new AVTransportService(Endpoint, 
-                    new Uri($"{DeviceId}-MR/upnp.org-AVTransport-1/control", UriKind.Relative)));
+            avTransportLazy = new Lazy<AVTransportService>(() =>
+                new AVTransportService(Endpoint,
+                    new Uri($"{DeviceId}-MR/upnp.org-AVTransport-1/control", Relative)));
             systemPropertiesLazy = new Lazy<SystemPropertiesService>(() =>
-                new SystemPropertiesService(Endpoint, 
-                    new Uri($"{DeviceId}/xiaomi.com-SystemProperties-1/control", UriKind.Relative)));
-            connectionManagerLazy = new Lazy<ConnectionManagerService>(() => 
-                new ConnectionManagerService(Endpoint, 
-                    new Uri($"{DeviceId}-MR/upnp.org-ConnectionManager-1/control", UriKind.Relative)));
-            renderingControlLazy = new Lazy<RenderingControlService>(() => 
-                new RenderingControlService(Endpoint, 
-                    new Uri($"{DeviceId}-MR/upnp.org-RenderingControl-1/control", UriKind.Relative)));
+                new SystemPropertiesService(Endpoint,
+                    new Uri($"{DeviceId}/xiaomi.com-SystemProperties-1/control", Relative)));
+            connectionManagerLazy = new Lazy<ConnectionManagerService>(() =>
+                new ConnectionManagerService(Endpoint,
+                    new Uri($"{DeviceId}-MR/upnp.org-ConnectionManager-1/control", Relative)));
+            renderingControlLazy = new Lazy<RenderingControlService>(() =>
+                new RenderingControlService(Endpoint,
+                    new Uri($"{DeviceId}-MR/upnp.org-RenderingControl-1/control", Relative)));
         }
 
         public string DeviceId { get; }
@@ -68,7 +68,7 @@ namespace IoT.Device.Xiaomi.Umi
 
         public AVTransportService AVTransport
         {
-            get { return avtransportLazy.Value; }
+            get { return avTransportLazy.Value; }
         }
 
         public SystemPropertiesService SystemProperties
