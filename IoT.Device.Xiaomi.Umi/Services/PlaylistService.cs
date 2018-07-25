@@ -49,5 +49,12 @@ namespace IoT.Device.Xiaomi.Umi.Services
                 ("UpdateID", updateId), ("AddAtIndex", addAtIndex),
                 ("EnqueuedURI", enqueuedUri ?? ""), ("EnqueuedURIMetaData", enqueuedUriMetaData ?? ""));
         }
+
+        public Task<IDictionary<string, string>> RenameAsync(uint instanceId = 0, string objectId = "", string title = "", string updateId = "0",
+            CancellationToken cancellationToken = default)
+        {
+            return InvokeAsync("Rename", cancellationToken, ("InstanceID", instanceId),
+                ("ObjectID", objectId ?? ""), ("Title", title), ("UpdateID", updateId));
+        }
     }
 }
