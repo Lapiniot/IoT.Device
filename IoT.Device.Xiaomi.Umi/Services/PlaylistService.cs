@@ -41,7 +41,7 @@ namespace IoT.Device.Xiaomi.Umi.Services
                 ("Playlists", string.Join(',', indices)), ("NewPositionList", "".PadRight(indices.Length - 1, ',')));
         }
 
-        public Task<IDictionary<string, string>> AddUriAsync(uint instanceId = 0, string objectId = "", uint updateId = 0,
+        public Task<IDictionary<string, string>> AddUriAsync(uint instanceId = 0, string objectId = "", string updateId = "0",
             string enqueuedUri = null, string enqueuedUriMetaData = null, uint addAtIndex = 4294967295,
             CancellationToken cancellationToken = default)
         {
