@@ -41,6 +41,13 @@ namespace IoT.Device.Xiaomi.Umi.Services
                 ("Playlists", string.Join(',', indices)), ("NewPositionList", "".PadRight(indices.Length - 1, ',')));
         }
 
+        public Task<IDictionary<string, string>> RenameAsync(uint instanceId = 0, string objectId = "", string title = "", string updateId = "0",
+            CancellationToken cancellationToken = default)
+        {
+            return InvokeAsync("Rename", cancellationToken, ("InstanceID", instanceId),
+                ("ObjectID", objectId ?? ""), ("Title", title), ("UpdateID", updateId));
+        }
+
         public Task<IDictionary<string, string>> AddUriAsync(uint instanceId = 0, string objectId = "", string updateId = "0",
             string enqueuedUri = null, string enqueuedUriMetaData = null, uint addAtIndex = 4294967295,
             CancellationToken cancellationToken = default)
@@ -50,11 +57,15 @@ namespace IoT.Device.Xiaomi.Umi.Services
                 ("EnqueuedURI", enqueuedUri ?? ""), ("EnqueuedURIMetaData", enqueuedUriMetaData ?? ""));
         }
 
-        public Task<IDictionary<string, string>> RenameAsync(uint instanceId = 0, string objectId = "", string title = "", string updateId = "0",
-            CancellationToken cancellationToken = default)
+        public Task<IDictionary<string, string>> RemoveItemsAsync(uint instanceId = 0, string objectId="", string updateId = "0",
+            int[] indices = null, CancellationToken cancellationToken = default)
         {
-            return InvokeAsync("Rename", cancellationToken, ("InstanceID", instanceId),
-                ("ObjectID", objectId ?? ""), ("Title", title), ("UpdateID", updateId));
+            if(indices == null) throw new ArgumentNullException(nameof(indices));
+            if(indices.Length == 0) throw new ArgumentException("Must not be empty!", nameof(indices));
+
+            return InvokeAsync("Reorder", cancellationToken,
+                ("InstanceID", instanceId), ("ObjectID", objectId), ("UpdateID", updateId),
+                ("TrackList", string.Join(',', indices)), ("NewPositionList", "".PadRight(indices.Length - 1, ',')));
         }
     }
 }
