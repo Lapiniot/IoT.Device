@@ -6,11 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\IoT.Protocol\IoT.Protocol.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="System.Common" Version="1.0.0" />
+    <PackageReference Include="IoT.Protocol" Version="1.0.0" />
   </ItemGroup>
 
 </Project>
