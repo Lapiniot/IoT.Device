@@ -14,7 +14,7 @@ namespace IoT.Device.Lumi
 
         public decimal Voltage
         {
-            get { return voltage; }
+            get => voltage;
             protected set
             {
                 if(voltage != value)

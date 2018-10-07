@@ -19,7 +19,7 @@ namespace IoT.Device.Lumi.SubDevices
 
         public decimal Temperature
         {
-            get { return temperature; }
+            get => temperature;
             private set
             {
                 if(temperature != value)
@@ -32,7 +32,7 @@ namespace IoT.Device.Lumi.SubDevices
 
         public decimal Humidity
         {
-            get { return humidity; }
+            get => humidity;
             private set
             {
                 if(humidity != value)
@@ -45,7 +45,7 @@ namespace IoT.Device.Lumi.SubDevices
 
         public decimal Pressure
         {
-            get { return pressure; }
+            get => pressure;
             private set
             {
                 if(pressure != value)

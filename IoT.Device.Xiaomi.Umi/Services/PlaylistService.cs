@@ -57,7 +57,7 @@ namespace IoT.Device.Xiaomi.Umi.Services
                 ("EnqueuedURI", enqueuedUri ?? ""), ("EnqueuedURIMetaData", enqueuedUriMetaData ?? ""));
         }
 
-        public Task<IDictionary<string, string>> RemoveItemsAsync(uint instanceId = 0, string objectId="", string updateId = "0",
+        public Task<IDictionary<string, string>> RemoveItemsAsync(uint instanceId = 0, string objectId = "", string updateId = "0",
             int[] indices = null, CancellationToken cancellationToken = default)
         {
             if(indices == null) throw new ArgumentNullException(nameof(indices));

@@ -22,7 +22,7 @@ namespace IoT.Device.Lumi.SubDevices
 
         public bool InUse
         {
-            get { return inUse; }
+            get => inUse;
             set
             {
                 if(inUse != value)
@@ -35,7 +35,7 @@ namespace IoT.Device.Lumi.SubDevices
 
         public decimal LoadVoltage
         {
-            get { return loadVoltage; }
+            get => loadVoltage;
             set
             {
                 if(loadVoltage != value)
@@ -48,7 +48,7 @@ namespace IoT.Device.Lumi.SubDevices
 
         public decimal LoadPower
         {
-            get { return loadPower; }
+            get => loadPower;
             set
             {
                 if(loadPower != value)
@@ -61,7 +61,7 @@ namespace IoT.Device.Lumi.SubDevices
 
         public decimal PowerConsumed
         {
-            get { return powerConsumed; }
+            get => powerConsumed;
             set
             {
                 if(powerConsumed != value)
@@ -74,7 +74,7 @@ namespace IoT.Device.Lumi.SubDevices
 
         public string Status
         {
-            get { return status; }
+            get => status;
             set
             {
                 if(status != value)

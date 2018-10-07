@@ -51,40 +51,19 @@ namespace IoT.Device.Xiaomi.Umi
 
         public Uri BaseUri { get; }
 
-        internal SoapControlEndpoint Endpoint
-        {
-            get { return endpointLazy.Value; }
-        }
+        internal SoapControlEndpoint Endpoint => endpointLazy.Value;
 
-        public ContentDirectoryService ContentDirectory
-        {
-            get { return contentDirectoryLazy.Value; }
-        }
+        public ContentDirectoryService ContentDirectory => contentDirectoryLazy.Value;
 
-        public PlaylistService Playlist
-        {
-            get { return playlistLazy.Value; }
-        }
+        public PlaylistService Playlist => playlistLazy.Value;
 
-        public AVTransportService AVTransport
-        {
-            get { return avTransportLazy.Value; }
-        }
+        public AVTransportService AVTransport => avTransportLazy.Value;
 
-        public SystemPropertiesService SystemProperties
-        {
-            get { return systemPropertiesLazy.Value; }
-        }
+        public SystemPropertiesService SystemProperties => systemPropertiesLazy.Value;
 
-        public ConnectionManagerService ConnectionManager
-        {
-            get { return connectionManagerLazy.Value; }
-        }
+        public ConnectionManagerService ConnectionManager => connectionManagerLazy.Value;
 
-        public RenderingControlService RenderingControl
-        {
-            get { return renderingControlLazy.Value; }
-        }
+        public RenderingControlService RenderingControl => renderingControlLazy.Value;
 
         protected override void OnConnect()
         {

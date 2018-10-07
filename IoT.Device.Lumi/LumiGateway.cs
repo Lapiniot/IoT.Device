@@ -37,7 +37,7 @@ namespace IoT.Device.Lumi
 
         public int RgbValue
         {
-            get { return rgbValue; }
+            get => rgbValue;
             private set
             {
                 if(rgbValue != value)
@@ -50,7 +50,7 @@ namespace IoT.Device.Lumi
 
         public int Illumination
         {
-            get { return illumination; }
+            get => illumination;
             private set
             {
                 if(illumination != value)
@@ -199,7 +199,10 @@ namespace IoT.Device.Lumi
 
                 subscription.Dispose();
 
-                foreach(var c in children) c.Value.Dispose();
+                foreach(var c in children)
+                {
+                    c.Value.Dispose();
+                }
 
                 children.Clear();
             }

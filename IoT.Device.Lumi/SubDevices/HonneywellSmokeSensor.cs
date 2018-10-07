@@ -17,7 +17,7 @@ namespace IoT.Device.Lumi.SubDevices
 
         public bool Alarm
         {
-            get { return alarm; }
+            get => alarm;
             private set
             {
                 if(alarm != value)

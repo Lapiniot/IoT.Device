@@ -18,7 +18,7 @@ namespace IoT.Device.Lumi.SubDevices
 
         public string Status
         {
-            get { return status; }
+            get => status;
             set
             {
                 if(status != value)

@@ -27,7 +27,7 @@ namespace IoT.Device.Lumi
 
         public bool IsOnline
         {
-            get { return isOnline; }
+            get => isOnline;
             protected set
             {
                 if(isOnline != value)

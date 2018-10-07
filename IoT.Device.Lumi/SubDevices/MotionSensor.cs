@@ -20,7 +20,7 @@ namespace IoT.Device.Lumi.SubDevices
 
         public int NoMotionSeconds
         {
-            get { return noMotionSeconds; }
+            get => noMotionSeconds;
             private set
             {
                 if(noMotionSeconds != value)
@@ -33,7 +33,7 @@ namespace IoT.Device.Lumi.SubDevices
 
         public string Status
         {
-            get { return status; }
+            get => status;
             private set
             {
                 if(status != value)
