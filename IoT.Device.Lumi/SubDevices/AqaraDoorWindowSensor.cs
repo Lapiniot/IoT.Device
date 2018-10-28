@@ -1,15 +1,32 @@
-using System;
+using System.Json;
 
 namespace IoT.Device.Lumi.SubDevices
 {
-    public class AqaraDoorWindowSensor : LumiSubDevice
+    public sealed class AqaraDoorWindowSensor : LumiSubDeviceWithStatus
     {
-        public AqaraDoorWindowSensor(string sid, int id) : base(sid, id)
+        private int noCloseSeconds;
+
+        private AqaraDoorWindowSensor(string sid, int id) : base(sid, id)
         {
         }
 
         public override string ModelName { get; } = "sensor_magnet.aq2";
 
-        protected override TimeSpan OfflineTimeout { get; } = TimeSpan.FromHours(1);
+        public int NoCloseSeconds
+        {
+            get => noCloseSeconds;
+            private set => Set(ref noCloseSeconds, value);
+        }
+
+        protected internal override void UpdateState(JsonObject data)
+        {
+            base.UpdateState(data);
+
+            if(data.TryGetValue("no_close", out var value) &&
+               int.TryParse(value, out var seconds))
+            {
+                NoCloseSeconds = seconds;
+            }
+        }
     }
 }
