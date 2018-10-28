@@ -8,14 +8,11 @@ using System.Threading.Tasks;
 using IoT.Device.Lumi.SubDevices;
 using IoT.Protocol.Lumi;
 using static System.TimeSpan;
-using Cache = IoT.Device.Container<
-    IoT.Device.Lumi.ExportSubDeviceAttribute,
-    IoT.Device.Lumi.LumiSubDevice>;
-using ILumiObserver = System.IObserver<(string Command, string Sid, System.Json.JsonObject Data, System.Json.JsonObject Message)>;
+using Cache = IoT.Device.Container<IoT.Device.Lumi.ExportSubDeviceAttribute, IoT.Device.Lumi.LumiSubDevice>;
 
 namespace IoT.Device.Lumi
 {
-    public sealed class LumiGateway : LumiThing, ILumiObserver
+    public sealed class LumiGateway : LumiThing, IObserver<JsonObject>
     {
         private readonly Dictionary<string, LumiSubDevice> children;
         private readonly LumiControlEndpoint client;
@@ -55,51 +52,49 @@ namespace IoT.Device.Lumi
         protected override TimeSpan HeartbeatTimeout { get; } =
             FromSeconds(10) + FromSeconds(2);
 
-        void ILumiObserver.OnCompleted()
+        void IObserver<JsonObject>.OnCompleted()
         {
             // Empty by design
         }
 
-        void ILumiObserver.OnError(Exception error)
+        void IObserver<JsonObject>.OnError(Exception error)
         {
             // Empty by design
         }
 
-        void ILumiObserver.OnNext((string Command, string Sid, JsonObject Data, JsonObject Message) value)
+        void IObserver<JsonObject>.OnNext(JsonObject message)
         {
-            switch(value.Command)
+            if(message.TryGetValue("sid", out var sid) && message.TryGetValue("cmd", out var command) &&
+               message.TryGetValue("data", out var v) && JsonValue.Parse(v) is JsonObject data)
             {
-                case "heartbeat":
-                    OnHeartbeatMessage(value.Sid, value.Data, value.Message);
-                    break;
-                case "report":
-                    OnReportMessage(value.Sid, value.Data, value.Message);
-                    break;
-            }
-        }
-
-        public void OnReportMessage(string sid, JsonObject data, JsonObject message)
-        {
-            if(sid == Sid && message.TryGetValue("model", out var model) && model == "gateway")
-            {
-                OnStateChanged(data);
-            }
-            else if(children.TryGetValue(sid, out var device))
-            {
-                device.OnStateChanged(data);
-            }
-        }
-
-        public void OnHeartbeatMessage(string sid, JsonObject data, JsonObject message)
-        {
-            if(sid == Sid && message.TryGetValue("model", out var model) && model == "gateway")
-            {
-                OnHeartbeat(data);
-                Token = message["token"];
-            }
-            else if(children.TryGetValue(sid, out var device))
-            {
-                device.OnHeartbeat(data);
+                switch((string)command)
+                {
+                    case "heartbeat":
+                    {
+                        if(sid == Sid)
+                        {
+                            OnHeartbeat(data);
+                            Token = message["token"];
+                        }
+                        else if(children.TryGetValue(sid, out var device))
+                        {
+                            device.OnHeartbeat(data);
+                        }
+                    }
+                        break;
+                    case "report":
+                    {
+                        if(sid == Sid)
+                        {
+                            OnStateChanged(data);
+                        }
+                        else if(children.TryGetValue(sid, out var device))
+                        {
+                            device.OnStateChanged(data);
+                        }
+                    }
+                        break;
+                }
             }
         }
 
