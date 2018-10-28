@@ -19,11 +19,25 @@ namespace IoT.Device.Lumi
 
         protected internal override void UpdateState(JsonObject data)
         {
+            var prevStatus = Status;
+
             base.UpdateState(data);
 
-            if(data.TryGetValue("status", out _))
+            if(data.TryGetValue("status", out var status))
             {
                 NoMotionSeconds = 0;
+
+                // Tricky part: motion sensors usually notify about motion fact
+                // by sending {"status":"motion"} frequently several times in row.
+                // Default "Status" property implementation triggers OnPropertyChanged event
+                // only when underlying field value changes.
+                // Here we handle status event in a slightly different way and trigger
+                // OnPropertyChanged for every repeating "motion" status update disregard of
+                // the previous state value.
+                if(status == prevStatus)
+                {
+                    OnPropertyChanged(nameof(Status));
+                }
             }
             else if(data.TryGetValue("no_motion", out var nomotion))
             {
