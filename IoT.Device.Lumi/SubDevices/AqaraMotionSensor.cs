@@ -18,11 +18,11 @@ namespace IoT.Device.Lumi.SubDevices
             set => Set(ref lux, value);
         }
 
-        protected internal override void UpdateState(JsonObject data)
+        protected internal override void OnStateChanged(JsonObject state)
         {
-            base.UpdateState(data);
+            base.OnStateChanged(state);
 
-            if(data.TryGetValue("lux", out var value))
+            if(state.TryGetValue("lux", out var value))
             {
                 Lux = value;
             }

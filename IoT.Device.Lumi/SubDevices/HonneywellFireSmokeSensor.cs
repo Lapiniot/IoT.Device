@@ -18,11 +18,11 @@ namespace IoT.Device.Lumi.SubDevices
             private set => Set(ref alarm, value);
         }
 
-        protected internal override void UpdateState(JsonObject data)
+        protected internal override void OnStateChanged(JsonObject state)
         {
-            base.UpdateState(data);
+            base.OnStateChanged(state);
 
-            if(data.TryGetValue("alarm", out var a))
+            if(state.TryGetValue("alarm", out var a))
             {
                 Alarm = a == "1";
             }

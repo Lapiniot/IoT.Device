@@ -11,18 +11,17 @@ namespace IoT.Device.Lumi
 {
     public abstract class LumiThing : ConnectedObject, INotifyPropertyChanged, IProvideOnlineInfo
     {
-        private readonly object syncRoot;
-        private volatile CancellationTokenSource cancellationTokenSource;
         private bool isOnline;
+        private CancellationTokenSource resetWatchTokenSource;
 
         protected LumiThing(string sid)
         {
-            (Sid, IsOnline, syncRoot) = (sid, true, new object());
+            (Sid, isOnline) = (sid, true);
         }
 
         public abstract string ModelName { get; }
 
-        protected abstract TimeSpan OfflineTimeout { get; }
+        protected abstract TimeSpan HeartbeatTimeout { get; }
 
         public string Sid { get; }
 
@@ -32,26 +31,28 @@ namespace IoT.Device.Lumi
             private set => Set(ref isOnline, value);
         }
 
-        protected internal virtual void UpdateState(JsonObject data)
+        protected internal virtual void OnHeartbeat(JsonObject state)
         {
-            StartOnlineWatch();
+            ResetOnlineWatch();
+
+            OnStateChanged(state);
         }
 
-        private void StartOnlineWatch()
+        protected internal virtual void OnStateChanged(JsonObject state)
         {
-            lock(syncRoot)
+            IsOnline = true;
+        }
+
+        private void ResetOnlineWatch()
+        {
+            var newCts = new CancellationTokenSource();
+
+            Task.Delay(HeartbeatTimeout, newCts.Token)
+                .ContinueWith(t => IsOnline = false, OnlyOnRanToCompletion);
+
+            using(var oldTcs = Interlocked.Exchange(ref resetWatchTokenSource, newCts))
             {
-                IsOnline = true;
-
-                using(var source = cancellationTokenSource)
-                {
-                    source?.Cancel();
-                }
-
-                cancellationTokenSource = new CancellationTokenSource();
-
-                Task.Delay(OfflineTimeout, cancellationTokenSource.Token)
-                    .ContinueWith(t => IsOnline = false, OnlyOnRanToCompletion);
+                oldTcs?.Cancel();
             }
         }
 
@@ -73,9 +74,9 @@ namespace IoT.Device.Lumi
 
             if(disposing)
             {
-                cancellationTokenSource?.Cancel();
-                cancellationTokenSource?.Dispose();
-                cancellationTokenSource = null;
+                resetWatchTokenSource?.Cancel();
+                resetWatchTokenSource?.Dispose();
+                resetWatchTokenSource = null;
             }
         }
 
@@ -84,6 +85,7 @@ namespace IoT.Device.Lumi
         #region INotifyPropertyChanged Support
 
         public event PropertyChangedEventHandler PropertyChanged;
+
 
         protected void OnPropertyChanged([CallerMemberName] string name = null)
         {

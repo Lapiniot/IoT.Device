@@ -16,11 +16,11 @@ namespace IoT.Device.Lumi
             private set => Set(ref noCloseSeconds, value);
         }
 
-        protected internal override void UpdateState(JsonObject data)
+        protected internal override void OnStateChanged(JsonObject state)
         {
-            base.UpdateState(data);
+            base.OnStateChanged(state);
 
-            if(data.TryGetValue("no_close", out var value) &&
+            if(state.TryGetValue("no_close", out var value) &&
                int.TryParse(value, out var seconds))
             {
                 NoCloseSeconds = seconds;

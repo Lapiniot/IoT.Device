@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using IoT.Device.Lumi.SubDevices;
 using IoT.Protocol.Lumi;
+using static System.TimeSpan;
 using Cache = IoT.Device.Container<
     IoT.Device.Lumi.ExportSubDeviceAttribute,
     IoT.Device.Lumi.LumiSubDevice>;
@@ -49,7 +50,10 @@ namespace IoT.Device.Lumi
 
         public override string ModelName { get; } = "gateway";
 
-        protected override TimeSpan OfflineTimeout { get; } = TimeSpan.FromSeconds(15);
+        // Gateway sends heartbeats every 10 seconds.
+        // We give extra 2 seconds to the timeout value.
+        protected override TimeSpan HeartbeatTimeout { get; } =
+            FromSeconds(10) + FromSeconds(2);
 
         void ILumiObserver.OnCompleted()
         {
@@ -78,11 +82,11 @@ namespace IoT.Device.Lumi
         {
             if(sid == Sid && message.TryGetValue("model", out var model) && model == "gateway")
             {
-                UpdateState(data);
+                OnStateChanged(data);
             }
             else if(children.TryGetValue(sid, out var device))
             {
-                device.UpdateState(data);
+                device.OnStateChanged(data);
             }
         }
 
@@ -90,11 +94,12 @@ namespace IoT.Device.Lumi
         {
             if(sid == Sid && message.TryGetValue("model", out var model) && model == "gateway")
             {
+                OnHeartbeat(data);
                 Token = message["token"];
             }
             else if(children.TryGetValue(sid, out var device))
             {
-                device.UpdateState(data);
+                device.OnHeartbeat(data);
             }
         }
 
@@ -127,7 +132,7 @@ namespace IoT.Device.Lumi
                         var id = (int)info["short_id"];
                         var deviceModel = info["model"];
                         device = Cache.CreateInstance((string)deviceModel, sid, id) ?? new GenericSubDevice(sid, id);
-                        device.UpdateState(data);
+                        device.OnStateChanged(data);
                         children.Add(sid, device);
                     }
                 }
@@ -150,14 +155,14 @@ namespace IoT.Device.Lumi
             return children.Values.ToArray();
         }
 
-        protected internal override void UpdateState(JsonObject data)
+        protected internal override void OnStateChanged(JsonObject state)
         {
-            if(data.TryGetValue("rgb", out var rgb))
+            if(state.TryGetValue("rgb", out var rgb))
             {
                 RgbValue = rgb;
             }
 
-            if(data.TryGetValue("illumination", out var value))
+            if(state.TryGetValue("illumination", out var value))
             {
                 Illumination = value;
             }

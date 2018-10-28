@@ -17,7 +17,10 @@ namespace IoT.Device.Lumi.SubDevices
 
         public override string ModelName { get; } = "plug.v1";
 
-        protected override TimeSpan OfflineTimeout { get; } = FromMinutes(10);
+        // Plugged devices usually send heartbeat every ~10 minutes.
+        // We give extra 10 seconds before transition to offline state.
+        protected override TimeSpan HeartbeatTimeout { get; } =
+            FromMinutes(10) + FromSeconds(10);
 
         public bool InUse
         {
@@ -43,26 +46,26 @@ namespace IoT.Device.Lumi.SubDevices
             private set => Set(ref powerConsumed, value);
         }
 
-        protected internal override void UpdateState(JsonObject data)
+        protected internal override void OnStateChanged(JsonObject state)
         {
-            base.UpdateState(data);
+            base.OnStateChanged(state);
 
-            if(data.TryGetValue("inuse", out var i))
+            if(state.TryGetValue("inuse", out var i))
             {
                 InUse = i == "1";
             }
 
-            if(data.TryGetValue("load_voltage", out var lv))
+            if(state.TryGetValue("load_voltage", out var lv))
             {
                 LoadVoltage = new decimal(lv, 0, 0, false, 3);
             }
 
-            if(data.TryGetValue("load_power", out var lp))
+            if(state.TryGetValue("load_power", out var lp))
             {
                 LoadPower = lp;
             }
 
-            if(data.TryGetValue("power_consumed", out var pc))
+            if(state.TryGetValue("power_consumed", out var pc))
             {
                 PowerConsumed = pc;
             }

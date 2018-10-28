@@ -18,11 +18,11 @@ namespace IoT.Device.Lumi.SubDevices
             set => Set(ref rotate, value);
         }
 
-        protected internal override void UpdateState(JsonObject data)
+        protected internal override void OnStateChanged(JsonObject state)
         {
-            base.UpdateState(data);
+            base.OnStateChanged(state);
 
-            if(data.TryGetValue("rotate", out var angle))
+            if(state.TryGetValue("rotate", out var angle))
             {
                 Rotate = angle;
             }

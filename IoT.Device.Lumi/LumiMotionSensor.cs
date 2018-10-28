@@ -17,13 +17,13 @@ namespace IoT.Device.Lumi
             private set => Set(ref noMotionSeconds, value);
         }
 
-        protected internal override void UpdateState(JsonObject data)
+        protected internal override void OnStateChanged(JsonObject state)
         {
             var prevStatus = Status;
 
-            base.UpdateState(data);
+            base.OnStateChanged(state);
 
-            if(data.TryGetValue("status", out var status))
+            if(state.TryGetValue("status", out var status))
             {
                 NoMotionSeconds = 0;
 
@@ -39,7 +39,7 @@ namespace IoT.Device.Lumi
                     OnPropertyChanged(nameof(Status));
                 }
             }
-            else if(data.TryGetValue("no_motion", out var nomotion))
+            else if(state.TryGetValue("no_motion", out var nomotion))
             {
                 NoMotionSeconds = int.Parse(nomotion);
                 Status = "nomotion";

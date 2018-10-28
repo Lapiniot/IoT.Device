@@ -15,7 +15,12 @@ namespace IoT.Device.Lumi
             this.id = id;
         }
 
-        protected override TimeSpan OfflineTimeout { get; } = FromHours(1);
+        // Battery powered ZigBee devices usually send heartbeats 
+        // once per hour to save battery. We give extra 5 seconds
+        // after one hour of absent heartbeat before switching
+        // to offline state.
+        protected override TimeSpan HeartbeatTimeout { get; } =
+            FromHours(1) + FromSeconds(5);
 
         public decimal Voltage
         {
@@ -23,11 +28,11 @@ namespace IoT.Device.Lumi
             protected set => Set(ref voltage, value);
         }
 
-        protected internal override void UpdateState(JsonObject data)
+        protected internal override void OnStateChanged(JsonObject state)
         {
-            base.UpdateState(data);
+            base.OnStateChanged(state);
 
-            if(data.TryGetValue("voltage", out var value))
+            if(state.TryGetValue("voltage", out var value))
             {
                 Voltage = new decimal(value, 0, 0, false, 3);
             }

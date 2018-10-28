@@ -32,21 +32,21 @@ namespace IoT.Device.Lumi.SubDevices
             private set => Set(ref pressure, value);
         }
 
-        protected internal override void UpdateState(JsonObject data)
+        protected internal override void OnStateChanged(JsonObject state)
         {
-            base.UpdateState(data);
+            base.OnStateChanged(state);
 
-            if(data.TryGetValue("temperature", out var t))
+            if(state.TryGetValue("temperature", out var t))
             {
                 Temperature = new decimal(t, 0, 0, false, 2);
             }
 
-            if(data.TryGetValue("humidity", out var h))
+            if(state.TryGetValue("humidity", out var h))
             {
                 Humidity = new decimal(h, 0, 0, false, 2);
             }
 
-            if(data.TryGetValue("pressure", out var p))
+            if(state.TryGetValue("pressure", out var p))
             {
                 Pressure = new decimal(p, 0, 0, false, 3);
             }

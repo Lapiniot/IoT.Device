@@ -19,13 +19,13 @@ namespace IoT.Device.Lumi
             protected set => Set(ref status, value);
         }
 
-        protected internal override void UpdateState(JsonObject data)
+        protected internal override void OnStateChanged(JsonObject state)
         {
-            base.UpdateState(data);
+            base.OnStateChanged(state);
 
             // Special value "iam" is usual device online
             // report when sensor's test button is pressed
-            if(data.TryGetValue("status", out var value) && value != "iam")
+            if(state.TryGetValue("status", out var value) && value != "iam")
             {
                 Status = value;
             }

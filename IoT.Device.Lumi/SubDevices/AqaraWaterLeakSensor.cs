@@ -10,9 +10,9 @@ namespace IoT.Device.Lumi.SubDevices
 
         public override string ModelName { get; } = "sensor_wleak.aq1";
 
-        protected internal override void UpdateState(JsonObject data)
+        protected internal override void OnStateChanged(JsonObject state)
         {
-            base.UpdateState(data);
+            base.OnStateChanged(state);
         }
     }
 }
