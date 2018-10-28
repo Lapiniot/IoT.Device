@@ -1,6 +1,4 @@
-﻿using System.Json;
-
-namespace IoT.Device.Lumi.SubDevices
+﻿namespace IoT.Device.Lumi.SubDevices
 {
     public sealed class ButtonSwitchV2 : LumiSubDevice
     {
@@ -9,10 +7,5 @@ namespace IoT.Device.Lumi.SubDevices
         }
 
         public override string ModelName { get; } = "sensor_switch.v2";
-
-        protected internal override void UpdateState(JsonObject data)
-        {
-            base.UpdateState(data);
-        }
     }
 }
