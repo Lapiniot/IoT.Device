@@ -1,7 +1,7 @@
 using System.Json;
 using IoT.Device.Lumi.Interfaces;
 
-namespace IoT.Device.Lumi.SubDevices
+namespace IoT.Device.Lumi
 {
     public abstract class LumiSubDeviceWithStatus : LumiSubDevice, IProvideStatus
     {
