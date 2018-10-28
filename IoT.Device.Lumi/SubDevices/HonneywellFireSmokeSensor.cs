@@ -3,15 +3,15 @@ using System.Json;
 
 namespace IoT.Device.Lumi.SubDevices
 {
-    public sealed class HonneywellSmokeSensor : LumiSubDevice
+    public sealed class HonneywellFireSmokeSensor : LumiSubDevice
     {
         private bool alarm;
 
-        private HonneywellSmokeSensor(string sid, int id) : base(sid, id)
+        private HonneywellFireSmokeSensor(string sid, int id) : base(sid, id)
         {
         }
 
-        public override string ModelName { get; } = "lumi.sensor_smoke.v1";
+        public override string ModelName { get; } = "sensor_smoke.v1";
 
         protected override TimeSpan OfflineTimeout { get; } = TimeSpan.FromHours(1);
 

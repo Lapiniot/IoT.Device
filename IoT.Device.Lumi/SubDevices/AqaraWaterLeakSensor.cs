@@ -9,7 +9,7 @@ namespace IoT.Device.Lumi.SubDevices
         {
         }
 
-        public override string ModelName { get; } = "lumi.sensor_wleak.aq1";
+        public override string ModelName { get; } = "sensor_wleak.aq1";
 
         protected override TimeSpan OfflineTimeout { get; } = TimeSpan.FromHours(1);
 

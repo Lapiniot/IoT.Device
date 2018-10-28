@@ -4,17 +4,17 @@ using IoT.Device.Lumi.Interfaces;
 
 namespace IoT.Device.Lumi.SubDevices
 {
-    public sealed class MotionSensor : LumiSubDevice, IProvideStatusInfo
+    public sealed class MotionSensorV2 : LumiSubDevice, IProvideStatusInfo
     {
         private int noMotionSeconds;
         private string status;
 
-        private MotionSensor(string sid, int id) : base(sid, id)
+        private MotionSensorV2(string sid, int id) : base(sid, id)
         {
             status = "nomotion";
         }
 
-        public override string ModelName { get; } = "lumi.sensor_motion.v2";
+        public override string ModelName { get; } = "sensor_motion.v2";
 
         protected override TimeSpan OfflineTimeout { get; } = TimeSpan.FromHours(1);
 

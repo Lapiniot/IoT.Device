@@ -8,10 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\IoT.Device\IoT.Device.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="IoT.Protocol.Lumi" Version="1.0.0" />
+    <ProjectReference Include="..\IoT.Protocol\IoT.Protocol.Lumi\IoT.Protocol.Lumi.csproj" />
   </ItemGroup>
 
 </Project>

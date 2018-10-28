@@ -13,7 +13,7 @@ namespace IoT.Device.Lumi.SubDevices
         {
         }
 
-        public override string ModelName { get; } = "lumi.weather.v1";
+        public override string ModelName { get; } = "weather.v1";
 
         protected override TimeSpan OfflineTimeout { get; } = TimeSpan.FromHours(1);
 

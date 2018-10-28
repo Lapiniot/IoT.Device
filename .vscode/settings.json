@@ -3,7 +3,9 @@
         "**/.git": true,
         "**/.DS_Store": true,
         "**/.gitignore": true,
-        "**/bin/": true,
-        "**/obj/": true
+        "**/.gitmodules": true,
+        "**/.vs": true,
+        "**/bin": true,
+        "**/obj": true
     }
 }

@@ -5,8 +5,4 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="IoT.Protocol" Version="1.0.0" />
-  </ItemGroup>
-
 </Project>

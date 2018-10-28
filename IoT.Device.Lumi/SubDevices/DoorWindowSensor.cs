@@ -4,15 +4,15 @@ using IoT.Device.Lumi.Interfaces;
 
 namespace IoT.Device.Lumi.SubDevices
 {
-    public sealed class WindowDoorSensor : LumiSubDevice, IProvideStatusInfo
+    public sealed class DoorWindowSensor : LumiSubDevice, IProvideStatusInfo
     {
         private string status;
 
-        private WindowDoorSensor(string sid, int id) : base(sid, id)
+        private DoorWindowSensor(string sid, int id) : base(sid, id)
         {
         }
 
-        public override string ModelName { get; } = "lumi.sensor_magnet.v2";
+        public override string ModelName { get; } = "sensor_magnet.v2";
 
         protected override TimeSpan OfflineTimeout { get; } = TimeSpan.FromHours(1);
 

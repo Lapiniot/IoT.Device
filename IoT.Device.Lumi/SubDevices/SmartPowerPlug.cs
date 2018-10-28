@@ -4,7 +4,7 @@ using IoT.Device.Lumi.Interfaces;
 
 namespace IoT.Device.Lumi.SubDevices
 {
-    public sealed class SmartPlug : LumiSubDevice, IProvideStatusInfo
+    public sealed class SmartPowerPlug : LumiSubDevice, IProvideStatusInfo
     {
         private bool inUse;
         private decimal loadPower;
@@ -12,11 +12,11 @@ namespace IoT.Device.Lumi.SubDevices
         private decimal powerConsumed;
         private string status;
 
-        private SmartPlug(string sid, int id) : base(sid, id)
+        private SmartPowerPlug(string sid, int id) : base(sid, id)
         {
         }
 
-        public override string ModelName { get; } = "lumi.plug.v1";
+        public override string ModelName { get; } = "plug.v1";
 
         protected override TimeSpan OfflineTimeout { get; } = TimeSpan.FromMinutes(10);
 

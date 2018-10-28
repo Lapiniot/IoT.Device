@@ -1,0 +1,3 @@
+[submodule "IoT.Protocol"]
+	path = IoT.Protocol
+	url = https://github.com/Lapiniot/IoT.Protocol.git

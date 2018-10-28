@@ -3,13 +3,13 @@ using System.Json;
 
 namespace IoT.Device.Lumi.SubDevices
 {
-    public sealed class SwitchButtonSensor : LumiSubDevice
+    public sealed class ButtonSwitchV2 : LumiSubDevice
     {
-        private SwitchButtonSensor(string sid, int id) : base(sid, id)
+        private ButtonSwitchV2(string sid, int id) : base(sid, id)
         {
         }
 
-        public override string ModelName { get; } = "lumi.sensor_switch.v2";
+        public override string ModelName { get; } = "sensor_switch.v2";
 
         protected override TimeSpan OfflineTimeout { get; } = TimeSpan.FromHours(1);
 
