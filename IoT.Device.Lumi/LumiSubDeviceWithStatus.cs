@@ -23,7 +23,9 @@ namespace IoT.Device.Lumi
         {
             base.UpdateState(data);
 
-            if(data.TryGetValue("status", out var value))
+            // Special value "iam" is usual device online
+            // report when sensor's test button is pressed
+            if(data.TryGetValue("status", out var value) && value != "iam")
             {
                 Status = value;
             }

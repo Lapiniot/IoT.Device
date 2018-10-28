@@ -29,7 +29,7 @@ namespace IoT.Device.Lumi
         public bool IsOnline
         {
             get => isOnline;
-            protected set => Set(ref isOnline, value);
+            private set => Set(ref isOnline, value);
         }
 
         protected internal virtual void UpdateState(JsonObject data)
