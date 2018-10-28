@@ -4,12 +4,28 @@ namespace IoT.Device.Lumi.SubDevices
 {
     public class AqaraCubeController : LumiSubDevice
     {
-        public AqaraCubeController(string sid, int id) : base(sid, id)
+        private decimal rotate;
+
+        private AqaraCubeController(string sid, int id) : base(sid, id)
         {
         }
 
         public override string ModelName { get; } = "sensor_cube.aqgl01";
 
-        protected override TimeSpan OfflineTimeout { get; } = TimeSpan.FromHours(1);
+        public decimal Rotate
+        {
+            get => rotate;
+            set => Set(ref rotate, value);
+        }
+
+        protected internal override void UpdateState(JsonObject data)
+        {
+            base.UpdateState(data);
+
+            if(data.TryGetValue("rotate", out var angle))
+            {
+                Rotate = angle;
+            }
+        }
     }
 }
