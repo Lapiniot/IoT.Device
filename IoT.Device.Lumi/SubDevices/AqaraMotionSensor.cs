@@ -2,14 +2,30 @@ using System;
 
 namespace IoT.Device.Lumi.SubDevices
 {
-    public class AqaraMotionSensor : LumiSubDevice
+    public sealed class AqaraMotionSensor : LumiMotionSensor
     {
-        public AqaraMotionSensor(string sid, int id) : base(sid, id)
+        private int lux;
+
+        private AqaraMotionSensor(string sid, int id) : base(sid, id)
         {
         }
 
         public override string ModelName { get; } = "sensor_motion.aq2";
 
-        protected override TimeSpan OfflineTimeout { get; } = TimeSpan.FromHours(1);
+        public int Lux
+        {
+            get => lux;
+            set => Set(ref lux, value);
+        }
+
+        protected internal override void UpdateState(JsonObject data)
+        {
+            base.UpdateState(data);
+
+            if(data.TryGetValue("lux", out var value))
+            {
+                Lux = value;
+            }
+        }
     }
 }
