@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using IoT.Device.Lumi.Interfaces;
+using static System.Threading.Tasks.TaskContinuationOptions;
 
 namespace IoT.Device.Lumi
 {
@@ -28,14 +29,7 @@ namespace IoT.Device.Lumi
         public bool IsOnline
         {
             get => isOnline;
-            protected set
-            {
-                if(isOnline != value)
-                {
-                    isOnline = value;
-                    OnPropertyChanged();
-                }
-            }
+            protected set => Set(ref isOnline, value);
         }
 
         protected internal virtual void UpdateState(JsonObject data)
@@ -57,7 +51,7 @@ namespace IoT.Device.Lumi
                 cancellationTokenSource = new CancellationTokenSource();
 
                 Task.Delay(OfflineTimeout, cancellationTokenSource.Token)
-                    .ContinueWith(t => IsOnline = false, TaskContinuationOptions.OnlyOnRanToCompletion);
+                    .ContinueWith(t => IsOnline = false, OnlyOnRanToCompletion);
             }
         }
 
@@ -94,6 +88,16 @@ namespace IoT.Device.Lumi
         protected void OnPropertyChanged([CallerMemberName] string name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected void Set<T>(ref T field, T value, [CallerMemberName] string name = null)
+        {
+            if(!Equals(field, value))
+            {
+                field = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            }
         }
 
         #endregion

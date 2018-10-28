@@ -1,4 +1,3 @@
-using System;
 using System.Json;
 
 namespace IoT.Device.Lumi.SubDevices
@@ -13,28 +12,20 @@ namespace IoT.Device.Lumi.SubDevices
 
         public override string ModelName { get; } = "sensor_smoke.v1";
 
-        protected override TimeSpan OfflineTimeout { get; } = TimeSpan.FromHours(1);
-
         public bool Alarm
         {
             get => alarm;
-            private set
-            {
-                if(alarm != value)
-                {
-                    alarm = value;
-                    OnPropertyChanged();
-                }
-            }
+            private set => Set(ref alarm, value);
         }
 
         protected internal override void UpdateState(JsonObject data)
         {
             base.UpdateState(data);
 
-            if(data.TryGetValue("voltage", out var v)) Voltage = new decimal(v, 0, 0, false, 3);
-
-            if(data.TryGetValue("alarm", out var a)) Alarm = a == "1";
+            if(data.TryGetValue("alarm", out var a))
+            {
+                Alarm = a == "1";
+            }
         }
     }
 }

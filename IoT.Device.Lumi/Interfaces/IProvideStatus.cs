@@ -1,6 +1,6 @@
 namespace IoT.Device.Lumi.Interfaces
 {
-    public interface IProvideStatusInfo
+    public interface IProvideStatus
     {
         string Status { get; }
     }

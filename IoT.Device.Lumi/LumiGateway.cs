@@ -38,27 +38,13 @@ namespace IoT.Device.Lumi
         public int RgbValue
         {
             get => rgbValue;
-            private set
-            {
-                if(rgbValue != value)
-                {
-                    rgbValue = value;
-                    OnPropertyChanged();
-                }
-            }
+            private set => Set(ref rgbValue, value);
         }
 
         public int Illumination
         {
             get => illumination;
-            private set
-            {
-                if(illumination != value)
-                {
-                    illumination = value;
-                    OnPropertyChanged();
-                }
-            }
+            private set => Set(ref illumination, value);
         }
 
         public override string ModelName { get; } = "gateway";
@@ -166,9 +152,15 @@ namespace IoT.Device.Lumi
 
         protected internal override void UpdateState(JsonObject data)
         {
-            if(data.TryGetValue("rgb", out var rgb)) RgbValue = rgb;
+            if(data.TryGetValue("rgb", out var rgb))
+            {
+                RgbValue = rgb;
+            }
 
-            if(data.TryGetValue("illumination", out var i)) Illumination = i;
+            if(data.TryGetValue("illumination", out var value))
+            {
+                Illumination = value;
+            }
         }
 
         #region Overrides of LumiThing

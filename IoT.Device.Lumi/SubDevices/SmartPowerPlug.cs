@@ -1,16 +1,15 @@
 using System;
 using System.Json;
-using IoT.Device.Lumi.Interfaces;
+using static System.TimeSpan;
 
 namespace IoT.Device.Lumi.SubDevices
 {
-    public sealed class SmartPowerPlug : LumiSubDevice, IProvideStatusInfo
+    public sealed class SmartPowerPlug : LumiSubDeviceWithStatus
     {
         private bool inUse;
         private decimal loadPower;
         private decimal loadVoltage;
         private decimal powerConsumed;
-        private string status;
 
         private SmartPowerPlug(string sid, int id) : base(sid, id)
         {
@@ -18,83 +17,55 @@ namespace IoT.Device.Lumi.SubDevices
 
         public override string ModelName { get; } = "plug.v1";
 
-        protected override TimeSpan OfflineTimeout { get; } = TimeSpan.FromMinutes(10);
+        protected override TimeSpan OfflineTimeout { get; } = FromMinutes(10);
 
         public bool InUse
         {
             get => inUse;
-            set
-            {
-                if(inUse != value)
-                {
-                    inUse = value;
-                    OnPropertyChanged();
-                }
-            }
+            private set => Set(ref inUse, value);
         }
 
         public decimal LoadVoltage
         {
             get => loadVoltage;
-            set
-            {
-                if(loadVoltage != value)
-                {
-                    loadVoltage = value;
-                    OnPropertyChanged();
-                }
-            }
+            private set => Set(ref loadVoltage, value);
         }
 
         public decimal LoadPower
         {
             get => loadPower;
-            set
-            {
-                if(loadPower != value)
-                {
-                    loadPower = value;
-                    OnPropertyChanged();
-                }
-            }
+            private set => Set(ref loadPower, value);
         }
 
         public decimal PowerConsumed
         {
             get => powerConsumed;
-            set
-            {
-                if(powerConsumed != value)
-                {
-                    powerConsumed = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        public string Status
-        {
-            get => status;
-            set
-            {
-                if(status != value)
-                {
-                    status = value;
-                    OnPropertyChanged();
-                }
-            }
+            private set => Set(ref powerConsumed, value);
         }
 
         protected internal override void UpdateState(JsonObject data)
         {
             base.UpdateState(data);
 
-            if(data.TryGetValue("voltage", out var v)) Voltage = new decimal(v, 0, 0, false, 3);
-            if(data.TryGetValue("status", out var s)) Status = s;
-            if(data.TryGetValue("inuse", out var i)) InUse = i == "1";
-            if(data.TryGetValue("load_voltage", out var lv)) LoadVoltage = new decimal(lv, 0, 0, false, 3);
-            if(data.TryGetValue("load_power", out var lp)) LoadPower = (decimal)lp;
-            if(data.TryGetValue("power_consumed", out var pc)) PowerConsumed = (decimal)pc;
+            if(data.TryGetValue("inuse", out var i))
+            {
+                InUse = i == "1";
+            }
+
+            if(data.TryGetValue("load_voltage", out var lv))
+            {
+                LoadVoltage = new decimal(lv, 0, 0, false, 3);
+            }
+
+            if(data.TryGetValue("load_power", out var lp))
+            {
+                LoadPower = lp;
+            }
+
+            if(data.TryGetValue("power_consumed", out var pc))
+            {
+                PowerConsumed = pc;
+            }
         }
     }
 }
