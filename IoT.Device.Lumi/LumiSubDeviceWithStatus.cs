@@ -7,8 +7,10 @@ namespace IoT.Device.Lumi
     {
         private string status;
 
-        protected LumiSubDeviceWithStatus(string sid, int id) : base(sid, id)
+        protected LumiSubDeviceWithStatus(string sid, int id, string defaultStatus = "") :
+            base(sid, id)
         {
+            status = defaultStatus;
         }
 
         public string Status
