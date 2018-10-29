@@ -30,8 +30,6 @@ namespace IoT.Device.Lumi
 
         protected internal override void OnStateChanged(JsonObject state)
         {
-            base.OnStateChanged(state);
-
             if(state.TryGetValue("voltage", out var value))
             {
                 Voltage = new decimal(value, 0, 0, false, 3);

@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using IoT.Device.Lumi.Interfaces;
+using static System.Runtime.CompilerServices.MethodImplOptions;
 using static System.Threading.Tasks.TaskContinuationOptions;
 
 namespace IoT.Device.Lumi
@@ -33,15 +34,14 @@ namespace IoT.Device.Lumi
 
         protected internal virtual void OnHeartbeat(JsonObject state)
         {
+            IsOnline = true;
+
             ResetOnlineWatch();
 
             OnStateChanged(state);
         }
 
-        protected internal virtual void OnStateChanged(JsonObject state)
-        {
-            IsOnline = true;
-        }
+        protected internal abstract void OnStateChanged(JsonObject state);
 
         private void ResetOnlineWatch()
         {
@@ -91,13 +91,13 @@ namespace IoT.Device.Lumi
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-
+        [MethodImpl(AggressiveInlining)]
         protected void OnPropertyChanged([CallerMemberName] string name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(AggressiveInlining)]
         protected void Set<T>(ref T field, T value, [CallerMemberName] string name = null)
         {
             if(!Equals(field, value))
