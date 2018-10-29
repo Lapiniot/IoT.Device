@@ -1,8 +1,14 @@
-using System;
+using System.Json;
+using IoT.Device.Metadata;
+using static IoT.Device.Metadata.PowerSource;
+using static IoT.Device.Metadata.Connectivity;
 
 namespace IoT.Device.Lumi.SubDevices
 {
-    public class AqaraCubeController : LumiSubDevice
+    [ModelID("MFKZQ01LM")]
+    [PowerSource(CR2450)]
+    [Connectivity(ZigBee)]
+    public sealed class AqaraCubeController : LumiSubDevice
     {
         private decimal rotate;
 
@@ -10,7 +16,7 @@ namespace IoT.Device.Lumi.SubDevices
         {
         }
 
-        public override string ModelName { get; } = "sensor_cube.aqgl01";
+        public override string Model { get; } = "sensor_cube.aqgl01";
 
         public decimal Rotate
         {

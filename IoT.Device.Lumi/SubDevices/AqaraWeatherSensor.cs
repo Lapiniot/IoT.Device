@@ -1,7 +1,13 @@
 using System.Json;
+using IoT.Device.Metadata;
+using static IoT.Device.Metadata.Connectivity;
+using static IoT.Device.Metadata.PowerSource;
 
 namespace IoT.Device.Lumi.SubDevices
 {
+    [ModelID("WSDCGQ11LM")]
+    [PowerSource(CR2032)]
+    [Connectivity(ZigBee)]
     public sealed class AqaraWeatherSensor : LumiSubDevice
     {
         private decimal humidity;
@@ -12,7 +18,7 @@ namespace IoT.Device.Lumi.SubDevices
         {
         }
 
-        public override string ModelName { get; } = "weather.v1";
+        public override string Model { get; } = "weather.v1";
 
         public decimal Temperature
         {

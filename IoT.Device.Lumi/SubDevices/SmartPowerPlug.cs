@@ -1,9 +1,15 @@
 using System;
 using System.Json;
+using IoT.Device.Metadata;
 using static System.TimeSpan;
+using static IoT.Device.Metadata.PowerSource;
+using static IoT.Device.Metadata.Connectivity;
 
 namespace IoT.Device.Lumi.SubDevices
 {
+    [ModelID("ZNCZ02LM")]
+    [PowerSource(Plugged)]
+    [Connectivity(ZigBee)]
     public sealed class SmartPowerPlug : LumiSubDeviceWithStatus
     {
         private bool inUse;
@@ -15,7 +21,7 @@ namespace IoT.Device.Lumi.SubDevices
         {
         }
 
-        public override string ModelName { get; } = "plug.v1";
+        public override string Model { get; } = "plug.v1";
 
         // Plugged devices usually send heartbeat every ~10 minutes.
         // We give extra 10 seconds before transition to offline state.

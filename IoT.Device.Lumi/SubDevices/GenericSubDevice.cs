@@ -6,6 +6,6 @@ namespace IoT.Device.Lumi.SubDevices
         {
         }
 
-        public override string ModelName { get; } = "generic.unknown";
+        public override string Model { get; } = "generic.unknown";
     }
 }

@@ -1,7 +1,11 @@
 using System.Json;
+using IoT.Device.Metadata;
 
 namespace IoT.Device.Lumi.SubDevices
 {
+    [ModelID("JTYJ-GD-01LM/BW")]
+    [PowerSource(PowerSource.CR123A)]
+    [Connectivity(Connectivity.ZigBee)]
     public sealed class HonneywellFireSmokeSensor : LumiSubDevice
     {
         private bool alarm;
@@ -10,7 +14,7 @@ namespace IoT.Device.Lumi.SubDevices
         {
         }
 
-        public override string ModelName { get; } = "sensor_smoke.v1";
+        public override string Model { get; } = "sensor_smoke.v1";
 
         public bool Alarm
         {

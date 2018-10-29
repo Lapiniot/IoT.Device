@@ -6,12 +6,18 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using IoT.Device.Lumi.SubDevices;
+using IoT.Device.Metadata;
 using IoT.Protocol.Lumi;
 using static System.TimeSpan;
+using static IoT.Device.Metadata.PowerSource;
+using static IoT.Device.Metadata.Connectivity;
 using Cache = IoT.Device.Container<IoT.Device.Lumi.ExportSubDeviceAttribute, IoT.Device.Lumi.LumiSubDevice>;
 
 namespace IoT.Device.Lumi
 {
+    [ModelID("DGNWG02LM")]
+    [PowerSource(Plugged)]
+    [Connectivity(WiFi24 | ZigBee)]
     public sealed class LumiGateway : LumiThing, IObserver<JsonObject>
     {
         private readonly Dictionary<string, LumiSubDevice> children;
@@ -45,7 +51,7 @@ namespace IoT.Device.Lumi
             private set => Set(ref illumination, value);
         }
 
-        public override string ModelName { get; } = "gateway";
+        public override string Model { get; } = "gateway";
 
         // Gateway sends heartbeats every 10 seconds.
         // We give extra 2 seconds to the timeout value.

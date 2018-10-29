@@ -1,7 +1,13 @@
-using System;
+using System.Json;
+using IoT.Device.Metadata;
+using static IoT.Device.Metadata.Connectivity;
+using static IoT.Device.Metadata.PowerSource;
 
 namespace IoT.Device.Lumi.SubDevices
 {
+    [ModelID("RTCGQ11LM")]
+    [PowerSource(CR2450)]
+    [Connectivity(ZigBee)]
     public sealed class AqaraMotionSensor : LumiMotionSensor
     {
         private int lux;
@@ -10,7 +16,7 @@ namespace IoT.Device.Lumi.SubDevices
         {
         }
 
-        public override string ModelName { get; } = "sensor_motion.aq2";
+        public override string Model { get; } = "sensor_motion.aq2";
 
         public int Lux
         {

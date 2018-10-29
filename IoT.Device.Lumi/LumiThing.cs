@@ -19,7 +19,7 @@ namespace IoT.Device.Lumi
             (Sid, isOnline) = (sid, true);
         }
 
-        public abstract string ModelName { get; }
+        public abstract string Model { get; }
 
         protected abstract TimeSpan HeartbeatTimeout { get; }
 
