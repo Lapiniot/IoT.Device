@@ -50,9 +50,9 @@ namespace IoT.Device.Lumi
             Task.Delay(HeartbeatTimeout, newCts.Token)
                 .ContinueWith(t => IsOnline = false, OnlyOnRanToCompletion);
 
-            using(var oldTcs = Interlocked.Exchange(ref resetWatchTokenSource, newCts))
+            using(var oldCts = Interlocked.Exchange(ref resetWatchTokenSource, newCts))
             {
-                oldTcs?.Cancel();
+                oldCts?.Cancel();
             }
         }
 
@@ -74,8 +74,13 @@ namespace IoT.Device.Lumi
 
             if(disposing)
             {
-                resetWatchTokenSource?.Cancel();
-                resetWatchTokenSource?.Dispose();
+                var source = resetWatchTokenSource;
+                if(source != null)
+                {
+                    source.Cancel();
+                    source.Dispose();
+                }
+
                 resetWatchTokenSource = null;
             }
         }
