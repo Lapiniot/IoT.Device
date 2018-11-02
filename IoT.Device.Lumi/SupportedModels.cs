@@ -11,3 +11,4 @@ using IoT.Device.Lumi.SubDevices;
 [assembly: ExportSubDevice("sensor_cube.aqgl01", typeof(AqaraCubeController))]
 [assembly: ExportSubDevice("sensor_magnet.aq2", typeof(AqaraDoorWindowSensor))]
 [assembly: ExportSubDevice("sensor_motion.aq2", typeof(AqaraMotionSensor))]
+[assembly: ExportSubDevice("vibration", typeof(AqaraVibrationSensor))]
