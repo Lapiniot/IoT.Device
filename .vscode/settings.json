@@ -4,6 +4,7 @@
         "**/.DS_Store": true,
         "**/.gitignore": true,
         "**/.gitmodules": true,
+        "**/*.user": true,
         "**/.vs": true,
         "**/bin": true,
         "**/obj": true
