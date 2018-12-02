@@ -24,6 +24,8 @@ namespace IoT.Device.Yeelight
 
         public abstract string[] SupportedProperties { get; }
 
+        public abstract T GetFeature<T>() where T : YeelightDeviceCapability;
+
         public async Task<JsonValue> InvokeAsync(JsonObject message, CancellationToken cancellationToken)
         {
             var response = await Endpoint.InvokeAsync(message, cancellationToken).ConfigureAwait(false);

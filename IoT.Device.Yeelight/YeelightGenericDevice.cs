@@ -24,6 +24,10 @@ namespace IoT.Device.Yeelight
         public override string[] SupportedCapabilities => supportedCapabilities ?? Array.Empty<string>();
 
         public override string[] SupportedProperties { get; } = Array.Empty<string>();
+        public override T GetFeature<T>()
+        {
+            throw new NotImplementedException();
+        }
 
         public IDisposable Subscribe(IObserver<JsonObject> observer)
         {

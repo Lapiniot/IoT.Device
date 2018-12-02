@@ -37,6 +37,10 @@ namespace IoT.Device.Yeelight
             "sat", "save_state", "flow_params", "name", "lan_ctrl"
         };
 
+        public override T GetFeature<T>()
+        {
+            return null;
+        }
 
         public IDisposable Subscribe(IObserver<JsonObject> observer)
         {
