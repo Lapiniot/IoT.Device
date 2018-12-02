@@ -12,14 +12,10 @@ namespace IoT.Device.Xiaomi.Umi.Services
         public const string ServiceSchema = "urn:xiaomi-com:service:SystemProperties:1";
 
         public SystemPropertiesService(SoapControlEndpoint endpoint, Uri controlUri) :
-            base(endpoint, controlUri, ServiceSchema)
-        {
-        }
+            base(endpoint, controlUri, ServiceSchema) {}
 
         public SystemPropertiesService(SoapControlEndpoint endpoint) :
-            base(endpoint, ServiceSchema)
-        {
-        }
+            base(endpoint, ServiceSchema) {}
 
         public async Task<string> GetStringAsync(string variableName, CancellationToken cancellationToken = default)
         {

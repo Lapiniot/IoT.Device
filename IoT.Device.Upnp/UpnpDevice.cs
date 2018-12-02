@@ -25,12 +25,8 @@ namespace IoT.Device.Upnp
             return UpnpDeviceDescription.LoadAsync(DescriptionUri, cancellationToken);
         }
 
-        protected override void OnClose()
-        {
-        }
+        protected override void OnClose() {}
 
-        protected override void OnConnect()
-        {
-        }
+        protected override void OnConnect() {}
     }
 }

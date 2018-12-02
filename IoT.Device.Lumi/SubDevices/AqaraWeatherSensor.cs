@@ -14,9 +14,7 @@ namespace IoT.Device.Lumi.SubDevices
         private decimal pressure;
         private decimal temperature;
 
-        private AqaraWeatherSensor(string sid, int id) : base(sid, id)
-        {
-        }
+        private AqaraWeatherSensor(string sid, int id) : base(sid, id) {}
 
         public override string Model { get; } = "weather.v1";
 

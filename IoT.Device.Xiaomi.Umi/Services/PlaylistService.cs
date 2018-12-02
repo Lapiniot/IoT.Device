@@ -13,14 +13,10 @@ namespace IoT.Device.Xiaomi.Umi.Services
         public const string ServiceSchema = "urn:xiaomi-com:service:Playlist:1";
 
         public PlaylistService(SoapControlEndpoint endpoint, Uri controlUri) :
-            base(endpoint, controlUri, ServiceSchema)
-        {
-        }
+            base(endpoint, controlUri, ServiceSchema) {}
 
         public PlaylistService(SoapControlEndpoint endpoint) :
-            base(endpoint, ServiceSchema)
-        {
-        }
+            base(endpoint, ServiceSchema) {}
 
         public Task<IDictionary<string, string>> CreateAsync(uint instanceId = 0,
             string title = "", string enqueuedUri = null, string enqueuedUriMetaData = null,

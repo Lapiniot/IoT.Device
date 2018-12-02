@@ -17,9 +17,7 @@ namespace IoT.Device.Lumi.SubDevices
         private decimal loadVoltage;
         private decimal powerConsumed;
 
-        private SmartPowerPlug(string sid, int id) : base(sid, id)
-        {
-        }
+        private SmartPowerPlug(string sid, int id) : base(sid, id) {}
 
         public override string Model { get; } = "plug.v1";
 

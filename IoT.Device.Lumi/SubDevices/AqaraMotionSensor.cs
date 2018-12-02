@@ -12,9 +12,7 @@ namespace IoT.Device.Lumi.SubDevices
     {
         private int lux;
 
-        private AqaraMotionSensor(string sid, int id) : base(sid, id)
-        {
-        }
+        private AqaraMotionSensor(string sid, int id) : base(sid, id) {}
 
         public override string Model { get; } = "sensor_motion.aq2";
 

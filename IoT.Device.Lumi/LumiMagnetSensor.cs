@@ -6,9 +6,7 @@ namespace IoT.Device.Lumi
     {
         private int noCloseSeconds;
 
-        protected LumiMagnetSensor(string sid, int id) : base(sid, id)
-        {
-        }
+        protected LumiMagnetSensor(string sid, int id) : base(sid, id) {}
 
         public int NoCloseSeconds
         {

@@ -9,9 +9,7 @@ namespace IoT.Device.Lumi.SubDevices
     [Connectivity(ZigBee)]
     public sealed class AqaraDoorWindowSensor : LumiMagnetSensor
     {
-        private AqaraDoorWindowSensor(string sid, int id) : base(sid, id)
-        {
-        }
+        private AqaraDoorWindowSensor(string sid, int id) : base(sid, id) {}
 
         public override string Model { get; } = "sensor_magnet.aq2";
     }

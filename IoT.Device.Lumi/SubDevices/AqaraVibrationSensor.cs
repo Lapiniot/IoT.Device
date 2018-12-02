@@ -14,9 +14,7 @@ namespace IoT.Device.Lumi.SubDevices
         private string coordinates;
         private int finalTiltAngle;
 
-        private AqaraVibrationSensor(string sid, int id) : base(sid, id)
-        {
-        }
+        private AqaraVibrationSensor(string sid, int id) : base(sid, id) {}
 
         public override string Model => "vibration";
 

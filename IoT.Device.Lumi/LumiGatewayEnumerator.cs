@@ -7,9 +7,7 @@ namespace IoT.Device.Lumi
 {
     public class LumiGatewayEnumerator : ConvertingEnumerator<(IPAddress Address, ushort Port, string Sid), LumiGateway>
     {
-        public LumiGatewayEnumerator() : base(new LumiEnumerator())
-        {
-        }
+        public LumiGatewayEnumerator() : base(new LumiEnumerator()) {}
 
         #region Overrides of ConvertingEnumerator<(IPAddress Address, ushort Port, string Sid),LumiGateway>
 

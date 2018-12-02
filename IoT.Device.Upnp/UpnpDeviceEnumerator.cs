@@ -6,9 +6,8 @@ namespace IoT.Device.Upnp
 {
     public class UpnpDeviceEnumerator : ConvertingEnumerator<SsdpReply, UpnpDevice>
     {
-        public UpnpDeviceEnumerator(string searchTarget = "ssdp:all") : base(new SsdpEnumerator(searchTarget: searchTarget))
-        {
-        }
+        public UpnpDeviceEnumerator(string searchTarget = "ssdp:all") :
+            base(new SsdpEnumerator(searchTarget: searchTarget)) {}
 
         public override UpnpDevice Convert(SsdpReply reply)
         {

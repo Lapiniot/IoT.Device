@@ -10,9 +10,7 @@ namespace IoT.Device.Lumi.SubDevices
     {
         private bool alarm;
 
-        private HonneywellFireSmokeSensor(string sid, int id) : base(sid, id)
-        {
-        }
+        private HonneywellFireSmokeSensor(string sid, int id) : base(sid, id) {}
 
         public override string Model { get; } = "sensor_smoke.v1";
 

@@ -14,9 +14,7 @@ namespace IoT.Device.Lumi.SubDevices
         private int rotateAngle;
         private int rotateDuration;
 
-        private AqaraCubeController(string sid, int id) : base(sid, id)
-        {
-        }
+        private AqaraCubeController(string sid, int id) : base(sid, id) {}
 
         public override string Model { get; } = "sensor_cube.aqgl01";
 

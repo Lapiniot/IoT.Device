@@ -9,9 +9,7 @@ namespace IoT.Device.Lumi.SubDevices
     [Connectivity(ZigBee)]
     public sealed class AqaraWaterLeakSensor : LumiSubDeviceWithStatus
     {
-        private AqaraWaterLeakSensor(string sid, int id) : base(sid, id)
-        {
-        }
+        private AqaraWaterLeakSensor(string sid, int id) : base(sid, id) {}
 
         public override string Model { get; } = "sensor_wleak.aq1";
     }

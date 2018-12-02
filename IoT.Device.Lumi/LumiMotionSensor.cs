@@ -7,9 +7,7 @@ namespace IoT.Device.Lumi
         private int noMotionSeconds;
 
         protected LumiMotionSensor(string sid, int id) :
-            base(sid, id, "nomotion")
-        {
-        }
+            base(sid, id, "nomotion") {}
 
         public int NoMotionSeconds
         {
