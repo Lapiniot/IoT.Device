@@ -11,7 +11,7 @@ namespace IoT.Device.Lumi
 
         #region Overrides of ConvertingEnumerator<(IPAddress Address, ushort Port, string Sid),LumiGateway>
 
-        public override LumiGateway Convert((IPAddress Address, ushort Port, string Sid) thing)
+        protected override LumiGateway Convert((IPAddress Address, ushort Port, string Sid) thing)
         {
             if(thing.Address == null || thing.Sid == string.Empty)
             {

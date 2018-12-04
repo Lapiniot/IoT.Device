@@ -10,7 +10,7 @@ namespace IoT.Device.Xiaomi.Umi
 
         #region Overrides of ConvertingEnumerator<SsdpReply,UmiSpeakerDevice>
 
-        public override UmiSpeakerDevice Convert(SsdpReply thing)
+        protected override UmiSpeakerDevice Convert(SsdpReply thing)
         {
             return new UmiSpeakerDevice(new Uri(thing.Location), thing.UniqueServiceName);
         }

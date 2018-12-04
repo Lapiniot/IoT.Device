@@ -12,7 +12,7 @@ namespace IoT.Device.Yeelight
     {
         public YeelightDeviceEnumerator() : base(new YeelightEnumerator()) { }
 
-        public override YeelightDevice Convert(SsdpReply reply)
+        protected override YeelightDevice Convert(SsdpReply reply)
         {
             if (reply.TryGetValue("Location", out var location) &&
                reply.TryGetValue("id", out var value) &&
