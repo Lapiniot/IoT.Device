@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace IoT.Device.Yeelight.Features
 {
-    public class YeeChangePowerState : YeelightDeviceCapability
+    public sealed class YeeChangePowerState : YeelightDeviceFeature
     {
         public YeeChangePowerState(YeelightDevice device) : base(device) { }
 

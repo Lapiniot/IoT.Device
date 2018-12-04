@@ -2,7 +2,7 @@
 
 namespace IoT.Device.Yeelight.Features
 {
-    public class YeeCronScheduler : YeelightDeviceCapability
+    public class YeeCronScheduler : YeelightDeviceFeature
     {
         public YeeCronScheduler(YeelightDevice device) : base(device) { }
 

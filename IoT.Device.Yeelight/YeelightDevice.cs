@@ -7,7 +7,7 @@ using IoT.Protocol.Interfaces;
 
 namespace IoT.Device.Yeelight
 {
-    public abstract class YeelightDevice : ConnectedObject
+    public abstract class YeelightDevice : AsyncConnectedObject
     {
         protected JsonArray EmptyArgs = new JsonArray();
 
@@ -24,7 +24,7 @@ namespace IoT.Device.Yeelight
 
         public abstract string[] SupportedProperties { get; }
 
-        public abstract T GetFeature<T>() where T : YeelightDeviceCapability;
+        public abstract T GetFeature<T>() where T : YeelightDeviceFeature;
 
         public async Task<JsonValue> InvokeAsync(JsonObject message, CancellationToken cancellationToken)
         {
@@ -67,14 +67,14 @@ namespace IoT.Device.Yeelight
             return Endpoint.ToString();
         }
 
-        protected override void OnConnect()
+        protected override Task OnConnectAsync(CancellationToken cancellationToken)
         {
-            Endpoint.Connect();
+            return Endpoint.ConnectAsync(cancellationToken);
         }
 
-        protected override void OnClose()
+        protected override Task OnDisconnectAsync()
         {
-            Endpoint.Close();
+            return Endpoint.DisconnectAsync();
         }
     }
 }

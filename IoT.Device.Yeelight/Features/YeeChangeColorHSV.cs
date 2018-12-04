@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace IoT.Device.Yeelight.Features
 {
-    public class YeeChangeColorHSV : YeelightDeviceCapability
+    public sealed class YeeChangeColorHSV : YeelightDeviceFeature
     {
         public YeeChangeColorHSV(YeelightDevice device) : base(device) { }
 

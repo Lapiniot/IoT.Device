@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Converters;
+using System.Net;
 using IoT.Protocol;
 using IoT.Protocol.Upnp;
 using IoT.Protocol.Yeelight;
@@ -17,7 +18,9 @@ namespace IoT.Device.Yeelight
                reply.TryGetValue("id", out var value) &&
                HexConverter.TryParse(value, out uint deviceId))
             {
-                var endpoint = new YeelightControlEndpoint(deviceId, new Uri(location));
+                Uri uri = new Uri(location);
+
+                var endpoint = new YeelightControlEndpoint(deviceId, new IPEndPoint(IPAddress.Parse(uri.Host), uri.Port));
 
                 var capabilities = reply["support"].Split(' ', ',');
 

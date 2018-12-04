@@ -64,17 +64,5 @@ namespace IoT.Device.Xiaomi.Umi
         public ConnectionManagerService ConnectionManager => connectionManagerLazy.Value;
 
         public RenderingControlService RenderingControl => renderingControlLazy.Value;
-
-        protected override void OnConnect()
-        {
-            base.OnConnect();
-            Endpoint.Connect();
-        }
-
-        protected override void OnClose()
-        {
-            base.OnClose();
-            Endpoint.Close();
-        }
     }
 }

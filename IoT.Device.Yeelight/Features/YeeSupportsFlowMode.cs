@@ -2,7 +2,7 @@
 
 namespace IoT.Device.Yeelight.Features
 {
-    public class YeeSupportsFlowMode : YeelightDeviceCapability
+    public sealed class YeeSupportsFlowMode : YeelightDeviceFeature
     {
         public YeeSupportsFlowMode(YeelightDevice device) : base(device) { }
 

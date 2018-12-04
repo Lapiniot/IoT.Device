@@ -10,7 +10,7 @@ using static System.Threading.Tasks.TaskContinuationOptions;
 
 namespace IoT.Device.Lumi
 {
-    public abstract class LumiThing : ConnectedObject, INotifyPropertyChanged, IProvideOnlineInfo
+    public abstract class LumiThing : INotifyPropertyChanged, IProvideOnlineInfo, IDisposable
     {
         private bool isOnline;
         private CancellationTokenSource resetWatchTokenSource;
@@ -25,6 +25,12 @@ namespace IoT.Device.Lumi
         protected abstract TimeSpan HeartbeatTimeout { get; }
 
         public string Sid { get; }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
         public bool IsOnline
         {
@@ -56,22 +62,8 @@ namespace IoT.Device.Lumi
             }
         }
 
-        protected override void OnConnect()
+        protected virtual void Dispose(bool disposing)
         {
-            // Empty by design
-        }
-
-        protected override void OnClose()
-        {
-            // Empty by design
-        }
-
-        #region IDisposable Support
-
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
-
             if(disposing)
             {
                 var source = resetWatchTokenSource;
@@ -84,8 +76,6 @@ namespace IoT.Device.Lumi
                 resetWatchTokenSource = null;
             }
         }
-
-        #endregion
 
         #region INotifyPropertyChanged Support
 

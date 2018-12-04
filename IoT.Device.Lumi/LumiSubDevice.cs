@@ -19,8 +19,7 @@ namespace IoT.Device.Lumi
         // once per hour to save battery. We give extra 5 seconds
         // after one hour of absent heartbeat before switching
         // to offline state.
-        protected override TimeSpan HeartbeatTimeout { get; } =
-            FromHours(1) + FromSeconds(5);
+        protected override TimeSpan HeartbeatTimeout { get; } = FromHours(1) + FromSeconds(5);
 
         public decimal Voltage
         {

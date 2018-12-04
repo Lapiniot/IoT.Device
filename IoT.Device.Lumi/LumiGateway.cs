@@ -18,7 +18,7 @@ namespace IoT.Device.Lumi
     [ModelID("DGNWG02LM")]
     [PowerSource(Plugged)]
     [Connectivity(WiFi24 | ZigBee)]
-    public sealed class LumiGateway : LumiThing, IObserver<JsonObject>
+    public sealed class LumiGateway : LumiThing, IAsyncConnectedObject, IObserver<JsonObject>
     {
         private readonly Dictionary<string, LumiSubDevice> children;
         private readonly LumiControlEndpoint client;
@@ -57,6 +57,53 @@ namespace IoT.Device.Lumi
         // We give extra 2 seconds to the timeout value.
         protected override TimeSpan HeartbeatTimeout { get; } =
             FromSeconds(10) + FromSeconds(2);
+
+        public bool IsConnected { get; private set; }
+
+        public async Task ConnectAsync(CancellationToken cancellationToken = default)
+        {
+            if(!IsConnected)
+            {
+                await semaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
+
+                try
+                {
+                    if(!IsConnected)
+                    {
+                        await client.ConnectAsync(cancellationToken).ConfigureAwait(false);
+                        await listener.ConnectAsync(cancellationToken).ConfigureAwait(false);
+                        IsConnected = true;
+                    }
+                }
+                finally
+                {
+                    semaphore.Release();
+                }
+            }
+        }
+
+        public async Task DisconnectAsync()
+        {
+            if(IsConnected)
+            {
+                await semaphore.WaitAsync().ConfigureAwait(false);
+
+                try
+                {
+                    if(IsConnected)
+                    {
+                        await client.DisconnectAsync().ConfigureAwait(false);
+                        await listener.DisconnectAsync().ConfigureAwait(false);
+                    }
+                }
+                finally
+                {
+                    IsConnected = false;
+
+                    semaphore.Release();
+                }
+            }
+        }
 
         void IObserver<JsonObject>.OnCompleted()
         {
@@ -171,28 +218,14 @@ namespace IoT.Device.Lumi
 
         #region Overrides of LumiThing
 
-        protected override void OnConnect()
-        {
-            base.OnConnect();
-
-            client.Connect();
-            listener.Connect();
-        }
-
-        protected override void OnClose()
-        {
-            base.OnClose();
-
-            client.Close();
-            listener.Close();
-        }
-
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
 
             if(disposing)
             {
+                client.Dispose();
+                listener.Dispose();
                 semaphore?.Dispose();
 
                 subscription.Dispose();

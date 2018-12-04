@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace IoT.Device.Yeelight.Features
 {
-    public class YeeChangeBrightness : YeelightDeviceCapability
+    public class YeeChangeBrightness : YeelightDeviceFeature
     {
         public YeeChangeBrightness(YeelightDevice device) : base(device) { }
 
@@ -13,12 +13,12 @@ namespace IoT.Device.Yeelight.Features
 
         public override string[] SupportedProperties => throw new NotImplementedException();
 
-        public Task<uint> GetBrightnessAsync(CancellationToken cancellationToken = default)
+        public virtual Task<uint> GetBrightnessAsync(CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }
 
-        public Task<JsonValue> SetBrightnessAsync(uint brightness, CancellationToken cancellationToken = default)
+        public virtual Task<JsonValue> SetBrightnessAsync(uint brightness, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }

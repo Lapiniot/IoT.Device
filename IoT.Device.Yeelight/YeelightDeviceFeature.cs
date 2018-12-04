@@ -1,10 +1,10 @@
 ﻿namespace IoT.Device.Yeelight
 {
-    public abstract class YeelightDeviceCapability
+    public abstract class YeelightDeviceFeature
     {
         protected YeelightDevice Device;
 
-        protected YeelightDeviceCapability(YeelightDevice device)
+        protected YeelightDeviceFeature(YeelightDevice device)
         {
             Device = device;
         }

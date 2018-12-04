@@ -2,7 +2,7 @@
 
 namespace IoT.Device.Yeelight.Features
 {
-    public class YeeChangeColorMode : YeelightDeviceCapability
+    public class YeeChangeColorMode : YeelightDeviceFeature
     {
         public YeeChangeColorMode(YeelightDevice device) : base(device) { }
 
