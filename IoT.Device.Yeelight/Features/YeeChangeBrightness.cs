@@ -8,27 +8,36 @@ namespace IoT.Device.Yeelight.Features
     public class YeeChangeBrightness : YeelightDeviceFeature
     {
         public new static readonly Type Type = typeof(YeeChangeBrightness);
-        public YeeChangeBrightness(YeelightDevice device) : base(device) { }
 
-        public override string[] SupportedMethods => new[] { "set_bright" };
+        private readonly string propBright;
+        private readonly string propSetBright;
 
-        public override string[] SupportedProperties => new[] { "bright" };
+        public YeeChangeBrightness(YeelightDevice device) : this(device, "bright", "set_bright") { }
 
-
-        public virtual async Task<uint> GetBrightnessAsync(CancellationToken cancellationToken = default)
+        protected YeeChangeBrightness(YeelightDevice device, string propGet, string propSet) : base(device)
         {
-            return (await Device.GetPropertiesAsync(cancellationToken, "bright").ConfigureAwait(false))[0];
+            propBright = propGet;
+            propSetBright = propSet;
         }
 
-        public virtual Task<JsonValue> SetBrightnessAsync(uint brightness, CancellationToken cancellationToken = default)
+        public override string[] SupportedMethods => new[] { propSetBright };
+
+        public override string[] SupportedProperties => new[] { propBright };
+
+        public async Task<uint> GetBrightnessAsync(CancellationToken cancellationToken = default)
         {
-            return Device.InvokeAsync("set_bright", new JsonArray(brightness), cancellationToken);
+            return (await Device.GetPropertiesAsync(cancellationToken, propBright).ConfigureAwait(false))[0];
         }
 
-        public virtual Task<JsonValue> SetBrightnessAsync(uint brightness, Effect effect = Effect.Smooth,
+        public Task<JsonValue> SetBrightnessAsync(uint brightness, CancellationToken cancellationToken = default)
+        {
+            return SetBrightnessAsync(brightness, Effect.Sudden, 0, cancellationToken);
+        }
+
+        public Task<JsonValue> SetBrightnessAsync(uint brightness, Effect effect = Effect.Smooth,
             int durationMilliseconds = 500, CancellationToken cancellationToken = default)
         {
-            return Device.InvokeAsync("set_bright", new JsonArray { brightness, effect.ToJsonValue(), durationMilliseconds }, cancellationToken);
+            return Device.InvokeAsync(propSetBright, new JsonArray { brightness, effect.ToJsonValue(), durationMilliseconds }, cancellationToken);
         }
     }
 }

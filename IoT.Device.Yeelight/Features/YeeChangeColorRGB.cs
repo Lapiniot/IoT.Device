@@ -5,19 +5,28 @@ using System.Threading.Tasks;
 
 namespace IoT.Device.Yeelight.Features
 {
-    public sealed class YeeChangeColorRGB : YeelightDeviceFeature
+    public class YeeChangeColorRGB : YeelightDeviceFeature
     {
         public new static readonly Type Type = typeof(YeeChangeColorRGB);
 
-        public YeeChangeColorRGB(YeelightDevice device) : base(device) { }
+        private readonly string propRGB;
+        private readonly string propSetRGB;
 
-        public override string[] SupportedMethods => new[] { "set_rgb" };
+        public YeeChangeColorRGB(YeelightDevice device) : this(device, "rgb", "set_rgb") { }
 
-        public override string[] SupportedProperties => new[] { "rgb" };
+        protected YeeChangeColorRGB(YeelightDevice device, string propGet, string propSet) : base(device)
+        {
+            propRGB = propGet;
+            propSetRGB = propSet;
+        }
+
+        public override string[] SupportedMethods => new[] { propSetRGB };
+
+        public override string[] SupportedProperties => new[] { propRGB };
 
         public async Task<uint> GetColorRGBAsync(CancellationToken cancellationToken = default)
         {
-            return (await Device.GetPropertiesAsync(cancellationToken, "rgb").ConfigureAwait(false))[0];
+            return (await Device.GetPropertiesAsync(cancellationToken, propRGB).ConfigureAwait(false))[0];
         }
 
         public Task<JsonValue> SetColorRGBAsync(uint rgb, CancellationToken cancellationToken = default)
@@ -28,7 +37,7 @@ namespace IoT.Device.Yeelight.Features
         public Task<JsonValue> SetColorRgbAsync(uint rgb, Effect effect = Effect.Smooth,
             int durationMilliseconds = 500, CancellationToken cancellationToken = default)
         {
-            return Device.InvokeAsync("set_rgb", new JsonArray { rgb, effect.ToJsonValue(), durationMilliseconds }, cancellationToken);
+            return Device.InvokeAsync(propSetRGB, new JsonArray { rgb, effect.ToJsonValue(), durationMilliseconds }, cancellationToken);
         }
     }
 }

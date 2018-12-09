@@ -1,5 +1,4 @@
 using System;
-using System.Json;
 using IoT.Protocol.Yeelight;
 
 namespace IoT.Device.Yeelight
