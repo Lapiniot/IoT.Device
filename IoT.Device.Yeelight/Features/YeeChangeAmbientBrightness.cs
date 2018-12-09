@@ -15,12 +15,17 @@ namespace IoT.Device.Yeelight.Features
 
         public Task<uint> GetBrightnessAsync(CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            return base.GetBrightnessAsync(cancellationToken);
         }
 
         public Task<JsonValue> SetBrightnessAsync(uint brightness, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            return base.SetBrightnessAsync(brightness, cancellationToken);
+        }
+
+        public override Task<JsonValue> SetBrightnessAsync(uint brightness, Effect effect = Effect.Smooth, int durationMilliseconds = 500, CancellationToken cancellationToken = default)
+        {
+            return base.SetBrightnessAsync(brightness, effect, durationMilliseconds, cancellationToken);
         }
     }
 }

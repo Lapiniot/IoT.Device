@@ -4,14 +4,12 @@ using IoT.Protocol.Yeelight;
 
 namespace IoT.Device.Yeelight
 {
-    public sealed class YeelightGenericDevice : YeelightDevice, IObservable<JsonObject>
+    public sealed class YeelightGenericDevice : YeelightDevice
     {
-        private readonly IObservable<JsonObject> observable;
         private readonly string[] supportedCapabilities;
 
         public YeelightGenericDevice(YeelightControlEndpoint endpoint) : base(endpoint)
         {
-            observable = endpoint;
         }
 
         public YeelightGenericDevice(YeelightControlEndpoint endpoint, string[] capabilities) : this(endpoint)
@@ -24,14 +22,10 @@ namespace IoT.Device.Yeelight
         public override string[] SupportedCapabilities => supportedCapabilities ?? Array.Empty<string>();
 
         public override string[] SupportedProperties { get; } = Array.Empty<string>();
+
         public override T GetFeature<T>()
         {
-            throw new NotImplementedException();
-        }
-
-        public IDisposable Subscribe(IObserver<JsonObject> observer)
-        {
-            return observable.Subscribe(observer);
+            return null;
         }
     }
 }

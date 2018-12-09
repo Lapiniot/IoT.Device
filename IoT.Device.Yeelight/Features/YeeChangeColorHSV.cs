@@ -7,25 +7,33 @@ namespace IoT.Device.Yeelight.Features
 {
     public sealed class YeeChangeColorHSV : YeelightDeviceFeature
     {
+        public new static readonly Type Type = typeof(YeeChangeColorHSV);
+
         public YeeChangeColorHSV(YeelightDevice device) : base(device) { }
 
-        public override string[] SupportedMethods => throw new NotImplementedException();
+        public override string[] SupportedMethods => new[] { "set_hsv" };
 
-        public override string[] SupportedProperties => throw new NotImplementedException();
+        public override string[] SupportedProperties => new[] { "hue", "sat" };
 
-        public Task<uint> GetHueAsync(CancellationToken cancellationToken = default)
+        public async Task<uint> GetHueAsync(CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            return (await Device.GetPropertiesAsync(cancellationToken, "hue").ConfigureAwait(false))[0];
         }
 
-        public Task<uint> GetSaturationAsync(CancellationToken cancellationToken = default)
+        public async Task<uint> GetSaturationAsync(CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            return (await Device.GetPropertiesAsync(cancellationToken, "sat").ConfigureAwait(false))[0];
         }
 
         public Task<JsonValue> SetColorHSVAsync(uint hsv, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            return SetColorHsvAsync(hsv, Effect.Sudden, 0, cancellationToken);
+        }
+
+        public Task<JsonValue> SetColorHsvAsync(uint hsv, Effect effect = Effect.Smooth,
+            int durationMilliseconds = 500, CancellationToken cancellationToken = default)
+        {
+            return Device.InvokeAsync("set_hsv", new JsonArray { hsv, effect.ToJsonValue(), durationMilliseconds }, cancellationToken);
         }
     }
 }

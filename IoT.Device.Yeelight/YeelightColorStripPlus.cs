@@ -1,6 +1,5 @@
-﻿using System;
-using System.Json;
 using IoT.Device.Yeelight;
+using IoT.Device.Yeelight.Features;
 using IoT.Protocol.Yeelight;
 using YeelightColorStripPlus = IoT.Device.Yeelight.YeelightColorStripPlus;
 
@@ -8,19 +7,13 @@ using YeelightColorStripPlus = IoT.Device.Yeelight.YeelightColorStripPlus;
 
 namespace IoT.Device.Yeelight
 {
-    public sealed class YeelightColorStripPlus : YeelightColorLamp, IObservable<JsonObject>
+    public class YeelightColorStripPlus : YeelightColorLamp
     {
-        private readonly YeelightControlEndpoint observable;
-        private readonly string[] supportedCapabilities;
+        private YeeChangeBrightness cbFeature;
+        private YeeChangePowerState cpsFeature;
 
         public YeelightColorStripPlus(YeelightControlEndpoint endpoint) : base(endpoint)
         {
-            observable = endpoint;
-        }
-
-        public YeelightColorStripPlus(YeelightControlEndpoint endpoint, string[] capabilities) : this(endpoint)
-        {
-            supportedCapabilities = capabilities;
         }
 
         public override string ModelName { get; } = "yeelink.light.strip2";
@@ -28,8 +21,7 @@ namespace IoT.Device.Yeelight
         public override string[] SupportedCapabilities => new[]
         {
             "get_prop", "set_ps", "set_power", "set_bright", "set_ct_abx", "set_rgb",
-            "start_cf", "set_scene",
-            "cron_get", "cron_add", "cron_del", "set_name"
+            "start_cf", "set_scene", "cron_get", "cron_add", "cron_del", "set_name"
         };
 
         public override string[] SupportedProperties => new[]
@@ -41,12 +33,19 @@ namespace IoT.Device.Yeelight
 
         public override T GetFeature<T>()
         {
-            return null;
-        }
+            var type = typeof(T);
 
-        public IDisposable Subscribe(IObserver<JsonObject> observer)
-        {
-            return observable.Subscribe(observer);
+            if (type == YeeChangePowerState.Type)
+            {
+                return (cpsFeature ?? (cpsFeature = new YeeChangePowerState(this))) as T;
+            }
+
+            if (type == YeeChangeBrightness.Type)
+            {
+                return (cbFeature ?? (cbFeature = new YeeChangeBrightness(this))) as T;
+            }
+
+            return null;
         }
     }
 }
