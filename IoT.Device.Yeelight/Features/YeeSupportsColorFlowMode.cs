@@ -10,20 +10,36 @@ namespace IoT.Device.Yeelight.Features
     {
         public static Type Type = typeof(YeeSupportsColorFlowMode);
 
-        public YeeSupportsColorFlowMode(YeelightDevice device) : base(device) { }
+        private readonly string propFlowing;
+        private readonly string propFlowParams;
+        private readonly string startSet;
+        private readonly string stopSet;
 
-        public override string[] SupportedMethods => new[] { "start_cf", "stop_cf" };
+        protected YeeSupportsColorFlowMode(YeelightDevice device, string startName, string stopName,
+            string flowingName, string flowParamsName) : base(device)
+        {
+            startSet = startName;
+            stopSet = stopName;
+            propFlowing = flowingName;
+            propFlowParams = flowParamsName;
+        }
 
-        public override string[] SupportedProperties => new[] { "flowing", "flow_params" };
+        public YeeSupportsColorFlowMode(YeelightDevice device) :
+            this(device, "start_cf", "stop_cf", "flowing", "flow_params")
+        { }
+
+        public override string[] SupportedMethods => new[] { startSet, stopSet };
+
+        public override string[] SupportedProperties => new[] { propFlowing, propFlowParams };
 
         public async Task<SwitchState> GetFlowingStateAsync(CancellationToken cancellationToken = default)
         {
-            return (SwitchState)(int)(await Device.GetPropertiesAsync(cancellationToken, "flowing").ConfigureAwait(false))[0];
+            return (SwitchState)(int)(await Device.GetPropertiesAsync(cancellationToken, propFlowing).ConfigureAwait(false))[0];
         }
 
         public async Task<JsonValue> GetFlowingParamsAsync(CancellationToken cancellationToken = default)
         {
-            return (await Device.GetPropertiesAsync(cancellationToken, "flow_params").ConfigureAwait(false))[0];
+            return (await Device.GetPropertiesAsync(cancellationToken, propFlowParams).ConfigureAwait(false))[0];
         }
 
         public Task<JsonValue> StartColorFlowAsync(uint count = 0, PostFlowAction mode = PostFlowAction.RestoreState,
@@ -52,12 +68,12 @@ namespace IoT.Device.Yeelight.Features
         public Task<JsonValue> StartColorFlowAsync(uint count = 0, PostFlowAction mode = PostFlowAction.RestoreState,
             string expression = "", CancellationToken cancellationToken = default)
         {
-            return Device.InvokeAsync("start_cf", new JsonArray(count, (int)mode, expression), cancellationToken);
+            return Device.InvokeAsync(startSet, new JsonArray(count, (int)mode, expression), cancellationToken);
         }
 
         public Task<JsonValue> StopColorFlowAsync(CancellationToken cancellationToken = default)
         {
-            return Device.InvokeAsync("stop_cf", EmptyArgs, cancellationToken);
+            return Device.InvokeAsync(stopSet, EmptyArgs, cancellationToken);
         }
     }
 }

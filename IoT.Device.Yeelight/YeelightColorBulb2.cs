@@ -11,12 +11,12 @@ namespace IoT.Device.Yeelight
     {
         private YeeChangeBrightness cbFeature;
         private YeeChangeColorHSV cchsvFeature;
-        private YeeChangeColorMode ccmFeature;
+        private YeeProvideColorMode ccmFeature;
         private YeeChangeColorRGB ccrgbFeature;
         private YeeChangeColorTemperature cctFeature;
         private YeeChangeDeviceName cdnFeature;
         private YeeChangePowerState cpsFeature;
-        private YeeCronScheduler csFeature;
+        private YeeSupportsCronScheduler csFeature;
         private YeeSupportsColorFlowMode scfmFeature;
         private YeeSupportsSaveState sssFeature;
 
@@ -65,14 +65,14 @@ namespace IoT.Device.Yeelight
                 return (cchsvFeature ?? (cchsvFeature = new YeeChangeColorHSV(this))) as T;
             }
 
-            if (type == YeeChangeColorMode.Type)
+            if (type == YeeProvideColorMode.Type)
             {
-                return (ccmFeature ?? (ccmFeature = new YeeChangeColorMode(this))) as T;
+                return (ccmFeature ?? (ccmFeature = new YeeProvideColorMode(this))) as T;
             }
 
-            if (type == YeeCronScheduler.Type)
+            if (type == YeeSupportsCronScheduler.Type)
             {
-                return (csFeature ?? (csFeature = new YeeCronScheduler(this))) as T;
+                return (csFeature ?? (csFeature = new YeeSupportsCronScheduler(this))) as T;
             }
 
             if (type == YeeSupportsColorFlowMode.Type)

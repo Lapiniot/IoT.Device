@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 
 namespace IoT.Device.Yeelight.Features
 {
-    public class YeeCronScheduler : YeelightDeviceFeature
+    public class YeeSupportsCronScheduler : YeelightDeviceFeature
     {
-        public static Type Type = typeof(YeeCronScheduler);
+        public static Type Type = typeof(YeeSupportsCronScheduler);
 
-        public YeeCronScheduler(YeelightDevice device) : base(device) { }
+        public YeeSupportsCronScheduler(YeelightDevice device) : base(device) { }
 
         public override string[] SupportedMethods => new[] { "cron_get", "cron_add", "cron_del" };
 
@@ -28,6 +28,11 @@ namespace IoT.Device.Yeelight.Features
         public Task<JsonValue> CronDelAsync(uint type, CancellationToken cancellationToken = default)
         {
             return Device.InvokeAsync("cron_del", new JsonArray { type }, cancellationToken);
+        }
+
+        public async Task<uint> GetDelayOffAsync(CancellationToken cancellationToken = default)
+        {
+            return (await Device.GetPropertiesAsync(cancellationToken, "delayoff").ConfigureAwait(false))[0];
         }
     }
 }

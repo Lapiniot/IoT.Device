@@ -47,4 +47,17 @@ namespace IoT.Device.Yeelight
         KeepState = 1,
         PowerOff = 2
     }
+
+    public enum AdjustDirection
+    {
+        Increase,
+        Decrease,
+        Circle
+    }
+
+    public enum LightMode
+    {
+        Daylight = 0,
+        Moonlight = 1
+    }
 }
