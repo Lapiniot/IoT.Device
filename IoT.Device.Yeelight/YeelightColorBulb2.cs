@@ -9,6 +9,10 @@ namespace IoT.Device.Yeelight
 {
     public class YeelightColorBulb2 : YeelightColorLamp
     {
+        private YeeAdjustBrightness abFeature;
+        private YeeAdjustColor acFeature;
+        private YeeAdjustColorTemperature actFeature;
+        private YeeAdjustProperty apFeature;
         private YeeChangeBrightness cbFeature;
         private YeeChangeColorHSV cchsvFeature;
         private YeeProvideColorMode ccmFeature;
@@ -17,7 +21,9 @@ namespace IoT.Device.Yeelight
         private YeeChangeDeviceName cdnFeature;
         private YeeChangePowerState cpsFeature;
         private YeeSupportsCronScheduler csFeature;
+        private YeeProvideLightMode plmFeature;
         private YeeSupportsColorFlowMode scfmFeature;
+        private YeeSupportsScenes sscFeature;
         private YeeSupportsSaveState sssFeature;
 
         protected YeelightColorBulb2(IConnectedEndpoint<JsonObject, JsonValue> endpoint) : base(endpoint) { }
@@ -78,6 +84,36 @@ namespace IoT.Device.Yeelight
             if (type == YeeSupportsColorFlowMode.Type)
             {
                 return (scfmFeature ?? (scfmFeature = new YeeSupportsColorFlowMode(this))) as T;
+            }
+
+            if (type == YeeSupportsScenes.Type)
+            {
+                return (sscFeature ?? (sscFeature = new YeeSupportsScenes(this))) as T;
+            }
+
+            if (type == YeeAdjustBrightness.Type)
+            {
+                return (abFeature ?? (abFeature = new YeeAdjustBrightness(this))) as T;
+            }
+
+            if (type == YeeAdjustColorTemperature.Type)
+            {
+                return (actFeature ?? (actFeature = new YeeAdjustColorTemperature(this))) as T;
+            }
+
+            if (type == YeeAdjustColor.Type)
+            {
+                return (acFeature ?? (acFeature = new YeeAdjustColor(this))) as T;
+            }
+
+            if (type == YeeAdjustProperty.Type)
+            {
+                return (apFeature ?? (apFeature = new YeeAdjustProperty(this))) as T;
+            }
+
+            if (type == YeeProvideLightMode.Type)
+            {
+                return (plmFeature ?? (plmFeature = new YeeProvideLightMode(this))) as T;
             }
 
             if (type == YeeChangeDeviceName.Type)
