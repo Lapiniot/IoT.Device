@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Net;
 using IoT.Protocol;
 using IoT.Protocol.Lumi;
@@ -7,7 +8,7 @@ namespace IoT.Device.Lumi
 {
     public class LumiGatewayEnumerator : ConvertingEnumerator<(IPAddress Address, ushort Port, string Sid), LumiGateway>
     {
-        public LumiGatewayEnumerator() : base(new LumiEnumerator()) {}
+        public LumiGatewayEnumerator() : base(new LumiEnumerator(), new LumiDeviceComparer()) {}
 
         #region Overrides of ConvertingEnumerator<(IPAddress Address, ushort Port, string Sid),LumiGateway>
 
@@ -22,5 +23,22 @@ namespace IoT.Device.Lumi
         }
 
         #endregion
+
+        public class LumiDeviceComparer : IEqualityComparer<(IPAddress Address, ushort Port, string Sid)>
+        {
+            #region Implementation of IEqualityComparer<in (IPAddress Address, ushort Port, string Sid)>
+
+            public bool Equals((IPAddress Address, ushort Port, string Sid) x, (IPAddress Address, ushort Port, string Sid) y)
+            {
+                return StringComparer.OrdinalIgnoreCase.Equals(x.Sid, y.Sid);
+            }
+
+            public int GetHashCode((IPAddress Address, ushort Port, string Sid) obj)
+            {
+                return obj.Sid != null ? obj.Sid.GetHashCode() : 0;
+            }
+
+            #endregion
+        }
     }
 }

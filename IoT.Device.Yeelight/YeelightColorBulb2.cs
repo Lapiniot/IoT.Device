@@ -3,7 +3,7 @@ using IoT.Device.Yeelight;
 using IoT.Device.Yeelight.Features;
 using IoT.Protocol.Interfaces;
 
-[assembly: ExportYeelightDevice(0x0531, typeof(YeelightColorBulb2), "yeelink.light.color2")]
+[assembly: ExportYeelightDevice("color", typeof(YeelightColorBulb2))]
 
 namespace IoT.Device.Yeelight
 {
@@ -16,24 +16,25 @@ namespace IoT.Device.Yeelight
         private YeeChangeBrightness cbFeature;
         private YeeChangeColorHSV cchsvFeature;
         private YeeProvideColorMode ccmFeature;
+        private YeeProvideLightMode plmFeature;
         private YeeChangeColorRGB ccrgbFeature;
         private YeeChangeColorTemperature cctFeature;
         private YeeChangeDeviceName cdnFeature;
         private YeeChangePowerState cpsFeature;
         private YeeSupportsCronScheduler csFeature;
-        private YeeProvideLightMode plmFeature;
         private YeeSupportsColorFlowMode scfmFeature;
         private YeeSupportsScenes sscFeature;
         private YeeSupportsSaveState sssFeature;
 
-        protected YeelightColorBulb2(IConnectedEndpoint<JsonObject, JsonValue> endpoint) : base(endpoint) { }
+        public YeelightColorBulb2(IConnectedEndpoint<JsonObject, JsonValue> endpoint) : base(endpoint) { }
 
         public override string ModelName { get; } = "yeelink.light.color2";
 
         public override string[] SupportedCapabilities => new[]
         {
-            "set_power", "set_bright", "set_ct_abx", "set_rgb", "start_cf",
-            "cron_get", "cron_add", "cron_del", "set_name"
+            "get_prop", "set_default", "set_power", "toggle", "set_bright", "start_cf",
+            "stop_cf", "set_scene", "cron_add", "cron_get", "cron_del", "set_ct_abx", "set_rgb",
+            "set_hsv", "set_adjust", "adjust_bright", "adjust_ct", "adjust_color", "set_music", "set_name"
         };
 
         public override string[] SupportedProperties => new[]

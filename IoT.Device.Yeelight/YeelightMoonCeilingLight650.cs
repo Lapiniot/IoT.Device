@@ -1,8 +1,9 @@
-﻿using System;
 using System.Json;
-using System.Net;
+using IoT.Device.Yeelight;
 using IoT.Device.Yeelight.Features;
 using IoT.Protocol.Interfaces;
+
+[assembly: ExportYeelightDevice("ceiling4", typeof(YeelightMoonCeilingLight650))]
 
 namespace IoT.Device.Yeelight
 {
@@ -39,15 +40,27 @@ namespace IoT.Device.Yeelight
         private YeeSupportsScenes sscFeature;
         private YeeSupportsSaveState sssFeature;
 
-        public YeelightMoonCeilingLight650(IConnectedEndpoint<JsonObject, JsonValue> endpoint) : base(endpoint) { }
+        public YeelightMoonCeilingLight650(IConnectedEndpoint<JsonObject, JsonValue> endpoint) : base(endpoint) {}
 
         #region Overrides of YeelightDevice
 
         public override string ModelName => "yeelink.light.ceiling4";
 
-        public override string[] SupportedCapabilities => throw new NotImplementedException();
+        public override string[] SupportedCapabilities => new[]
+        {
+            "get_prop", "set_default", "set_power", "toggle", "set_bright", "set_scene", "cron_add",
+            "cron_get", "cron_del", "start_cf", "stop_cf", "set_ct_abx", "set_name", "set_adjust",
+            "adjust_bright", "adjust_ct", "bg_set_rgb", "bg_set_hsv", "bg_set_ct_abx", "bg_start_cf",
+            "bg_stop_cf", "bg_set_scene", "bg_set_default", "bg_set_power", "bg_set_bright", "bg_set_adjust",
+            "bg_adjust_bright", "bg_adjust_color", "bg_adjust_ct", "bg_toggle", "dev_toggle"
+        };
 
-        public override string[] SupportedProperties => throw new NotImplementedException();
+        public override string[] SupportedProperties => new[]
+        {
+            "power", "color_mode", "bright", "ct", "rgb", "flowing", "pdo_status", "hue", "sat", "save_state",
+            "flow_params", "nl_br", "nighttime", "miband_sleep", "main_power", "bg_proact", "bg_power", "bg_lmode",
+            "bg_bright", "bg_rgb", "bg_hue", "bg_sat", "bg_ct", "init_power_opt", "name", "lan_ctrl"
+        };
 
         public override T GetFeature<T>()
         {

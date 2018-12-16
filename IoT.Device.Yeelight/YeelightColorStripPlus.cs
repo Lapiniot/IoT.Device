@@ -1,10 +1,9 @@
 using System.Json;
-using System.Net;
 using IoT.Device.Yeelight;
 using IoT.Device.Yeelight.Features;
 using IoT.Protocol.Interfaces;
 
-[assembly: ExportYeelightDevice(0x07C3, typeof(YeelightColorStripPlus), "yeelink.light.strip2")]
+[assembly: ExportYeelightDevice("stripe", typeof(YeelightColorStripPlus))]
 
 namespace IoT.Device.Yeelight
 {
@@ -16,13 +15,13 @@ namespace IoT.Device.Yeelight
         private YeeAdjustProperty apFeature;
         private YeeChangeBrightness cbFeature;
         private YeeChangeColorHSV cchsvFeature;
-        private YeeProvideColorMode ccmFeature;
-        private YeeChangeColorRGB ccrgbFeature;
         private YeeChangeColorTemperature cctFeature;
+        private YeeProvideColorMode ccmFeature;
+        private YeeProvideLightMode plmFeature;
+        private YeeChangeColorRGB ccrgbFeature;
         private YeeChangeDeviceName cdnFeature;
         private YeeChangePowerState cpsFeature;
         private YeeSupportsCronScheduler csFeature;
-        private YeeProvideLightMode plmFeature;
         private YeeSupportsColorFlowMode scfmFeature;
         private YeeSupportsScenes sscFeature;
         private YeeSupportsSaveState sssFeature;
@@ -33,15 +32,15 @@ namespace IoT.Device.Yeelight
 
         public override string[] SupportedCapabilities => new[]
         {
-            "get_prop", "set_ps", "set_power", "set_bright", "set_ct_abx", "set_rgb",
-            "start_cf", "set_scene", "cron_get", "cron_add", "cron_del", "set_name"
+            "get_prop", "set_default", "set_power", "toggle", "set_bright", "start_cf",
+            "stop_cf", "set_scene", "cron_add", "cron_get", "cron_del", "set_rgb",
+            "set_hsv", "set_adjust", "adjust_bright", "adjust_color", "set_music", "set_name"
         };
 
         public override string[] SupportedProperties => new[]
         {
             "power", "color_mode", "bright", "ct", "rgb", "flowing", "pdo_status", "hue", "sat",
-            "save_state", "flow_params", "nl_br", "nighttime", "miband_sleep", "init_power_opt",
-            "lan_ctrl"
+            "save_state", "flow_params", "init_power_opt", "name", "lan_ctrl"
         };
 
         public override T GetFeature<T>()

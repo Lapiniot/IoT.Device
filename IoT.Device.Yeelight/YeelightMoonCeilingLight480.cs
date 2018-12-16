@@ -1,8 +1,9 @@
-﻿using System;
 using System.Json;
-using System.Net;
+using IoT.Device.Yeelight;
 using IoT.Device.Yeelight.Features;
 using IoT.Protocol.Interfaces;
+
+[assembly: ExportYeelightDevice("ceiling3", typeof(YeelightMoonCeilingLight480))]
 
 namespace IoT.Device.Yeelight
 {
@@ -21,15 +22,24 @@ namespace IoT.Device.Yeelight
         private YeeSupportsScenes sscFeature;
         private YeeSupportsSaveState sssFeature;
 
-        public YeelightMoonCeilingLight480(IConnectedEndpoint<JsonObject, JsonValue> endpoint) : base(endpoint) { }
+        public YeelightMoonCeilingLight480(IConnectedEndpoint<JsonObject, JsonValue> endpoint) : base(endpoint) {}
 
         #region Overrides of YeelightDevice
 
         public override string ModelName => "yeelink.light.ceiling3";
 
-        public override string[] SupportedCapabilities => throw new NotImplementedException();
+        public override string[] SupportedCapabilities => new[]
+        {
+            "get_prop", "set_default", "set_power", "toggle", "set_bright", "set_scene",
+            "cron_add", "cron_get", "cron_del", "start_cf", "stop_cf", "set_ct_abx",
+            "set_name", "set_adjust", "adjust_bright", "adjust_ct"
+        };
 
-        public override string[] SupportedProperties => throw new NotImplementedException();
+        public override string[] SupportedProperties => new[]
+        {
+            "power", "color_mode", "bright", "ct", "flowing", "pdo_status", "save_state", "flow_params",
+            "nl_br", "nighttime", "miband_sleep", "init_power_opt", "name", "lan_ctrl"
+        };
 
         public override T GetFeature<T>()
         {

@@ -5,15 +5,13 @@ namespace IoT.Device
     [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true)]
     public abstract class ExportDeviceAttributeBase : Attribute
     {
-        protected ExportDeviceAttributeBase(uint deviceType, Type implementation, string modelName)
+        protected ExportDeviceAttributeBase(string model, Type implementation)
         {
-            ModelName = modelName;
-            DeviceType = deviceType;
+            Model = model;
             ImplementationType = implementation ?? throw new ArgumentNullException(nameof(implementation));
         }
 
-        public string ModelName { get; }
-        public uint DeviceType { get; }
+        public string Model { get; }
         public Type ImplementationType { get; }
     }
 }
