@@ -1,9 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  
   <Import Project="../common.props" />
-
-  <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
-  </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\IoT.Device.Upnp\IoT.Device.Upnp.csproj" />
