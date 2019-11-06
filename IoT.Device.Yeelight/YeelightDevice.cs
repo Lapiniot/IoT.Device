@@ -7,7 +7,7 @@ using IoT.Protocol.Interfaces;
 
 namespace IoT.Device.Yeelight
 {
-    public abstract class YeelightDevice : AsyncConnectedObject
+    public abstract class YeelightDevice : ConnectedObject
     {
         protected JsonArray EmptyArgs = new JsonArray();
 

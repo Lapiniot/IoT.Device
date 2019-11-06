@@ -34,7 +34,7 @@ namespace IoT.Device.Yeelight
             }
             catch
             {
-                endpoint.Dispose();
+                var _ = endpoint.DisposeAsync();
                 throw;
             }
         }

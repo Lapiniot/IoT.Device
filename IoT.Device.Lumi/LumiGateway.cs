@@ -18,7 +18,7 @@ namespace IoT.Device.Lumi
     [ModelID("DGNWG02LM")]
     [PowerSource(Plugged)]
     [Connectivity(WiFi24 | ZigBee)]
-    public sealed class LumiGateway : LumiThing, IAsyncConnectedObject, IObserver<JsonObject>
+    public sealed class LumiGateway : LumiThing, IConnectedObject, IObserver<JsonObject>
     {
         private readonly Dictionary<string, LumiSubDevice> children;
         private readonly LumiControlEndpoint client;
@@ -179,7 +179,7 @@ namespace IoT.Device.Lumi
                     {
                         var id = (int)info["short_id"];
                         var deviceModel = info["model"];
-                        device = Cache.CreateInstance((string)deviceModel, sid, id) ?? new GenericSubDevice(sid, id);
+                        device = Cache.CreateInstance(deviceModel, sid, id) ?? new GenericSubDevice(sid, id);
                         device.OnStateChanged(data);
                         children.Add(sid, device);
                     }
@@ -224,8 +224,8 @@ namespace IoT.Device.Lumi
 
             if(disposing)
             {
-                client.Dispose();
-                listener.Dispose();
+                var _ = client.DisposeAsync();
+                listener.DisposeAsync();
                 semaphore?.Dispose();
 
                 subscription.Dispose();
