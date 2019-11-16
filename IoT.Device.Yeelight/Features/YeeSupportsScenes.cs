@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -48,9 +47,9 @@ namespace IoT.Device.Yeelight.Features
         /// {"id":1, "method":"set_scene", "params":["cf", 0, 0, "500,1,255,100,1000,1,16776960,70"]}
         /// {"id":1, "method":"set_scene", "params":["auto_delay_off", 50, 5]
         /// </example>
-        public Task<JsonValue> SetSceneAsync(string cls, uint param1, uint param2, CancellationToken cancellationToken = default)
+        public Task SetSceneAsync(string cls, uint param1, uint param2, CancellationToken cancellationToken = default)
         {
-            return Device.InvokeAsync(method, new JsonArray(cls, param1, param2), cancellationToken);
+            return Device.InvokeAsync(method, new object[] {cls, param1, param2}, cancellationToken);
         }
 
         /// <summary>
@@ -80,10 +79,10 @@ namespace IoT.Device.Yeelight.Features
         /// {"id":1, "method":"set_scene", "params":["cf", 0, 0, "500,1,255,100,1000,1,16776960,70"]}
         /// {"id":1, "method":"set_scene", "params":["auto_delay_off", 50, 5]
         /// </example>
-        public Task<JsonValue> SetSceneAsync(string cls, uint param1, uint param2, uint param3,
+        public Task SetSceneAsync(string cls, uint param1, uint param2, uint param3,
             CancellationToken cancellationToken = default)
         {
-            return Device.InvokeAsync(method, new JsonArray(cls, param1, param2, param3), cancellationToken);
+            return Device.InvokeAsync(method, new object[] {cls, param1, param2, param3}, cancellationToken);
         }
 
         /// <summary>
@@ -113,10 +112,10 @@ namespace IoT.Device.Yeelight.Features
         /// {"id":1, "method":"set_scene", "params":["cf", 0, 0, "500,1,255,100,1000,1,16776960,70"]}
         /// {"id":1, "method":"set_scene", "params":["auto_delay_off", 50, 5]
         /// </example>
-        public Task<JsonValue> SetSceneAsync(string cls, uint param1, uint param2, string param3,
+        public Task SetSceneAsync(string cls, uint param1, uint param2, string param3,
             CancellationToken cancellationToken = default)
         {
-            return Device.InvokeAsync(method, new JsonArray(cls, param1, param2, param3), cancellationToken);
+            return Device.InvokeAsync(method, new object[] {cls, param1, param2, param3}, cancellationToken);
         }
     }
 }

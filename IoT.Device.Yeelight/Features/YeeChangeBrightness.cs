@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -7,7 +6,7 @@ namespace IoT.Device.Yeelight.Features
 {
     public class YeeChangeBrightness : YeelightDeviceFeature
     {
-        public new static readonly Type Type = typeof(YeeChangeBrightness);
+        public static readonly Type Type = typeof(YeeChangeBrightness);
 
         private readonly string propBright;
         private readonly string propSetBright;
@@ -26,18 +25,18 @@ namespace IoT.Device.Yeelight.Features
 
         public async Task<uint> GetBrightnessAsync(CancellationToken cancellationToken = default)
         {
-            return (await Device.GetPropertiesAsync(cancellationToken, propBright).ConfigureAwait(false))[0];
+            return (await Device.GetPropertyAsync(propBright, cancellationToken).ConfigureAwait(false)).GetUInt32();
         }
 
-        public Task<JsonValue> SetBrightnessAsync(uint brightness, CancellationToken cancellationToken = default)
+        public Task SetBrightnessAsync(uint brightness, CancellationToken cancellationToken = default)
         {
             return SetBrightnessAsync(brightness, Effect.Sudden, 0, cancellationToken);
         }
 
-        public Task<JsonValue> SetBrightnessAsync(uint brightness, Effect effect = Effect.Smooth,
+        public Task SetBrightnessAsync(uint brightness, Effect effect = Effect.Smooth,
             int durationMilliseconds = 500, CancellationToken cancellationToken = default)
         {
-            return Device.InvokeAsync(propSetBright, new JsonArray { brightness, effect.ToJsonValue(), durationMilliseconds }, cancellationToken);
+            return Device.InvokeAsync(propSetBright, new object[] { brightness, effect.ToString().ToLowerInvariant(), durationMilliseconds }, cancellationToken);
         }
     }
 }

@@ -1,5 +1,6 @@
-﻿using System.Json;
+﻿using System.Text.Json;
 using IoT.Device.Metadata;
+using static System.Text.Json.JsonValueKind;
 using static IoT.Device.Metadata.Connectivity;
 using static IoT.Device.Metadata.PowerSource;
 
@@ -14,7 +15,7 @@ namespace IoT.Device.Lumi.SubDevices
         private string coordinates;
         private int finalTiltAngle;
 
-        private AqaraVibrationSensor(string sid, int id) : base(sid, id) {}
+        internal AqaraVibrationSensor(string sid, int id) : base(sid, id) {}
 
         public override string Model => "vibration";
 
@@ -36,23 +37,23 @@ namespace IoT.Device.Lumi.SubDevices
             set => Set(ref bedActivity, value);
         }
 
-        protected internal override void OnStateChanged(JsonObject state)
+        protected internal override void OnStateChanged(JsonElement state)
         {
             base.OnStateChanged(state);
 
-            if(state.TryGetValue("final_tilt_angle", out var value))
+            if(state.TryGetProperty("final_tilt_angle", out var value) && value.ValueKind == Number)
             {
-                FinalTiltAngle = value;
+                FinalTiltAngle = value.GetInt32();
             }
 
-            if(state.TryGetValue("coordination", out value))
+            if(state.TryGetProperty("coordination", out value) && value.ValueKind == String)
             {
-                Coordinates = value;
+                Coordinates = value.GetString();
             }
 
-            if(state.TryGetValue("bed_activity", out value))
+            if(state.TryGetProperty("bed_activity", out value) && value.ValueKind == Number)
             {
-                BedActivity = value;
+                BedActivity = value.GetInt32();
             }
         }
     }

@@ -1,22 +1,24 @@
 ﻿using System;
-using System.Json;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using IoT.Protocol.Interfaces;
+using IoT.Protocol.Yeelight;
+using Message = System.Collections.Generic.IDictionary<string, object>;
 
 namespace IoT.Device.Yeelight
 {
-    public abstract class YeelightDevice : ConnectedObject
+    public abstract class YeelightDevice : IConnectedObject, IAsyncDisposable
     {
-        protected JsonArray EmptyArgs = new JsonArray();
+        public Message EmptyArgs { get; } = new Dictionary<string, object>();
 
-        protected YeelightDevice(IConnectedEndpoint<JsonObject, JsonValue> endpoint)
+        protected YeelightDevice(YeelightControlEndpoint endpoint)
         {
             Endpoint = endpoint;
         }
 
-        public IConnectedEndpoint<JsonObject, JsonValue> Endpoint { get; }
+        public YeelightControlEndpoint Endpoint { get; }
 
         public abstract string ModelName { get; }
 
@@ -26,40 +28,37 @@ namespace IoT.Device.Yeelight
 
         public abstract T GetFeature<T>() where T : YeelightDeviceFeature;
 
-        public async Task<JsonValue> InvokeAsync(JsonObject message, CancellationToken cancellationToken)
+        public async Task<JsonElement> InvokeAsync(Message message, CancellationToken cancellationToken)
         {
-            var response = await Endpoint.InvokeAsync(message, cancellationToken).ConfigureAwait(false);
+            var json = await Endpoint.InvokeAsync(message, cancellationToken).ConfigureAwait(false);
 
-            if (response is JsonObject json)
-            {
-                if (json.TryGetValue("result", out var result)) return result;
+            if(json.TryGetProperty("result", out var result)) return result;
 
-                if (json.TryGetValue("error", out var e)) throw new YeelightException(e["code"], e["message"]);
+            if(json.TryGetProperty("error", out var e)) throw new YeelightException(e.GetProperty("code").GetInt32(), e.GetProperty("message").GetString());
 
-                return json;
-            }
-
-            throw new InvalidOperationException("Invalid response received (not a valid JSON object)");
+            return json;
         }
 
-        public Task<JsonValue> InvokeAsync(string method, JsonObject args,
-            CancellationToken cancellationToken)
+        public Task<JsonElement> InvokeAsync(string method, object args, CancellationToken cancellationToken)
         {
-            return InvokeAsync(new JsonObject { { "method", method }, { "params", args } }, cancellationToken);
+            return InvokeAsync(new Dictionary<string, object> { { "method", method }, { "params", args } }, cancellationToken);
         }
 
-        public Task<JsonValue> InvokeAsync(string method, JsonArray args,
-            CancellationToken cancellationToken)
+        public async Task<JsonElement[]> GetPropertiesAsync(string[] properties, CancellationToken cancellationToken = default)
         {
-            return InvokeAsync(new JsonObject { { "method", method }, { "params", args } }, cancellationToken);
+            return (await InvokeAsync("get_prop", properties.Cast<object>().ToArray(), cancellationToken).ConfigureAwait(false)).EnumerateArray().ToArray();
         }
 
-        public async Task<JsonArray> GetPropertiesAsync(CancellationToken cancellationToken = default,
-            params string[] properties)
+        public async Task<T> GetPropertyAsync<T>(string property, CancellationToken cancellationToken = default) where T : struct, Enum
         {
-            return await InvokeAsync("get_prop",
-                new JsonArray(properties.Select(p => (JsonValue)p)),
-                cancellationToken).ConfigureAwait(false) as JsonArray;
+            var element = await InvokeAsync("get_prop", new object[] { property }, cancellationToken).ConfigureAwait(false);
+
+            return Enum.Parse<T>(element[0].GetString(), true);
+        }
+
+        public async Task<JsonElement> GetPropertyAsync(string property, CancellationToken cancellationToken = default)
+        {
+            return (await InvokeAsync("get_prop", new object[] { property }, cancellationToken).ConfigureAwait(false))[0];
         }
 
         public override string ToString()
@@ -67,14 +66,29 @@ namespace IoT.Device.Yeelight
             return Endpoint.ToString();
         }
 
-        protected override Task OnConnectAsync(CancellationToken cancellationToken)
+        #region Implementation of IConnectedObject
+
+        public bool IsConnected => Endpoint.IsConnected;
+
+        public Task ConnectAsync(CancellationToken cancellationToken = default)
         {
             return Endpoint.ConnectAsync(cancellationToken);
         }
 
-        protected override Task OnDisconnectAsync()
+        public Task DisconnectAsync()
         {
             return Endpoint.DisconnectAsync();
         }
+
+        #endregion
+
+        #region Implementation of IAsyncDisposable
+
+        public ValueTask DisposeAsync()
+        {
+            return Endpoint.DisposeAsync();
+        }
+
+        #endregion
     }
 }

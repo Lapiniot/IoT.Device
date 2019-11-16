@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel;
-using System.Json;
 using System.Runtime.CompilerServices;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using IoT.Device.Lumi.Interfaces;
@@ -38,7 +38,7 @@ namespace IoT.Device.Lumi
             private set => Set(ref isOnline, value);
         }
 
-        protected internal virtual void OnHeartbeat(JsonObject state)
+        protected internal virtual void OnHeartbeat(JsonElement state)
         {
             IsOnline = true;
 
@@ -47,7 +47,7 @@ namespace IoT.Device.Lumi
             OnStateChanged(state);
         }
 
-        protected internal abstract void OnStateChanged(JsonObject state);
+        protected internal abstract void OnStateChanged(JsonElement state);
 
         private void ResetOnlineWatch()
         {

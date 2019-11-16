@@ -1,6 +1,7 @@
 using System;
-using System.Json;
+using System.Text.Json;
 using IoT.Device.Lumi.Interfaces;
+using static System.Text.Json.JsonValueKind;
 using static System.TimeSpan;
 
 namespace IoT.Device.Lumi
@@ -27,11 +28,11 @@ namespace IoT.Device.Lumi
             protected set => Set(ref voltage, value);
         }
 
-        protected internal override void OnStateChanged(JsonObject state)
+        protected internal override void OnStateChanged(JsonElement state)
         {
-            if(state.TryGetValue("voltage", out var value))
+            if(state.TryGetProperty("voltage", out var value) && value.ValueKind == Number)
             {
-                Voltage = new decimal(value, 0, 0, false, 3);
+                Voltage = new decimal(value.GetInt32(), 0, 0, false, 3);
             }
         }
 

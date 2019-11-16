@@ -1,5 +1,6 @@
-using System.Json;
+using System.Text.Json;
 using IoT.Device.Metadata;
+using static System.Text.Json.JsonValueKind;
 using static IoT.Device.Metadata.Connectivity;
 using static IoT.Device.Metadata.PowerSource;
 
@@ -12,7 +13,7 @@ namespace IoT.Device.Lumi.SubDevices
     {
         private int lux;
 
-        private AqaraMotionSensor(string sid, int id) : base(sid, id) {}
+        internal AqaraMotionSensor(string sid, int id) : base(sid, id) {}
 
         public override string Model { get; } = "sensor_motion.aq2";
 
@@ -22,13 +23,13 @@ namespace IoT.Device.Lumi.SubDevices
             set => Set(ref lux, value);
         }
 
-        protected internal override void OnStateChanged(JsonObject state)
+        protected internal override void OnStateChanged(JsonElement state)
         {
             base.OnStateChanged(state);
 
-            if(state.TryGetValue("lux", out var value))
+            if(state.TryGetProperty("lux", out var value) && value.ValueKind == Number)
             {
-                Lux = value;
+                Lux = value.GetInt32();
             }
         }
     }

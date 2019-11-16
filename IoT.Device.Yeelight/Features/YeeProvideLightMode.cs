@@ -16,7 +16,7 @@ namespace IoT.Device.Yeelight.Features
 
         public async Task<LightMode> GetModeAsync(CancellationToken cancellationToken = default)
         {
-            return (LightMode)(int)(await Device.GetPropertiesAsync(cancellationToken, "active_mode").ConfigureAwait(false))[0];
+            return (LightMode)(await Device.GetPropertyAsync("active_mode", cancellationToken).ConfigureAwait(false)).GetInt32();
         }
     }
 }

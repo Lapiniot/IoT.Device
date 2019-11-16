@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Json;
 using System.Linq;
 using System.Net;
+using System.Runtime.CompilerServices;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using IoT.Device.Lumi.SubDevices;
 using IoT.Device.Metadata;
 using IoT.Protocol.Lumi;
+using static System.Text.Json.JsonSerializer;
+using static System.Text.Json.JsonValueKind;
 using static System.TimeSpan;
 using static IoT.Device.Metadata.PowerSource;
 using static IoT.Device.Metadata.Connectivity;
@@ -18,7 +21,7 @@ namespace IoT.Device.Lumi
     [ModelID("DGNWG02LM")]
     [PowerSource(Plugged)]
     [Connectivity(WiFi24 | ZigBee)]
-    public sealed class LumiGateway : LumiThing, IConnectedObject, IObserver<JsonObject>
+    public sealed class LumiGateway : LumiThing, IConnectedObject, IObserver<JsonElement>
     {
         private readonly Dictionary<string, LumiSubDevice> children;
         private readonly LumiControlEndpoint client;
@@ -55,8 +58,7 @@ namespace IoT.Device.Lumi
 
         // Gateway sends heartbeats every 10 seconds.
         // We give extra 2 seconds to the timeout value.
-        protected override TimeSpan HeartbeatTimeout { get; } =
-            FromSeconds(10) + FromSeconds(2);
+        protected override TimeSpan HeartbeatTimeout { get; } = FromSeconds(10) + FromSeconds(2);
 
         public bool IsConnected { get; private set; }
 
@@ -105,64 +107,18 @@ namespace IoT.Device.Lumi
             }
         }
 
-        void IObserver<JsonObject>.OnCompleted()
-        {
-            // Empty by design
-        }
-
-        void IObserver<JsonObject>.OnError(Exception error)
-        {
-            // Empty by design
-        }
-
-        void IObserver<JsonObject>.OnNext(JsonObject message)
-        {
-            if(message.TryGetValue("sid", out var sid) && message.TryGetValue("cmd", out var command) &&
-               message.TryGetValue("data", out var v) && JsonValue.Parse(v) is JsonObject data)
-            {
-                switch((string)command)
-                {
-                    case "heartbeat":
-                    {
-                        if(sid == Sid)
-                        {
-                            OnHeartbeat(data);
-                            Token = message["token"];
-                        }
-                        else if(children.TryGetValue(sid, out var device))
-                        {
-                            device.OnHeartbeat(data);
-                        }
-                    }
-                        break;
-                    case "report":
-                    {
-                        if(sid == Sid)
-                        {
-                            OnStateChanged(data);
-                        }
-                        else if(children.TryGetValue(sid, out var device))
-                        {
-                            device.OnStateChanged(data);
-                        }
-                    }
-                        break;
-                }
-            }
-        }
-
-        public Task<JsonObject> InvokeAsync(string command, string sid = null,
-            CancellationToken cancellationToken = default)
+        public Task<JsonElement> InvokeAsync(string command, string sid = null, CancellationToken cancellationToken = default)
         {
             return client.InvokeAsync(command, sid ?? Sid, cancellationToken);
         }
 
-        public async Task<LumiSubDevice[]> GetChildrenAsync(CancellationToken cancellationToken = default)
+        public async IAsyncEnumerable<LumiSubDevice> GetChildrenAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
-            var j = await InvokeAsync("get_id_list", Sid, cancellationToken).ConfigureAwait(false);
+            var json = await InvokeAsync("get_id_list", Sid, cancellationToken).ConfigureAwait(false);
 
-            var sids = ((JsonArray)JsonValue.Parse(j["data"]) ?? throw new InvalidOperationException())
-                .Select(s => (string)s).ToArray();
+            var data = Deserialize<JsonElement>(json.GetProperty("data").GetString());
+
+            var sids = data.EnumerateArray().Select(a => a.GetString()).ToArray();
 
             await semaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
 
@@ -170,20 +126,6 @@ namespace IoT.Device.Lumi
             {
                 var adds = sids.Except(children.Keys).ToArray();
                 var removes = children.Keys.Except(sids).ToArray();
-
-                foreach(var sid in adds)
-                {
-                    var info = await InvokeAsync("read", sid, cancellationToken).ConfigureAwait(false);
-
-                    if(JsonValue.Parse(info["data"]) is JsonObject data && !children.TryGetValue(sid, out var device))
-                    {
-                        var id = (int)info["short_id"];
-                        var deviceModel = info["model"];
-                        device = Cache.CreateInstance(deviceModel, sid, id) ?? new GenericSubDevice(sid, id);
-                        device.OnStateChanged(data);
-                        children.Add(sid, device);
-                    }
-                }
 
                 foreach(var sid in removes)
                 {
@@ -194,25 +136,43 @@ namespace IoT.Device.Lumi
                         device.Dispose();
                     }
                 }
+
+                foreach(var (_, value) in children)
+                {
+                    yield return value;
+                }
+
+                foreach(var sid in adds)
+                {
+                    var info = await InvokeAsync("read", sid, cancellationToken).ConfigureAwait(false);
+
+                    if(info.TryGetProperty("data", out var d) && !children.TryGetValue(sid, out var device))
+                    {
+                        var id = info.GetProperty("short_id").GetInt32();
+                        var deviceModel = info.GetProperty("model").GetString();
+                        device = Cache.CreateInstance(deviceModel, sid, id) ?? new GenericSubDevice(sid, id);
+                        device.OnStateChanged(Deserialize<JsonElement>(d.GetString()));
+                        children.Add(sid, device);
+                        yield return device;
+                    }
+                }
             }
             finally
             {
                 semaphore.Release();
             }
-
-            return children.Values.ToArray();
         }
 
-        protected internal override void OnStateChanged(JsonObject state)
+        protected internal override void OnStateChanged(JsonElement state)
         {
-            if(state.TryGetValue("rgb", out var rgb))
+            if(state.TryGetProperty("rgb", out var value) && value.ValueKind == Number)
             {
-                RgbValue = rgb;
+                RgbValue = value.GetInt32();
             }
 
-            if(state.TryGetValue("illumination", out var value))
+            if(state.TryGetProperty("illumination", out value) && value.ValueKind == Number)
             {
-                Illumination = value;
+                Illumination = value.GetInt32();
             }
         }
 
@@ -236,6 +196,51 @@ namespace IoT.Device.Lumi
                 }
 
                 children.Clear();
+            }
+        }
+
+        #endregion
+
+        #region Implementation of IObserver<in JsonElement>
+
+        void IObserver<JsonElement>.OnCompleted() {}
+
+        void IObserver<JsonElement>.OnError(Exception error) {}
+
+        void IObserver<JsonElement>.OnNext(JsonElement message)
+        {
+            if(message.TryGetProperty("sid", out var sid) && message.TryGetProperty("cmd", out var command) &&
+               message.TryGetProperty("data", out var v) && Deserialize<JsonElement>(v.GetString()) is JsonElement data)
+            {
+                var key = sid.GetString();
+                switch(command.GetString())
+                {
+                    case "heartbeat":
+                    {
+                        if(key == Sid)
+                        {
+                            OnHeartbeat(data);
+                            Token = message.GetProperty("token").GetString();
+                        }
+                        else if(children.TryGetValue(key, out var device))
+                        {
+                            device.OnHeartbeat(data);
+                        }
+                    }
+                        break;
+                    case "report":
+                    {
+                        if(key == Sid)
+                        {
+                            OnStateChanged(data);
+                        }
+                        else if(children.TryGetValue(key, out var device))
+                        {
+                            device.OnStateChanged(data);
+                        }
+                    }
+                        break;
+                }
             }
         }
 

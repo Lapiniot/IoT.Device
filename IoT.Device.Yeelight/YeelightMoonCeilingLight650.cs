@@ -1,7 +1,9 @@
-using System.Json;
+using System.Collections.Generic;
+using System.Text.Json;
 using IoT.Device.Yeelight;
 using IoT.Device.Yeelight.Features;
 using IoT.Protocol.Interfaces;
+using IoT.Protocol.Yeelight;
 
 [assembly: ExportYeelightDevice("ceiling4", typeof(YeelightMoonCeilingLight650))]
 
@@ -40,7 +42,7 @@ namespace IoT.Device.Yeelight
         private YeeSupportsScenes sscFeature;
         private YeeSupportsSaveState sssFeature;
 
-        public YeelightMoonCeilingLight650(IConnectedEndpoint<JsonObject, JsonValue> endpoint) : base(endpoint) {}
+        public YeelightMoonCeilingLight650(YeelightControlEndpoint endpoint) : base(endpoint) { }
 
         #region Overrides of YeelightDevice
 
@@ -66,154 +68,154 @@ namespace IoT.Device.Yeelight
         {
             var type = typeof(T);
 
-            if (type == YeeChangeDevicePowerState.Type)
+            if(type == YeeChangeDevicePowerState.Type)
             {
-                return (cdpsFeature ?? (cdpsFeature = new YeeChangeDevicePowerState(this))) as T;
+                return (cdpsFeature ??= new YeeChangeDevicePowerState(this)) as T;
             }
 
-            if (type == YeeChangePowerState.Type)
+            if(type == YeeChangePowerState.Type)
             {
-                return (cpsFeature ?? (cpsFeature = new YeeChangePowerState(this))) as T;
+                return (cpsFeature ??= new YeeChangePowerState(this)) as T;
             }
 
-            if (type == YeeChangeAmbientPowerState.Type)
+            if(type == YeeChangeAmbientPowerState.Type)
             {
-                return (capsFeature ?? (capsFeature = new YeeChangeAmbientPowerState(this))) as T;
+                return (capsFeature ??= new YeeChangeAmbientPowerState(this)) as T;
             }
 
-            if (type == YeeChangeBrightness.Type)
+            if(type == YeeChangeBrightness.Type)
             {
-                return (cbFeature ?? (cbFeature = new YeeChangeBrightness(this))) as T;
+                return (cbFeature ??= new YeeChangeBrightness(this)) as T;
             }
 
-            if (type == YeeChangeAmbientBrightness.Type)
+            if(type == YeeChangeAmbientBrightness.Type)
             {
-                return (cabFeature ?? (cabFeature = new YeeChangeAmbientBrightness(this))) as T;
+                return (cabFeature ??= new YeeChangeAmbientBrightness(this)) as T;
             }
 
-            if (type == YeeChangeColorTemperature.Type)
+            if(type == YeeChangeColorTemperature.Type)
             {
-                return (cctFeature ?? (cctFeature = new YeeChangeColorTemperature(this))) as T;
+                return (cctFeature ??= new YeeChangeColorTemperature(this)) as T;
             }
 
-            if (type == YeeChangeAmbientColorTemperature.Type)
+            if(type == YeeChangeAmbientColorTemperature.Type)
             {
-                return (cactFeature ?? (cactFeature = new YeeChangeAmbientColorTemperature(this))) as T;
+                return (cactFeature ??= new YeeChangeAmbientColorTemperature(this)) as T;
             }
 
-            if (type == YeeChangeColorRGB.Type)
+            if(type == YeeChangeColorRGB.Type)
             {
-                return (ccrgbFeature ?? (ccrgbFeature = new YeeChangeColorRGB(this))) as T;
+                return (ccrgbFeature ??= new YeeChangeColorRGB(this)) as T;
             }
 
-            if (type == YeeChangeAmbientColorRGB.Type)
+            if(type == YeeChangeAmbientColorRGB.Type)
             {
-                return (ccargbFeature ?? (ccargbFeature = new YeeChangeAmbientColorRGB(this))) as T;
+                return (ccargbFeature ??= new YeeChangeAmbientColorRGB(this)) as T;
             }
 
-            if (type == YeeChangeColorHSV.Type)
+            if(type == YeeChangeColorHSV.Type)
             {
-                return (cchsvFeature ?? (cchsvFeature = new YeeChangeColorHSV(this))) as T;
+                return (cchsvFeature ??= new YeeChangeColorHSV(this)) as T;
             }
 
-            if (type == YeeChangeAmbientColorHSV.Type)
+            if(type == YeeChangeAmbientColorHSV.Type)
             {
-                return (ccahsvFeature ?? (ccahsvFeature = new YeeChangeAmbientColorHSV(this))) as T;
+                return (ccahsvFeature ??= new YeeChangeAmbientColorHSV(this)) as T;
             }
 
-            if (type == YeeProvideColorMode.Type)
+            if(type == YeeProvideColorMode.Type)
             {
-                return (ccmFeature ?? (ccmFeature = new YeeProvideColorMode(this))) as T;
+                return (ccmFeature ??= new YeeProvideColorMode(this)) as T;
             }
 
-            if (type == YeeProvideAmbientColorMode.Type)
+            if(type == YeeProvideAmbientColorMode.Type)
             {
-                return (cacmFeature ?? (cacmFeature = new YeeProvideAmbientColorMode(this))) as T;
+                return (cacmFeature ??= new YeeProvideAmbientColorMode(this)) as T;
             }
 
-            if (type == YeeSupportsCronScheduler.Type)
+            if(type == YeeSupportsCronScheduler.Type)
             {
-                return (csFeature ?? (csFeature = new YeeSupportsCronScheduler(this))) as T;
+                return (csFeature ??= new YeeSupportsCronScheduler(this)) as T;
             }
 
-            if (type == YeeSupportsColorFlowMode.Type)
+            if(type == YeeSupportsColorFlowMode.Type)
             {
-                return (scfmFeature ?? (scfmFeature = new YeeSupportsColorFlowMode(this))) as T;
+                return (scfmFeature ??= new YeeSupportsColorFlowMode(this)) as T;
             }
 
-            if (type == YeeSupportsAmbientColorFlowMode.Type)
+            if(type == YeeSupportsAmbientColorFlowMode.Type)
             {
-                return (sacfmFeature ?? (sacfmFeature = new YeeSupportsAmbientColorFlowMode(this))) as T;
+                return (sacfmFeature ??= new YeeSupportsAmbientColorFlowMode(this)) as T;
             }
 
-            if (type == YeeSupportsScenes.Type)
+            if(type == YeeSupportsScenes.Type)
             {
-                return (sscFeature ?? (sscFeature = new YeeSupportsScenes(this))) as T;
+                return (sscFeature ??= new YeeSupportsScenes(this)) as T;
             }
 
-            if (type == YeeSupportsAmbientScenes.Type)
+            if(type == YeeSupportsAmbientScenes.Type)
             {
-                return (sascFeature ?? (sascFeature = new YeeSupportsAmbientScenes(this))) as T;
+                return (sascFeature ??= new YeeSupportsAmbientScenes(this)) as T;
             }
 
-            if (type == YeeAdjustBrightness.Type)
+            if(type == YeeAdjustBrightness.Type)
             {
-                return (abFeature ?? (abFeature = new YeeAdjustBrightness(this))) as T;
+                return (abFeature ??= new YeeAdjustBrightness(this)) as T;
             }
 
-            if (type == YeeAdjustAmbientBrightness.Type)
+            if(type == YeeAdjustAmbientBrightness.Type)
             {
-                return (aabFeature ?? (aabFeature = new YeeAdjustAmbientBrightness(this))) as T;
+                return (aabFeature ??= new YeeAdjustAmbientBrightness(this)) as T;
             }
 
-            if (type == YeeAdjustColorTemperature.Type)
+            if(type == YeeAdjustColorTemperature.Type)
             {
-                return (actFeature ?? (actFeature = new YeeAdjustColorTemperature(this))) as T;
+                return (actFeature ??= new YeeAdjustColorTemperature(this)) as T;
             }
 
-            if (type == YeeAdjustAmbientColorTemperature.Type)
+            if(type == YeeAdjustAmbientColorTemperature.Type)
             {
-                return (aactFeature ?? (aactFeature = new YeeAdjustAmbientColorTemperature(this))) as T;
+                return (aactFeature ??= new YeeAdjustAmbientColorTemperature(this)) as T;
             }
 
-            if (type == YeeAdjustColor.Type)
+            if(type == YeeAdjustColor.Type)
             {
-                return (acFeature ?? (acFeature = new YeeAdjustColor(this))) as T;
+                return (acFeature ??= new YeeAdjustColor(this)) as T;
             }
 
-            if (type == YeeAdjustAmbientColor.Type)
+            if(type == YeeAdjustAmbientColor.Type)
             {
-                return (aacFeature ?? (aacFeature = new YeeAdjustAmbientColor(this))) as T;
+                return (aacFeature ??= new YeeAdjustAmbientColor(this)) as T;
             }
 
-            if (type == YeeAdjustProperty.Type)
+            if(type == YeeAdjustProperty.Type)
             {
-                return (apFeature ?? (apFeature = new YeeAdjustProperty(this))) as T;
+                return (apFeature ??= new YeeAdjustProperty(this)) as T;
             }
 
-            if (type == YeeAdjustAmbientProperty.Type)
+            if(type == YeeAdjustAmbientProperty.Type)
             {
-                return (aapFeature ?? (aapFeature = new YeeAdjustAmbientProperty(this))) as T;
+                return (aapFeature ??= new YeeAdjustAmbientProperty(this)) as T;
             }
 
-            if (type == YeeSupportsAmbientLight.Type)
+            if(type == YeeSupportsAmbientLight.Type)
             {
-                return (salFeature ?? (salFeature = new YeeSupportsAmbientLight(this))) as T;
+                return (salFeature ??= new YeeSupportsAmbientLight(this)) as T;
             }
 
-            if (type == YeeProvideLightMode.Type)
+            if(type == YeeProvideLightMode.Type)
             {
-                return (plmFeature ?? (plmFeature = new YeeProvideLightMode(this))) as T;
+                return (plmFeature ??= new YeeProvideLightMode(this)) as T;
             }
 
-            if (type == YeeChangeDeviceName.Type)
+            if(type == YeeChangeDeviceName.Type)
             {
-                return (cdnFeature ?? (cdnFeature = new YeeChangeDeviceName(this))) as T;
+                return (cdnFeature ??= new YeeChangeDeviceName(this)) as T;
             }
 
-            if (type == YeeSupportsSaveState.Type)
+            if(type == YeeSupportsSaveState.Type)
             {
-                return (sssFeature ?? (sssFeature = new YeeSupportsSaveState(this))) as T;
+                return (sssFeature ??= new YeeSupportsSaveState(this)) as T;
             }
 
             return null;

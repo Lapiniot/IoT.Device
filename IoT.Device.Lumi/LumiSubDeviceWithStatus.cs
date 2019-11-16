@@ -1,5 +1,6 @@
-using System.Json;
+using System.Text.Json;
 using IoT.Device.Lumi.Interfaces;
+using static System.Text.Json.JsonValueKind;
 
 namespace IoT.Device.Lumi
 {
@@ -19,15 +20,17 @@ namespace IoT.Device.Lumi
             protected set => Set(ref status, value);
         }
 
-        protected internal override void OnStateChanged(JsonObject state)
+        protected internal override void OnStateChanged(JsonElement state)
         {
             base.OnStateChanged(state);
 
             // Special value "iam" is usual device online
             // report when sensor's test button is pressed
-            if(state.TryGetValue("status", out var value) && value != "iam")
+            if(state.TryGetProperty("status", out var value) && value.ValueKind == String)
             {
-                Status = value;
+                var str = value.GetString();
+
+                if(str != "iam") Status = str;
             }
         }
     }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -17,12 +16,12 @@ namespace IoT.Device.Yeelight.Features
 
         public async Task<string> GetNameAsync(CancellationToken cancellationToken = default)
         {
-            return (await Device.GetPropertiesAsync(cancellationToken, "name").ConfigureAwait(false))[0];
+            return (await Device.GetPropertyAsync("name", cancellationToken).ConfigureAwait(false)).GetString();
         }
 
-        public Task<JsonValue> SetNameAsync(string name, CancellationToken cancellationToken = default)
+        public Task SetNameAsync(string name, CancellationToken cancellationToken = default)
         {
-            return Device.InvokeAsync("set_name", new JsonArray { name }, cancellationToken);
+            return Device.InvokeAsync("set_name", new[] {name}, cancellationToken);
         }
     }
 }

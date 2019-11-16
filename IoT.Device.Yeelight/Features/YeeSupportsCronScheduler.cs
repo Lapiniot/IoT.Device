@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Json;
+using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,24 +16,24 @@ namespace IoT.Device.Yeelight.Features
 
         public override string[] SupportedProperties => Array.Empty<string>();
 
-        public async Task<JsonArray> CronGetAsync(uint type, CancellationToken cancellationToken = default)
+        public async Task<JsonElement[]> CronGetAsync(uint type, CancellationToken cancellationToken = default)
         {
-            return (JsonArray)await Device.InvokeAsync("cron_get", new JsonArray { type }, cancellationToken).ConfigureAwait(false);
+            return (await Device.InvokeAsync("cron_get", new[] {type}, cancellationToken).ConfigureAwait(false)).EnumerateArray().ToArray();
         }
 
-        public Task<JsonValue> CronAddAsync(uint type, uint delay, CancellationToken cancellationToken = default)
+        public Task CronAddAsync(uint type, uint delay, CancellationToken cancellationToken = default)
         {
-            return Device.InvokeAsync("cron_add", new JsonArray { type, delay }, cancellationToken);
+            return Device.InvokeAsync("cron_add", new[] {type, delay}, cancellationToken);
         }
 
-        public Task<JsonValue> CronDelAsync(uint type, CancellationToken cancellationToken = default)
+        public Task CronDelAsync(uint type, CancellationToken cancellationToken = default)
         {
-            return Device.InvokeAsync("cron_del", new JsonArray { type }, cancellationToken);
+            return Device.InvokeAsync("cron_del", new[] {type}, cancellationToken);
         }
 
         public async Task<uint> GetDelayOffAsync(CancellationToken cancellationToken = default)
         {
-            return (await Device.GetPropertiesAsync(cancellationToken, "delayoff").ConfigureAwait(false))[0];
+            return (await Device.GetPropertyAsync("delayoff", cancellationToken).ConfigureAwait(false)).GetUInt32();
         }
     }
 }

@@ -14,7 +14,7 @@ namespace IoT.Device.Yeelight
 
         protected override YeelightDevice Convert(SsdpReply reply)
         {
-            if (!reply.TryGetValue("Location", out var location) ||
+            if(!reply.TryGetValue("Location", out var location) ||
                !reply.TryGetValue("id", out var value) ||
                !HexConverter.TryParse(value, out uint deviceId))
             {

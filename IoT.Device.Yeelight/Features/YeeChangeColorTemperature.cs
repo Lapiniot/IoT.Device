@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -7,7 +6,7 @@ namespace IoT.Device.Yeelight.Features
 {
     public class YeeChangeColorTemperature : YeelightDeviceFeature
     {
-        public new static readonly Type Type = typeof(YeeChangeColorTemperature);
+        public static readonly Type Type = typeof(YeeChangeColorTemperature);
         private readonly string propCt;
         private readonly string propSetCt;
 
@@ -25,18 +24,18 @@ namespace IoT.Device.Yeelight.Features
 
         public async Task<uint> GetColorTemperatureAsync(CancellationToken cancellationToken = default)
         {
-            return (await Device.GetPropertiesAsync(cancellationToken, propCt).ConfigureAwait(false))[0];
+            return (await Device.GetPropertyAsync(propCt, cancellationToken).ConfigureAwait(false)).GetUInt32();
         }
 
-        public Task<JsonValue> SetColorTemperatureAsync(uint temperature, CancellationToken cancellationToken = default)
+        public Task SetColorTemperatureAsync(uint temperature, CancellationToken cancellationToken = default)
         {
             return SetColorTemperatureAsync(temperature, Effect.Sudden, 0, cancellationToken);
         }
 
-        public Task<JsonValue> SetColorTemperatureAsync(uint temperature, Effect effect = Effect.Smooth,
+        public Task SetColorTemperatureAsync(uint temperature, Effect effect = Effect.Smooth,
             int durationMilliseconds = 500, CancellationToken cancellationToken = default)
         {
-            return Device.InvokeAsync(propSetCt, new JsonArray { temperature, effect.ToJsonValue(), durationMilliseconds }, cancellationToken);
+            return Device.InvokeAsync(propSetCt, new object[] { temperature, effect.ToString().ToLowerInvariant(), durationMilliseconds }, cancellationToken);
         }
     }
 }

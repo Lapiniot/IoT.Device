@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -7,7 +6,7 @@ namespace IoT.Device.Yeelight.Features
 {
     public class YeeChangeColorRGB : YeelightDeviceFeature
     {
-        public new static readonly Type Type = typeof(YeeChangeColorRGB);
+        public static readonly Type Type = typeof(YeeChangeColorRGB);
 
         private readonly string propRGB;
         private readonly string propSetRGB;
@@ -26,18 +25,18 @@ namespace IoT.Device.Yeelight.Features
 
         public async Task<uint> GetColorRGBAsync(CancellationToken cancellationToken = default)
         {
-            return (await Device.GetPropertiesAsync(cancellationToken, propRGB).ConfigureAwait(false))[0];
+            return (await Device.GetPropertyAsync(propRGB, cancellationToken).ConfigureAwait(false)).GetUInt32();
         }
 
-        public Task<JsonValue> SetColorRGBAsync(uint rgb, CancellationToken cancellationToken = default)
+        public Task SetColorRGBAsync(uint rgb, CancellationToken cancellationToken = default)
         {
             return SetColorRgbAsync(rgb, Effect.Sudden, 0, cancellationToken);
         }
 
-        public Task<JsonValue> SetColorRgbAsync(uint rgb, Effect effect = Effect.Smooth,
+        public Task SetColorRgbAsync(uint rgb, Effect effect = Effect.Smooth,
             int durationMilliseconds = 500, CancellationToken cancellationToken = default)
         {
-            return Device.InvokeAsync(propSetRGB, new JsonArray { rgb, effect.ToJsonValue(), durationMilliseconds }, cancellationToken);
+            return Device.InvokeAsync(propSetRGB, new object[] { rgb, effect.ToString().ToLowerInvariant(), durationMilliseconds }, cancellationToken);
         }
     }
 }

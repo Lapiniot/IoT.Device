@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Json;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -34,21 +34,21 @@ namespace IoT.Device.Yeelight.Features
 
         public async Task<SwitchState> GetFlowingStateAsync(CancellationToken cancellationToken = default)
         {
-            return (SwitchState)(int)(await Device.GetPropertiesAsync(cancellationToken, propFlowing).ConfigureAwait(false))[0];
+            return (SwitchState)(await Device.GetPropertyAsync(propFlowing, cancellationToken).ConfigureAwait(false)).GetInt32();
         }
 
-        public async Task<JsonValue> GetFlowingParamsAsync(CancellationToken cancellationToken = default)
+        public async Task<JsonElement> GetFlowingParamsAsync(CancellationToken cancellationToken = default)
         {
-            return (await Device.GetPropertiesAsync(cancellationToken, propFlowParams).ConfigureAwait(false))[0];
+            return await Device.GetPropertyAsync(propFlowParams, cancellationToken).ConfigureAwait(false);
         }
 
-        public Task<JsonValue> StartColorFlowAsync(uint count = 0, PostFlowAction mode = PostFlowAction.RestoreState,
+        public Task StartColorFlowAsync(uint count = 0, PostFlowAction mode = PostFlowAction.RestoreState,
             CancellationToken cancellationToken = default,
             params (int Duration, FlowTransition Mode, int Value, int Brightness)[] states)
         {
             var sb = new StringBuilder();
 
-            foreach (var (duration, flowTransition, value, brightness) in states)
+            foreach(var (duration, flowTransition, value, brightness) in states)
             {
                 sb.Append(duration);
                 sb.Append(",");
@@ -60,18 +60,18 @@ namespace IoT.Device.Yeelight.Features
                 sb.Append(",");
             }
 
-            if (sb[sb.Length - 1] == ',') sb.Length--;
+            if(sb[^1] == ',') sb.Length--;
 
             return StartColorFlowAsync(count, mode, sb.ToString(), cancellationToken);
         }
 
-        public Task<JsonValue> StartColorFlowAsync(uint count = 0, PostFlowAction mode = PostFlowAction.RestoreState,
+        public Task StartColorFlowAsync(uint count = 0, PostFlowAction mode = PostFlowAction.RestoreState,
             string expression = "", CancellationToken cancellationToken = default)
         {
-            return Device.InvokeAsync(startSet, new JsonArray(count, (int)mode, expression), cancellationToken);
+            return Device.InvokeAsync(startSet, new object[] { count, (int)mode, expression }, cancellationToken);
         }
 
-        public Task<JsonValue> StopColorFlowAsync(CancellationToken cancellationToken = default)
+        public Task StopColorFlowAsync(CancellationToken cancellationToken = default)
         {
             return Device.InvokeAsync(stopSet, EmptyArgs, cancellationToken);
         }

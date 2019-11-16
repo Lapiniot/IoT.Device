@@ -1,4 +1,5 @@
-using System.Json;
+using System.Text.Json;
+using static System.Text.Json.JsonValueKind;
 
 namespace IoT.Device.Lumi
 {
@@ -14,12 +15,13 @@ namespace IoT.Device.Lumi
             private set => Set(ref noCloseSeconds, value);
         }
 
-        protected internal override void OnStateChanged(JsonObject state)
+        protected internal override void OnStateChanged(JsonElement state)
         {
             base.OnStateChanged(state);
 
-            if(state.TryGetValue("no_close", out var value) &&
-               int.TryParse(value, out var seconds))
+            if(state.TryGetProperty("no_close", out var value) &&
+               value.ValueKind == String &&
+               int.TryParse(value.GetString(), out var seconds))
             {
                 NoCloseSeconds = seconds;
             }

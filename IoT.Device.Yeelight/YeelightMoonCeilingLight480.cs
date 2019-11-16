@@ -1,7 +1,6 @@
-using System.Json;
 using IoT.Device.Yeelight;
 using IoT.Device.Yeelight.Features;
-using IoT.Protocol.Interfaces;
+using IoT.Protocol.Yeelight;
 
 [assembly: ExportYeelightDevice("ceiling3", typeof(YeelightMoonCeilingLight480))]
 
@@ -22,7 +21,7 @@ namespace IoT.Device.Yeelight
         private YeeSupportsScenes sscFeature;
         private YeeSupportsSaveState sssFeature;
 
-        public YeelightMoonCeilingLight480(IConnectedEndpoint<JsonObject, JsonValue> endpoint) : base(endpoint) {}
+        public YeelightMoonCeilingLight480(YeelightControlEndpoint endpoint) : base(endpoint) { }
 
         #region Overrides of YeelightDevice
 
@@ -45,64 +44,64 @@ namespace IoT.Device.Yeelight
         {
             var type = typeof(T);
 
-            if (type == YeeChangePowerState.Type)
+            if(type == YeeChangePowerState.Type)
             {
-                return (cpsFeature ?? (cpsFeature = new YeeChangePowerState(this))) as T;
+                return (cpsFeature ??= new YeeChangePowerState(this)) as T;
             }
 
-            if (type == YeeChangeBrightness.Type)
+            if(type == YeeChangeBrightness.Type)
             {
-                return (cbFeature ?? (cbFeature = new YeeChangeBrightness(this))) as T;
+                return (cbFeature ??= new YeeChangeBrightness(this)) as T;
             }
 
-            if (type == YeeChangeColorTemperature.Type)
+            if(type == YeeChangeColorTemperature.Type)
             {
-                return (cctFeature ?? (cctFeature = new YeeChangeColorTemperature(this))) as T;
+                return (cctFeature ??= new YeeChangeColorTemperature(this)) as T;
             }
 
-            if (type == YeeProvideColorMode.Type)
+            if(type == YeeProvideColorMode.Type)
             {
-                return (ccmFeature ?? (ccmFeature = new YeeProvideColorMode(this))) as T;
+                return (ccmFeature ??= new YeeProvideColorMode(this)) as T;
             }
 
-            if (type == YeeSupportsCronScheduler.Type)
+            if(type == YeeSupportsCronScheduler.Type)
             {
-                return (csFeature ?? (csFeature = new YeeSupportsCronScheduler(this))) as T;
+                return (csFeature ??= new YeeSupportsCronScheduler(this)) as T;
             }
 
-            if (type == YeeSupportsScenes.Type)
+            if(type == YeeSupportsScenes.Type)
             {
-                return (sscFeature ?? (sscFeature = new YeeSupportsScenes(this))) as T;
+                return (sscFeature ??= new YeeSupportsScenes(this)) as T;
             }
 
-            if (type == YeeAdjustBrightness.Type)
+            if(type == YeeAdjustBrightness.Type)
             {
-                return (abFeature ?? (abFeature = new YeeAdjustBrightness(this))) as T;
+                return (abFeature ??= new YeeAdjustBrightness(this)) as T;
             }
 
-            if (type == YeeAdjustColorTemperature.Type)
+            if(type == YeeAdjustColorTemperature.Type)
             {
-                return (actFeature ?? (actFeature = new YeeAdjustColorTemperature(this))) as T;
+                return (actFeature ??= new YeeAdjustColorTemperature(this)) as T;
             }
 
-            if (type == YeeAdjustProperty.Type)
+            if(type == YeeAdjustProperty.Type)
             {
-                return (apFeature ?? (apFeature = new YeeAdjustProperty(this))) as T;
+                return (apFeature ??= new YeeAdjustProperty(this)) as T;
             }
 
-            if (type == YeeProvideLightMode.Type)
+            if(type == YeeProvideLightMode.Type)
             {
-                return (plmFeature ?? (plmFeature = new YeeProvideLightMode(this))) as T;
+                return (plmFeature ??= new YeeProvideLightMode(this)) as T;
             }
 
-            if (type == YeeChangeDeviceName.Type)
+            if(type == YeeChangeDeviceName.Type)
             {
-                return (cdnFeature ?? (cdnFeature = new YeeChangeDeviceName(this))) as T;
+                return (cdnFeature ??= new YeeChangeDeviceName(this)) as T;
             }
 
-            if (type == YeeSupportsSaveState.Type)
+            if(type == YeeSupportsSaveState.Type)
             {
-                return (sssFeature ?? (sssFeature = new YeeSupportsSaveState(this))) as T;
+                return (sssFeature ??= new YeeSupportsSaveState(this)) as T;
             }
 
             return null;

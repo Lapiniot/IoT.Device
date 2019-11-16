@@ -1,5 +1,5 @@
 using System;
-using System.Json;
+using System.Text.Json;
 using IoT.Device.Metadata;
 using static IoT.Device.Metadata.PowerSource;
 using static IoT.Device.Metadata.Connectivity;
@@ -14,7 +14,7 @@ namespace IoT.Device.Lumi.SubDevices
         private int rotateAngle;
         private int rotateDuration;
 
-        private AqaraCubeController(string sid, int id) : base(sid, id) {}
+        internal AqaraCubeController(string sid, int id) : base(sid, id) {}
 
         public override string Model { get; } = "sensor_cube.aqgl01";
 
@@ -30,13 +30,13 @@ namespace IoT.Device.Lumi.SubDevices
             private set => Set(ref rotateDuration, value);
         }
 
-        protected internal override void OnStateChanged(JsonObject state)
+        protected internal override void OnStateChanged(JsonElement state)
         {
             base.OnStateChanged(state);
 
-            if(state.TryGetValue("rotate", out var value))
+            if(state.TryGetProperty("rotate", out var value) && value.ValueKind == JsonValueKind.String)
             {
-                var str = (string)value;
+                var str = value.GetString();
                 var i = str.IndexOf(',');
                 if(i > 0 && i < str.Length - 1 &&
                    int.TryParse(str.Substring(0, i), out var angle) &&

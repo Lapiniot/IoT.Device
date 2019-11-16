@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -27,9 +26,9 @@ namespace IoT.Device.Yeelight.Features
         /// </param>
         /// <param name="cancellationToken">Token for external cancellation</param>
         /// <returns>Operation result ("ok" or error description)</returns>
-        public Task<JsonValue> AdjustValueAsync(int percentage, uint durationMilliseconds, CancellationToken cancellationToken = default)
+        public Task AdjustValueAsync(int percentage, uint durationMilliseconds, CancellationToken cancellationToken = default)
         {
-            return Device.InvokeAsync(method, new JsonArray(percentage, durationMilliseconds), cancellationToken);
+            return Device.InvokeAsync(method, new[] {percentage, (int)durationMilliseconds}, cancellationToken);
         }
     }
 }

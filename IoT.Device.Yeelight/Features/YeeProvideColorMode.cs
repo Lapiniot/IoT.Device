@@ -23,7 +23,7 @@ namespace IoT.Device.Yeelight.Features
 
         public async Task<ColorMode> GetColorModeAsync(CancellationToken cancellationToken = default)
         {
-            return (ColorMode)(uint)(await Device.GetPropertiesAsync(cancellationToken, property).ConfigureAwait(false))[0];
+            return (ColorMode)(await Device.GetPropertyAsync(property, cancellationToken).ConfigureAwait(false)).GetInt32();
         }
     }
 }

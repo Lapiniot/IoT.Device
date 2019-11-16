@@ -1,6 +1,7 @@
 using System;
-using System.Json;
+using System.Text.Json;
 using IoT.Device.Metadata;
+using static System.Text.Json.JsonValueKind;
 using static System.TimeSpan;
 using static IoT.Device.Metadata.PowerSource;
 using static IoT.Device.Metadata.Connectivity;
@@ -17,7 +18,7 @@ namespace IoT.Device.Lumi.SubDevices
         private decimal loadVoltage;
         private decimal powerConsumed;
 
-        private SmartPowerPlug(string sid, int id) : base(sid, id) {}
+        internal SmartPowerPlug(string sid, int id) : base(sid, id) {}
 
         public override string Model { get; } = "plug.v1";
 
@@ -50,28 +51,28 @@ namespace IoT.Device.Lumi.SubDevices
             private set => Set(ref powerConsumed, value);
         }
 
-        protected internal override void OnStateChanged(JsonObject state)
+        protected internal override void OnStateChanged(JsonElement state)
         {
             base.OnStateChanged(state);
 
-            if(state.TryGetValue("inuse", out var i))
+            if(state.TryGetProperty("inuse", out var value) && value.ValueKind == JsonValueKind.String)
             {
-                InUse = i == "1";
+                InUse = value.GetString() == "1";
             }
 
-            if(state.TryGetValue("load_voltage", out var lv))
+            if(state.TryGetProperty("load_voltage", out value) && value.ValueKind == Number)
             {
-                LoadVoltage = new decimal(lv, 0, 0, false, 3);
+                LoadVoltage = new decimal(value.GetInt32(), 0, 0, false, 3);
             }
 
-            if(state.TryGetValue("load_power", out var lp))
+            if(state.TryGetProperty("load_power", out value) && value.ValueKind == Number)
             {
-                LoadPower = lp;
+                LoadPower = value.GetDecimal();
             }
 
-            if(state.TryGetValue("power_consumed", out var pc))
+            if(state.TryGetProperty("power_consumed", out value) && value.ValueKind == Number)
             {
-                PowerConsumed = pc;
+                PowerConsumed = value.GetDecimal();
             }
         }
     }

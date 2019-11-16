@@ -1,10 +1,10 @@
-﻿using System.Json;
+﻿using System;
 
 namespace IoT.Device.Yeelight
 {
     public abstract class YeelightDeviceFeature
     {
-        protected static readonly JsonArray EmptyArgs = new JsonArray();
+        protected static readonly object[] EmptyArgs = Array.Empty<object>();
 
         protected YeelightDevice Device;
 

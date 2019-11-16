@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -7,7 +6,7 @@ namespace IoT.Device.Yeelight.Features
 {
     public class YeeChangeColorHSV : YeelightDeviceFeature
     {
-        public new static readonly Type Type = typeof(YeeChangeColorHSV);
+        public static readonly Type Type = typeof(YeeChangeColorHSV);
 
         private readonly string propHue;
         private readonly string propSaturation;
@@ -28,23 +27,22 @@ namespace IoT.Device.Yeelight.Features
 
         public async Task<uint> GetHueAsync(CancellationToken cancellationToken = default)
         {
-            return (await Device.GetPropertiesAsync(cancellationToken, propHue).ConfigureAwait(false))[0];
+            return (await Device.GetPropertyAsync(propHue, cancellationToken).ConfigureAwait(false)).GetUInt32();
         }
 
         public async Task<uint> GetSaturationAsync(CancellationToken cancellationToken = default)
         {
-            return (await Device.GetPropertiesAsync(cancellationToken, propSaturation).ConfigureAwait(false))[0];
+            return (await Device.GetPropertyAsync(propSaturation, cancellationToken).ConfigureAwait(false)).GetUInt32();
         }
 
-        public Task<JsonValue> SetColorHSVAsync(uint hsv, CancellationToken cancellationToken = default)
+        public Task SetColorHSVAsync(uint hsv, CancellationToken cancellationToken = default)
         {
             return SetColorHsvAsync(hsv, Effect.Sudden, 0, cancellationToken);
         }
 
-        public Task<JsonValue> SetColorHsvAsync(uint hsv, Effect effect = Effect.Smooth,
-            int durationMilliseconds = 500, CancellationToken cancellationToken = default)
+        public Task SetColorHsvAsync(uint hsv, Effect effect = Effect.Smooth, int durationMilliseconds = 500, CancellationToken cancellationToken = default)
         {
-            return Device.InvokeAsync(propSetHSV, new JsonArray { hsv, effect.ToJsonValue(), durationMilliseconds }, cancellationToken);
+            return Device.InvokeAsync(propSetHSV, new object[] { hsv, effect.ToString().ToLowerInvariant(), durationMilliseconds }, cancellationToken);
         }
     }
 }

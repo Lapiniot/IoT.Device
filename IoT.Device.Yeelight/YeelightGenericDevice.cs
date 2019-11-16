@@ -3,13 +3,12 @@ using IoT.Protocol.Yeelight;
 
 namespace IoT.Device.Yeelight
 {
-    public sealed class YeelightGenericDevice : YeelightDevice
+    public class YeelightGenericDevice : YeelightDevice
     {
         private readonly string[] supportedCapabilities;
 
         public YeelightGenericDevice(YeelightControlEndpoint endpoint) : base(endpoint)
-        {
-        }
+        { }
 
         public YeelightGenericDevice(YeelightControlEndpoint endpoint, string[] capabilities) : this(endpoint)
         {
