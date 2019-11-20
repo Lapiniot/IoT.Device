@@ -5,13 +5,12 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using IoT.Protocol.Yeelight;
-using Message = System.Collections.Generic.IDictionary<string, object>;
 
 namespace IoT.Device.Yeelight
 {
     public abstract class YeelightDevice : IConnectedObject, IAsyncDisposable
     {
-        public Message EmptyArgs { get; } = new Dictionary<string, object>();
+        public IDictionary<string, object> EmptyArgs { get; } = new Dictionary<string, object>();
 
         protected YeelightDevice(YeelightControlEndpoint endpoint)
         {
@@ -28,7 +27,7 @@ namespace IoT.Device.Yeelight
 
         public abstract T GetFeature<T>() where T : YeelightDeviceFeature;
 
-        public async Task<JsonElement> InvokeAsync(Message message, CancellationToken cancellationToken)
+        public async Task<JsonElement> InvokeAsync(RequestMessage message, CancellationToken cancellationToken)
         {
             var json = await Endpoint.InvokeAsync(message, cancellationToken).ConfigureAwait(false);
 
@@ -41,7 +40,7 @@ namespace IoT.Device.Yeelight
 
         public Task<JsonElement> InvokeAsync(string method, object args, CancellationToken cancellationToken)
         {
-            return InvokeAsync(new Dictionary<string, object> { { "method", method }, { "params", args } }, cancellationToken);
+            return InvokeAsync(new RequestMessage(method, args), cancellationToken);
         }
 
         public async Task<JsonElement[]> GetPropertiesAsync(string[] properties, CancellationToken cancellationToken = default)
@@ -86,6 +85,7 @@ namespace IoT.Device.Yeelight
 
         public ValueTask DisposeAsync()
         {
+            GC.SuppressFinalize(this);
             return Endpoint.DisposeAsync();
         }
 

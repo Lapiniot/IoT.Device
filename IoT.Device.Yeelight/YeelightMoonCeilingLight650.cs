@@ -1,8 +1,5 @@
-using System.Collections.Generic;
-using System.Text.Json;
 using IoT.Device.Yeelight;
 using IoT.Device.Yeelight.Features;
-using IoT.Protocol.Interfaces;
 using IoT.Protocol.Yeelight;
 
 [assembly: ExportYeelightDevice("ceiling4", typeof(YeelightMoonCeilingLight650))]
