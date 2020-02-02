@@ -129,12 +129,11 @@ namespace IoT.Device.Lumi
 
                 foreach(var sid in removes)
                 {
-                    if(children.TryGetValue(sid, out var device))
-                    {
-                        children.Remove(sid);
+                    if(!children.TryGetValue(sid, out var device)) continue;
 
-                        device.Dispose();
-                    }
+                    children.Remove(sid);
+
+                    device.Dispose();
                 }
 
                 foreach(var (_, value) in children)
@@ -146,15 +145,14 @@ namespace IoT.Device.Lumi
                 {
                     var info = await InvokeAsync("read", sid, cancellationToken).ConfigureAwait(false);
 
-                    if(info.TryGetProperty("data", out var d) && !children.TryGetValue(sid, out var device))
-                    {
-                        var id = info.GetProperty("short_id").GetInt32();
-                        var deviceModel = info.GetProperty("model").GetString();
-                        device = Cache.CreateInstance(deviceModel, sid, id) ?? new GenericSubDevice(sid, id);
-                        device.OnStateChanged(Deserialize<JsonElement>(d.GetString()));
-                        children.Add(sid, device);
-                        yield return device;
-                    }
+                    if(!info.TryGetProperty("data", out var d) || children.TryGetValue(sid, out var device)) continue;
+
+                    var id = info.GetProperty("short_id").GetInt32();
+                    var deviceModel = info.GetProperty("model").GetString();
+                    device = Cache.CreateInstance(deviceModel, sid, id) ?? new GenericSubDevice(sid, id);
+                    device.OnStateChanged(Deserialize<JsonElement>(d.GetString()));
+                    children.Add(sid, device);
+                    yield return device;
                 }
             }
             finally
@@ -182,21 +180,20 @@ namespace IoT.Device.Lumi
         {
             base.Dispose(disposing);
 
-            if(disposing)
+            if(!disposing) return;
+
+            var _ = client.DisposeAsync();
+            listener.DisposeAsync();
+            semaphore?.Dispose();
+
+            subscription.Dispose();
+
+            foreach(var c in children)
             {
-                var _ = client.DisposeAsync();
-                listener.DisposeAsync();
-                semaphore?.Dispose();
-
-                subscription.Dispose();
-
-                foreach(var c in children)
-                {
-                    c.Value.Dispose();
-                }
-
-                children.Clear();
+                c.Value.Dispose();
             }
+
+            children.Clear();
         }
 
         #endregion
@@ -209,38 +206,42 @@ namespace IoT.Device.Lumi
 
         void IObserver<JsonElement>.OnNext(JsonElement message)
         {
-            if(message.TryGetProperty("sid", out var sid) && message.TryGetProperty("cmd", out var command) &&
-               message.TryGetProperty("data", out var v) && Deserialize<JsonElement>(v.GetString()) is JsonElement data)
+            if(!message.TryGetProperty("sid", out var sid) ||
+               !message.TryGetProperty("cmd", out var command) ||
+               !message.TryGetProperty("data", out var v) ||
+               !(Deserialize<JsonElement>(v.GetString()) is { } data))
             {
-                var key = sid.GetString();
-                switch(command.GetString())
+                return;
+            }
+
+            var key = sid.GetString();
+            switch(command.GetString())
+            {
+                case "heartbeat":
                 {
-                    case "heartbeat":
+                    if(key == Sid)
                     {
-                        if(key == Sid)
-                        {
-                            OnHeartbeat(data);
-                            Token = message.GetProperty("token").GetString();
-                        }
-                        else if(children.TryGetValue(key, out var device))
-                        {
-                            device.OnHeartbeat(data);
-                        }
+                        OnHeartbeat(data);
+                        Token = message.GetProperty("token").GetString();
                     }
-                        break;
-                    case "report":
+                    else if(children.TryGetValue(key, out var device))
                     {
-                        if(key == Sid)
-                        {
-                            OnStateChanged(data);
-                        }
-                        else if(children.TryGetValue(key, out var device))
-                        {
-                            device.OnStateChanged(data);
-                        }
+                        device.OnHeartbeat(data);
                     }
-                        break;
                 }
+                    break;
+                case "report":
+                {
+                    if(key == Sid)
+                    {
+                        OnStateChanged(data);
+                    }
+                    else if(children.TryGetValue(key, out var device))
+                    {
+                        device.OnStateChanged(data);
+                    }
+                }
+                    break;
             }
         }
 

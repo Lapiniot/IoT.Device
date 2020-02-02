@@ -26,12 +26,11 @@ namespace IoT.Device.Lumi
 
             // Special value "iam" is usual device online
             // report when sensor's test button is pressed
-            if(state.TryGetProperty("status", out var value) && value.ValueKind == String)
-            {
-                var str = value.GetString();
+            if(!state.TryGetProperty("status", out var value) || value.ValueKind != String) return;
 
-                if(str != "iam") Status = str;
-            }
+            var str = value.GetString();
+
+            if(str != "iam") Status = str;
         }
     }
 }

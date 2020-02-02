@@ -56,25 +56,23 @@ namespace IoT.Device.Lumi
             Task.Delay(HeartbeatTimeout, newCts.Token)
                 .ContinueWith(t => IsOnline = false, OnlyOnRanToCompletion);
 
-            using(var oldCts = Interlocked.Exchange(ref resetWatchTokenSource, newCts))
-            {
-                oldCts?.Cancel();
-            }
+            using var oldCts = Interlocked.Exchange(ref resetWatchTokenSource, newCts);
+
+            oldCts?.Cancel();
         }
 
         protected virtual void Dispose(bool disposing)
         {
-            if(disposing)
-            {
-                var source = resetWatchTokenSource;
-                if(source != null)
-                {
-                    source.Cancel();
-                    source.Dispose();
-                }
+            if(!disposing) return;
 
-                resetWatchTokenSource = null;
+            var source = resetWatchTokenSource;
+            if(source != null)
+            {
+                source.Cancel();
+                source.Dispose();
             }
+
+            resetWatchTokenSource = null;
         }
 
         #region INotifyPropertyChanged Support
@@ -90,11 +88,9 @@ namespace IoT.Device.Lumi
         [MethodImpl(AggressiveInlining)]
         protected void Set<T>(ref T field, T value, [CallerMemberName] string name = null)
         {
-            if(!Equals(field, value))
-            {
-                field = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-            }
+            if(Equals(field, value)) return;
+            field = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
         #endregion
