@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using IoT.Device.Yeelight;
 using IoT.Device.Yeelight.Features;
 using IoT.Protocol.Yeelight;
@@ -29,14 +30,14 @@ namespace IoT.Device.Yeelight
 
         public override string ModelName { get; } = "yeelink.light.color2";
 
-        public override string[] SupportedCapabilities => new[]
+        public override IEnumerable<string> SupportedCapabilities => new[]
         {
             "get_prop", "set_default", "set_power", "toggle", "set_bright", "start_cf",
             "stop_cf", "set_scene", "cron_add", "cron_get", "cron_del", "set_ct_abx", "set_rgb",
             "set_hsv", "set_adjust", "adjust_bright", "adjust_ct", "adjust_color", "set_music", "set_name"
         };
 
-        public override string[] SupportedProperties => new[]
+        public override IEnumerable<string> SupportedProperties => new[]
         {
             "power", "color_mode", "bright", "ct", "rgb", "flowing", "hue",
             "sat", "save_state", "flow_params", "name"

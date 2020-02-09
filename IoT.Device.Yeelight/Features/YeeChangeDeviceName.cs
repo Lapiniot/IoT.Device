@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -10,9 +11,9 @@ namespace IoT.Device.Yeelight.Features
 
         public YeeChangeDeviceName(YeelightDevice device) : base(device) { }
 
-        public override string[] SupportedMethods => new[] { "set_name" };
+        public override IEnumerable<string> SupportedMethods => new[] {"set_name"};
 
-        public override string[] SupportedProperties => new[] { "name" };
+        public override IEnumerable<string> SupportedProperties => new[] {"name"};
 
         public async Task<string> GetNameAsync(CancellationToken cancellationToken = default)
         {

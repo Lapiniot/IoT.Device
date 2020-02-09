@@ -13,14 +13,14 @@ using static System.Text.Json.JsonSerializer;
 using static System.Text.Json.JsonValueKind;
 using static System.TimeSpan;
 using static IoT.Device.Metadata.PowerSource;
-using static IoT.Device.Metadata.Connectivity;
+using static IoT.Device.Metadata.ConnectivityTypes;
 using Cache = IoT.Device.Container<IoT.Device.Lumi.ExportSubDeviceAttribute, IoT.Device.Lumi.LumiSubDevice>;
 
 namespace IoT.Device.Lumi
 {
     [ModelID("DGNWG02LM")]
     [PowerSource(Plugged)]
-    [Connectivity(WiFi24 | ZigBee)]
+    [ConnectivityType(WiFi24 | ZigBee)]
     public sealed class LumiGateway : LumiThing, IConnectedObject, IObserver<JsonElement>
     {
         private readonly Dictionary<string, LumiSubDevice> children;

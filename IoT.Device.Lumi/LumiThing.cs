@@ -53,8 +53,8 @@ namespace IoT.Device.Lumi
         {
             var newCts = new CancellationTokenSource();
 
-            Task.Delay(HeartbeatTimeout, newCts.Token)
-                .ContinueWith(t => IsOnline = false, OnlyOnRanToCompletion);
+            Task.Delay(HeartbeatTimeout, newCts.Token).ContinueWith(t => IsOnline = t.IsCanceled,
+                default, ExecuteSynchronously, TaskScheduler.Default);
 
             using var oldCts = Interlocked.Exchange(ref resetWatchTokenSource, newCts);
 

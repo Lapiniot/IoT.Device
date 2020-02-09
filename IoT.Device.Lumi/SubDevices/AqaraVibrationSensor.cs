@@ -1,14 +1,14 @@
 ﻿using System.Text.Json;
 using IoT.Device.Metadata;
 using static System.Text.Json.JsonValueKind;
-using static IoT.Device.Metadata.Connectivity;
+using static IoT.Device.Metadata.ConnectivityTypes;
 using static IoT.Device.Metadata.PowerSource;
 
 namespace IoT.Device.Lumi.SubDevices
 {
     [ModelID("DJT11LM")]
     [PowerSource(CR2032)]
-    [Connectivity(ZigBee)]
+    [ConnectivityType(ZigBee)]
     public class AqaraVibrationSensor : LumiSubDeviceWithStatus
     {
         private int bedActivity;

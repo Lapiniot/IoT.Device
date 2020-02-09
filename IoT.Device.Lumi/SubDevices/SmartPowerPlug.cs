@@ -4,13 +4,13 @@ using IoT.Device.Metadata;
 using static System.Text.Json.JsonValueKind;
 using static System.TimeSpan;
 using static IoT.Device.Metadata.PowerSource;
-using static IoT.Device.Metadata.Connectivity;
+using static IoT.Device.Metadata.ConnectivityTypes;
 
 namespace IoT.Device.Lumi.SubDevices
 {
     [ModelID("ZNCZ02LM")]
     [PowerSource(Plugged)]
-    [Connectivity(ZigBee)]
+    [ConnectivityType(ZigBee)]
     public sealed class SmartPowerPlug : LumiSubDeviceWithStatus
     {
         private bool inUse;

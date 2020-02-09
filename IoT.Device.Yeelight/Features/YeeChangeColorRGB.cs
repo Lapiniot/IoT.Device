@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,9 +20,9 @@ namespace IoT.Device.Yeelight.Features
             propSetRGB = propSet;
         }
 
-        public override string[] SupportedMethods => new[] { propSetRGB };
+        public override IEnumerable<string> SupportedMethods => new[] {propSetRGB};
 
-        public override string[] SupportedProperties => new[] { propRGB };
+        public override IEnumerable<string> SupportedProperties => new[] {propRGB};
 
         public async Task<uint> GetColorRGBAsync(CancellationToken cancellationToken = default)
         {

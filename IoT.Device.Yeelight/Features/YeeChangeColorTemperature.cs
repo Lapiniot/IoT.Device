@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,9 +19,9 @@ namespace IoT.Device.Yeelight.Features
             propSetCt = propSet;
         }
 
-        public override string[] SupportedMethods => new[] { propSetCt };
+        public override IEnumerable<string> SupportedMethods => new[] {propSetCt};
 
-        public override string[] SupportedProperties => new[] { propCt };
+        public override IEnumerable<string> SupportedProperties => new[] {propCt};
 
         public async Task<uint> GetColorTemperatureAsync(CancellationToken cancellationToken = default)
         {

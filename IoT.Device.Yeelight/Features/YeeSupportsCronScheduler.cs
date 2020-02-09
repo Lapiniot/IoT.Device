@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading;
@@ -8,13 +9,13 @@ namespace IoT.Device.Yeelight.Features
 {
     public class YeeSupportsCronScheduler : YeelightDeviceFeature
     {
-        public static Type Type = typeof(YeeSupportsCronScheduler);
+        public static readonly Type Type = typeof(YeeSupportsCronScheduler);
 
         public YeeSupportsCronScheduler(YeelightDevice device) : base(device) { }
 
-        public override string[] SupportedMethods => new[] { "cron_get", "cron_add", "cron_del" };
+        public override IEnumerable<string> SupportedMethods => new[] {"cron_get", "cron_add", "cron_del"};
 
-        public override string[] SupportedProperties => Array.Empty<string>();
+        public override IEnumerable<string> SupportedProperties => Array.Empty<string>();
 
         public async Task<JsonElement[]> CronGetAsync(uint type, CancellationToken cancellationToken = default)
         {

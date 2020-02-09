@@ -23,11 +23,10 @@ namespace IoT.Device.Upnp
 
         public int GetHashCode(SsdpReply obj)
         {
+            if(obj is null) return 0;
             obj.TryGetValue(Location, out var l);
             obj.TryGetValue(Usn, out var u);
-
-            return (l != null ? Comparer.GetHashCode(l) : 0) ^
-                   (u != null ? Comparer.GetHashCode(u) : 0);
+            return Comparer.GetHashCode(l) ^ Comparer.GetHashCode(u);
         }
 
         #endregion

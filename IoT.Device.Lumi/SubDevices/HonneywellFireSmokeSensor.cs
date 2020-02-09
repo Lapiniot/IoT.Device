@@ -6,7 +6,7 @@ namespace IoT.Device.Lumi.SubDevices
 {
     [ModelID("JTYJ-GD-01LM/BW")]
     [PowerSource(PowerSource.CR123A)]
-    [Connectivity(Connectivity.ZigBee)]
+    [ConnectivityType(ConnectivityTypes.ZigBee)]
     public sealed class HonneywellFireSmokeSensor : LumiSubDevice
     {
         private bool alarm;

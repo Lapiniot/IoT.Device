@@ -21,6 +21,10 @@ namespace IoT.Device.Xiaomi.Umi
 
         public UmiSpeakerDevice(Uri descriptionUri, string usn) : base(descriptionUri, usn)
         {
+            if(descriptionUri is null) throw new ArgumentNullException(nameof(descriptionUri));
+
+            if(string.IsNullOrEmpty(usn)) throw new ArgumentException("message", nameof(usn));
+
             DeviceId = usn.Split(new[] {':'}, 3)[1];
 
             BaseUri = new Uri(descriptionUri.GetLeftPart(Authority));

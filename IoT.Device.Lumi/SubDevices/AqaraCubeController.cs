@@ -2,13 +2,13 @@ using System;
 using System.Text.Json;
 using IoT.Device.Metadata;
 using static IoT.Device.Metadata.PowerSource;
-using static IoT.Device.Metadata.Connectivity;
+using static IoT.Device.Metadata.ConnectivityTypes;
 
 namespace IoT.Device.Lumi.SubDevices
 {
     [ModelID("MFKZQ01LM")]
     [PowerSource(CR2450)]
-    [Connectivity(ZigBee)]
+    [ConnectivityType(ZigBee)]
     public sealed class AqaraCubeController : LumiSubDevice
     {
         private int rotateAngle;
@@ -37,7 +37,7 @@ namespace IoT.Device.Lumi.SubDevices
             if(!state.TryGetProperty("rotate", out var value) || value.ValueKind != JsonValueKind.String) return;
 
             var str = value.GetString();
-            var i = str.IndexOf(',');
+            var i = str.IndexOf(',', StringComparison.InvariantCulture);
 
             if(i <= 0 || i >= str.Length - 1 ||
                !int.TryParse(str.Substring(0, i), out var angle) ||

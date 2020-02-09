@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
@@ -8,7 +9,7 @@ namespace IoT.Device.Yeelight.Features
 {
     public class YeeSupportsColorFlowMode : YeelightDeviceFeature
     {
-        public static Type Type = typeof(YeeSupportsColorFlowMode);
+        public static readonly Type Type = typeof(YeeSupportsColorFlowMode);
 
         private readonly string propFlowing;
         private readonly string propFlowParams;
@@ -28,9 +29,9 @@ namespace IoT.Device.Yeelight.Features
             this(device, "start_cf", "stop_cf", "flowing", "flow_params")
         { }
 
-        public override string[] SupportedMethods => new[] { startSet, stopSet };
+        public override IEnumerable<string> SupportedMethods => new[] {startSet, stopSet};
 
-        public override string[] SupportedProperties => new[] { propFlowing, propFlowParams };
+        public override IEnumerable<string> SupportedProperties => new[] {propFlowing, propFlowParams};
 
         public async Task<SwitchState> GetFlowingStateAsync(CancellationToken cancellationToken = default)
         {

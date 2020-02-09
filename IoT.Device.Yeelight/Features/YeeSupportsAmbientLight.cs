@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -10,9 +12,9 @@ namespace IoT.Device.Yeelight.Features
 
         public YeeSupportsAmbientLight(YeelightDevice device) : base(device) { }
 
-        public override string[] SupportedMethods => new[] { "set_ps" };
+        public override IEnumerable<string> SupportedMethods => new[] {"set_ps"};
 
-        public override string[] SupportedProperties => new[] { "bg_proact" };
+        public override IEnumerable<string> SupportedProperties => new[] {"bg_proact"};
 
         public async Task<SwitchState> GetProactiveModeAsync(CancellationToken cancellationToken = default)
         {
@@ -27,7 +29,7 @@ namespace IoT.Device.Yeelight.Features
         /// <returns></returns>
         public Task SetProactiveModeAsync(SwitchState state = SwitchState.On, CancellationToken cancellationToken = default)
         {
-            return Device.InvokeAsync("set_ps", new[] { "cfg_bg_proact", ((int)state).ToString() }, cancellationToken);
+            return Device.InvokeAsync("set_ps", new[] {"cfg_bg_proact", ((int)state).ToString(CultureInfo.InvariantCulture)}, cancellationToken);
         }
     }
 }

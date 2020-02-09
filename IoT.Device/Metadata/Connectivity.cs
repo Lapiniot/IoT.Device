@@ -3,7 +3,7 @@ using System;
 namespace IoT.Device.Metadata
 {
     [Flags]
-    public enum Connectivity
+    public enum ConnectivityTypes
     {
         Ethernet = 1,
         WiFi24 = 2,

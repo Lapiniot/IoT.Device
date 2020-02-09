@@ -21,9 +21,9 @@ namespace IoT.Device.Yeelight
 
         public abstract string ModelName { get; }
 
-        public abstract string[] SupportedCapabilities { get; }
+        public abstract IEnumerable<string> SupportedCapabilities { get; }
 
-        public abstract string[] SupportedProperties { get; }
+        public abstract IEnumerable<string> SupportedProperties { get; }
 
         public abstract T GetFeature<T>() where T : YeelightDeviceFeature;
 

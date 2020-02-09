@@ -1,14 +1,14 @@
 using System.Text.Json;
 using IoT.Device.Metadata;
 using static System.Text.Json.JsonValueKind;
-using static IoT.Device.Metadata.Connectivity;
+using static IoT.Device.Metadata.ConnectivityTypes;
 using static IoT.Device.Metadata.PowerSource;
 
 namespace IoT.Device.Lumi.SubDevices
 {
     [ModelID("RTCGQ11LM")]
     [PowerSource(CR2450)]
-    [Connectivity(ZigBee)]
+    [ConnectivityType(ZigBee)]
     public sealed class AqaraMotionSensor : LumiMotionSensor
     {
         private int lux;

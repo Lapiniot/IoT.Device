@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -10,9 +11,9 @@ namespace IoT.Device.Yeelight.Features
 
         public YeeProvideLightMode(YeelightDevice device) : base(device) { }
 
-        public override string[] SupportedMethods => Array.Empty<string>();
+        public override IEnumerable<string> SupportedMethods => Array.Empty<string>();
 
-        public override string[] SupportedProperties => new[] { "active_mode" };
+        public override IEnumerable<string> SupportedProperties => new[] {"active_mode"};
 
         public async Task<LightMode> GetModeAsync(CancellationToken cancellationToken = default)
         {

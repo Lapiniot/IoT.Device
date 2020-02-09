@@ -8,13 +8,13 @@ namespace IoT.Device.Lumi
 {
     public class LumiGatewayEnumerator : ConvertingEnumerator<(IPAddress Address, ushort Port, string Sid), LumiGateway>
     {
-        public LumiGatewayEnumerator() : base(new LumiEnumerator(), new LumiDeviceComparer()) {}
+        public LumiGatewayEnumerator() : base(new LumiEnumerator(), new LumiDeviceComparer()) { }
 
         #region Overrides of ConvertingEnumerator<(IPAddress Address, ushort Port, string Sid),LumiGateway>
 
         protected override LumiGateway Convert((IPAddress Address, ushort Port, string Sid) thing)
         {
-            if(thing.Address == null || thing.Sid == string.Empty)
+            if(thing.Address == null || string.IsNullOrEmpty(thing.Sid))
             {
                 throw new ApplicationException("Lumi gateway device does not exist or did not respond properly.");
             }
@@ -24,7 +24,7 @@ namespace IoT.Device.Lumi
 
         #endregion
 
-        public class LumiDeviceComparer : IEqualityComparer<(IPAddress Address, ushort Port, string Sid)>
+        private class LumiDeviceComparer : IEqualityComparer<(IPAddress Address, ushort Port, string Sid)>
         {
             #region Implementation of IEqualityComparer<in (IPAddress Address, ushort Port, string Sid)>
 
@@ -35,7 +35,7 @@ namespace IoT.Device.Lumi
 
             public int GetHashCode((IPAddress Address, ushort Port, string Sid) obj)
             {
-                return obj.Sid != null ? obj.Sid.GetHashCode() : 0;
+                return obj.Sid?.GetHashCode(StringComparison.InvariantCulture) ?? 0;
             }
 
             #endregion

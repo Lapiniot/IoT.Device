@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -21,9 +22,9 @@ namespace IoT.Device.Yeelight.Features
             propSetHSV = propHSVSet;
         }
 
-        public override string[] SupportedMethods => new[] { propSetHSV };
+        public override IEnumerable<string> SupportedMethods => new[] {propSetHSV};
 
-        public override string[] SupportedProperties => new[] { propHue, propSaturation };
+        public override IEnumerable<string> SupportedProperties => new[] {propHue, propSaturation};
 
         public async Task<uint> GetHueAsync(CancellationToken cancellationToken = default)
         {

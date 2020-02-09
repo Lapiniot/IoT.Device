@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using IoT.Protocol.Yeelight;
 
 namespace IoT.Device.Yeelight
@@ -17,9 +18,9 @@ namespace IoT.Device.Yeelight
 
         public override string ModelName { get; } = "yeelight.unknown";
 
-        public override string[] SupportedCapabilities => supportedCapabilities ?? Array.Empty<string>();
+        public override IEnumerable<string> SupportedCapabilities => supportedCapabilities ?? Array.Empty<string>();
 
-        public override string[] SupportedProperties { get; } = Array.Empty<string>();
+        public override IEnumerable<string> SupportedProperties { get; } = Array.Empty<string>();
 
         public override T GetFeature<T>()
         {

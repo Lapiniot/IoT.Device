@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace IoT.Device.Yeelight
 {
@@ -6,15 +7,15 @@ namespace IoT.Device.Yeelight
     {
         protected static readonly object[] EmptyArgs = Array.Empty<object>();
 
-        protected YeelightDevice Device;
-
         protected YeelightDeviceFeature(YeelightDevice device)
         {
             Device = device;
         }
 
-        public abstract string[] SupportedMethods { get; }
+        protected YeelightDevice Device { get; }
 
-        public abstract string[] SupportedProperties { get; }
+        public abstract IEnumerable<string> SupportedMethods { get; }
+
+        public abstract IEnumerable<string> SupportedProperties { get; }
     }
 }

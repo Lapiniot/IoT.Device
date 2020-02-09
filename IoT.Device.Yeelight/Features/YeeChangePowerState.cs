@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -21,9 +22,9 @@ namespace IoT.Device.Yeelight.Features
             this.propSetToggle = propSetToggle;
         }
 
-        public override string[] SupportedMethods => new[] { propSetPower, propSetToggle };
+        public override IEnumerable<string> SupportedMethods => new[] { propSetPower };
 
-        public override string[] SupportedProperties => new[] { propGetPower };
+        public override IEnumerable<string> SupportedProperties => new[] { propGetPower };
 
         public async Task<SwitchState> GetPowerStateAsync(CancellationToken cancellationToken = default)
         {

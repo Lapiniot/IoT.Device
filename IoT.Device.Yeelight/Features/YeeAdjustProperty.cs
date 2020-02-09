@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -17,9 +18,9 @@ namespace IoT.Device.Yeelight.Features
 
         public YeeAdjustProperty(YeelightDevice device) : this(device, "set_adjust") { }
 
-        public override string[] SupportedMethods => new[] { method };
+        public override IEnumerable<string> SupportedMethods => new[] {method};
 
-        public override string[] SupportedProperties => Array.Empty<string>();
+        public override IEnumerable<string> SupportedProperties => Array.Empty<string>();
 
         /// <summary>
         /// This method is used to change brightness, CT or color of a smart LED without knowing the current value,

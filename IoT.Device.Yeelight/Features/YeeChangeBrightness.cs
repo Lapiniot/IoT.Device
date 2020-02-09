@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,9 +20,9 @@ namespace IoT.Device.Yeelight.Features
             propSetBright = propSet;
         }
 
-        public override string[] SupportedMethods => new[] { propSetBright };
+        public override IEnumerable<string> SupportedMethods => new[] {propSetBright};
 
-        public override string[] SupportedProperties => new[] { propBright };
+        public override IEnumerable<string> SupportedProperties => new[] {propBright};
 
         public async Task<uint> GetBrightnessAsync(CancellationToken cancellationToken = default)
         {

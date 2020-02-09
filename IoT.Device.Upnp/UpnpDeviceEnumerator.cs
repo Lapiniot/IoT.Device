@@ -11,6 +11,8 @@ namespace IoT.Device.Upnp
 
         protected override UpnpDevice Convert(SsdpReply reply)
         {
+            if(reply is null) throw new ArgumentNullException(nameof(reply));
+
             return new UpnpDevice(new Uri(reply.Location), reply.UniqueServiceName);
         }
     }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using IoT.Device.Yeelight;
 using IoT.Device.Yeelight.Features;
 using IoT.Protocol.Yeelight;
@@ -45,7 +46,7 @@ namespace IoT.Device.Yeelight
 
         public override string ModelName => "yeelink.light.ceiling4";
 
-        public override string[] SupportedCapabilities => new[]
+        public override IEnumerable<string> SupportedCapabilities => new[]
         {
             "get_prop", "set_default", "set_power", "toggle", "set_bright", "set_scene", "cron_add",
             "cron_get", "cron_del", "start_cf", "stop_cf", "set_ct_abx", "set_name", "set_adjust",
@@ -54,7 +55,7 @@ namespace IoT.Device.Yeelight
             "bg_adjust_bright", "bg_adjust_color", "bg_adjust_ct", "bg_toggle", "dev_toggle"
         };
 
-        public override string[] SupportedProperties => new[]
+        public override IEnumerable<string> SupportedProperties => new[]
         {
             "power", "color_mode", "bright", "ct", "rgb", "flowing", "pdo_status", "hue", "sat", "save_state",
             "flow_params", "nl_br", "nighttime", "miband_sleep", "main_power", "bg_proact", "bg_power", "bg_lmode",

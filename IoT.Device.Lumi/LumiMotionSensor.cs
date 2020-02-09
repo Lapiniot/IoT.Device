@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json;
 using static System.Text.Json.JsonValueKind;
 
@@ -40,7 +41,7 @@ namespace IoT.Device.Lumi
             }
             else if(state.TryGetProperty("no_motion", out value) && value.ValueKind == String)
             {
-                NoMotionSeconds = int.Parse(value.GetString());
+                NoMotionSeconds = int.Parse(value.GetString(), CultureInfo.InvariantCulture);
                 Status = "nomotion";
             }
         }

@@ -14,6 +14,8 @@ namespace IoT.Device.Yeelight
 
         protected override YeelightDevice Convert(SsdpReply reply)
         {
+            if(reply is null) throw new ArgumentNullException(nameof(reply));
+
             if(!reply.TryGetValue("Location", out var location) ||
                !reply.TryGetValue("id", out var value) ||
                !HexConverter.TryParse(value, out uint deviceId))

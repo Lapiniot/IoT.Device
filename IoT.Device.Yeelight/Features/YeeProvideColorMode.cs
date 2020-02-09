@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -17,9 +18,9 @@ namespace IoT.Device.Yeelight.Features
 
         public YeeProvideColorMode(YeelightDevice device) : this(device, "color_mode") { }
 
-        public override string[] SupportedMethods => Array.Empty<string>();
+        public override IEnumerable<string> SupportedMethods => Array.Empty<string>();
 
-        public override string[] SupportedProperties => new[] { property };
+        public override IEnumerable<string> SupportedProperties => new[] {property};
 
         public async Task<ColorMode> GetColorModeAsync(CancellationToken cancellationToken = default)
         {

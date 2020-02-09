@@ -14,6 +14,8 @@ namespace IoT.Device.Xiaomi.Umi
 
         protected override UmiSpeakerDevice Convert(SsdpReply thing)
         {
+            if(thing is null) throw new ArgumentNullException(nameof(thing));
+
             return new UmiSpeakerDevice(new Uri(thing.Location), thing.UniqueServiceName);
         }
 

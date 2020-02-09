@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,8 +14,8 @@ namespace IoT.Device.Yeelight.Features
             method = adjustMethodName;
         }
 
-        public override string[] SupportedMethods => new[] { method };
-        public override string[] SupportedProperties => Array.Empty<string>();
+        public override IEnumerable<string> SupportedMethods => new[] {method};
+        public override IEnumerable<string> SupportedProperties => Array.Empty<string>();
 
         /// <summary>
         /// This method is used to adjust the property value by specified percentage within specified duration.
