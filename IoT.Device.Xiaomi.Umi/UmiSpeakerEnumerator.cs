@@ -8,15 +8,16 @@ namespace IoT.Device.Xiaomi.Umi
     public class UmiSpeakerEnumerator : ConvertingEnumerator<SsdpReply, UmiSpeakerDevice>
     {
         public UmiSpeakerEnumerator() :
-            base(new SsdpEnumerator("urn:schemas-upnp-org:device:UmiSystem:1"), new UpnpReplyComparer()) {}
+            base(new SsdpSearchEnumerator("urn:schemas-upnp-org:device:UmiSystem:1"), new UpnpReplyComparer()) {}
 
         #region Overrides of ConvertingEnumerator<SsdpReply,UmiSpeakerDevice>
 
-        protected override UmiSpeakerDevice Convert(SsdpReply thing)
+        protected override UmiSpeakerDevice Convert(SsdpReply reply)
         {
-            if(thing is null) throw new ArgumentNullException(nameof(thing));
+            if(reply is null) throw new ArgumentNullException(nameof(reply));
+            if(!reply.StartLine.StartsWith("HTTP", StringComparison.InvariantCulture)) return null;
 
-            return new UmiSpeakerDevice(new Uri(thing.Location), thing.UniqueServiceName);
+            return new UmiSpeakerDevice(new Uri(reply.Location), reply.UniqueServiceName);
         }
 
         #endregion
