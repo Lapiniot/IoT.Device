@@ -38,9 +38,9 @@ namespace IoT.Device.Yeelight.Features
             return (SwitchState)(await Device.GetPropertyAsync(propFlowing, cancellationToken).ConfigureAwait(false)).GetInt32();
         }
 
-        public async Task<JsonElement> GetFlowingParamsAsync(CancellationToken cancellationToken = default)
+        public Task<JsonElement> GetFlowingParamsAsync(CancellationToken cancellationToken = default)
         {
-            return await Device.GetPropertyAsync(propFlowParams, cancellationToken).ConfigureAwait(false);
+            return Device.GetPropertyAsync(propFlowParams, cancellationToken);
         }
 
         public Task StartColorFlowAsync(uint count = 0, PostFlowAction mode = PostFlowAction.RestoreState,

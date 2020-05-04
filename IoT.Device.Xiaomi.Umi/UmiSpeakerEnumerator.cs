@@ -15,9 +15,9 @@ namespace IoT.Device.Xiaomi.Umi
         protected override UmiSpeakerDevice Convert(SsdpReply reply)
         {
             if(reply is null) throw new ArgumentNullException(nameof(reply));
-            if(!reply.StartLine.StartsWith("HTTP", StringComparison.InvariantCulture)) return null;
-
-            return new UmiSpeakerDevice(new Uri(reply.Location), reply.UniqueServiceName);
+            return reply.StartLine.StartsWith("HTTP", StringComparison.InvariantCulture)
+                ? new UmiSpeakerDevice(new Uri(reply.Location), reply.UniqueServiceName)
+                : null;
         }
 
         #endregion

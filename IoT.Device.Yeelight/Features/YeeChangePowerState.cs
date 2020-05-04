@@ -26,9 +26,9 @@ namespace IoT.Device.Yeelight.Features
 
         public override IEnumerable<string> SupportedProperties => new[] { propGetPower };
 
-        public async Task<SwitchState> GetPowerStateAsync(CancellationToken cancellationToken = default)
+        public Task<SwitchState> GetPowerStateAsync(CancellationToken cancellationToken = default)
         {
-            return await Device.GetPropertyAsync<SwitchState>(propGetPower, cancellationToken).ConfigureAwait(false);
+            return Device.GetPropertyAsync<SwitchState>(propGetPower, cancellationToken);
         }
 
         public Task SetPowerStateAsync(SwitchState state = SwitchState.On, CancellationToken cancellationToken = default)
