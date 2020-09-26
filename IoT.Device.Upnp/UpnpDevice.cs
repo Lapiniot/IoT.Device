@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using IoT.Protocol.Upnp;
 
 namespace IoT.Device.Upnp
 {
@@ -19,10 +16,5 @@ namespace IoT.Device.Upnp
         public string Usn { get; }
 
         public Uri DescriptionUri { get; }
-
-        public Task<UpnpDeviceDescription> GetDescriptionAsync(CancellationToken cancellationToken = default)
-        {
-            return UpnpDeviceDescription.LoadAsync(DescriptionUri, cancellationToken);
-        }
     }
 }
