@@ -10,7 +10,9 @@ namespace IoT.Device.Yeelight
 {
     public class YeelightDeviceEnumerator : ConvertingEnumerator<SsdpReply, YeelightDevice>
     {
-        public YeelightDeviceEnumerator() : base(new YeelightEnumerator(), new SsdpReplyComparer("id")) { }
+        public YeelightDeviceEnumerator(IRetryPolicy discoveryPolicy) :
+            base(new YeelightEnumerator(discoveryPolicy), new SsdpReplyComparer("id"))
+        { }
 
         protected override YeelightDevice Convert(SsdpReply reply)
         {

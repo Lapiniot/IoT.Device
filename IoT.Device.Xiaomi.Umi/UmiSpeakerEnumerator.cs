@@ -7,8 +7,10 @@ namespace IoT.Device.Xiaomi.Umi
 {
     public class UmiSpeakerEnumerator : ConvertingEnumerator<SsdpReply, UmiSpeakerDevice>
     {
-        public UmiSpeakerEnumerator() :
-            base(new SsdpSearchEnumerator("urn:schemas-upnp-org:device:UmiSystem:1"), new UpnpReplyComparer()) {}
+        public UmiSpeakerEnumerator(IRetryPolicy discoveryPolicy) :
+            base(new SsdpSearchEnumerator("urn:schemas-upnp-org:device:UmiSystem:1", discoveryPolicy), new UpnpReplyComparer())
+        {
+        }
 
         #region Overrides of ConvertingEnumerator<SsdpReply,UmiSpeakerDevice>
 
