@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Policies;
 using IoT.Device.Upnp;
 using IoT.Protocol;
 using IoT.Protocol.Upnp;
@@ -7,7 +8,7 @@ namespace IoT.Device.Xiaomi.Umi
 {
     public class UmiSpeakerEnumerator : ConvertingEnumerator<SsdpReply, UmiSpeakerDevice>
     {
-        public UmiSpeakerEnumerator(IRetryPolicy discoveryPolicy) :
+        public UmiSpeakerEnumerator(IRepeatPolicy discoveryPolicy) :
             base(new SsdpSearchEnumerator("urn:schemas-upnp-org:device:UmiSystem:1", discoveryPolicy), new UpnpReplyComparer())
         {
         }

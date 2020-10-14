@@ -1,4 +1,5 @@
 using System;
+using System.Policies;
 using IoT.Protocol;
 using IoT.Protocol.Upnp;
 
@@ -6,12 +7,12 @@ namespace IoT.Device.Upnp
 {
     public class UpnpDeviceEnumerator : ConvertingEnumerator<SsdpReply, UpnpDevice>
     {
-        public UpnpDeviceEnumerator(string searchTarget, IRetryPolicy discoveryPolicy) :
+        public UpnpDeviceEnumerator(string searchTarget, IRepeatPolicy discoveryPolicy) :
             base(new SsdpSearchEnumerator(searchTarget, discoveryPolicy), new UpnpReplyComparer())
         {
         }
 
-        public UpnpDeviceEnumerator(IRetryPolicy discoveryPolicy) :
+        public UpnpDeviceEnumerator(IRepeatPolicy discoveryPolicy) :
             base(new SsdpSearchEnumerator("ssdp:all", discoveryPolicy), new UpnpReplyComparer())
         {
         }
