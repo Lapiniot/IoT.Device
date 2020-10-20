@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Policies;
 using IoT.Protocol;
 using IoT.Protocol.Lumi;
 
@@ -8,7 +9,7 @@ namespace IoT.Device.Lumi
 {
     public class LumiGatewayEnumerator : ConvertingEnumerator<(IPAddress Address, ushort Port, string Sid), LumiGateway>
     {
-        public LumiGatewayEnumerator(IRetryPolicy discoveryPolicy) :
+        public LumiGatewayEnumerator(IRepeatPolicy discoveryPolicy) :
             base(new LumiEnumerator(discoveryPolicy), new LumiDeviceComparer())
         {
         }

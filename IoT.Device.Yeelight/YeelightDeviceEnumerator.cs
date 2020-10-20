@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Converters;
 using System.Net;
+using System.Policies;
 using IoT.Protocol;
 using IoT.Protocol.Upnp;
 using IoT.Protocol.Yeelight;
@@ -10,7 +11,7 @@ namespace IoT.Device.Yeelight
 {
     public class YeelightDeviceEnumerator : ConvertingEnumerator<SsdpReply, YeelightDevice>
     {
-        public YeelightDeviceEnumerator(IRetryPolicy discoveryPolicy) :
+        public YeelightDeviceEnumerator(IRepeatPolicy discoveryPolicy) :
             base(new YeelightEnumerator(discoveryPolicy), new SsdpReplyComparer("id"))
         { }
 
