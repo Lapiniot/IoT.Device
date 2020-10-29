@@ -74,11 +74,6 @@ namespace IoT.Device.Lumi
             oldCts?.Cancel();
         }
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if(!disposing) return;
-        }
-
         #region INotifyPropertyChanged Support
 
         public event PropertyChangedEventHandler PropertyChanged;

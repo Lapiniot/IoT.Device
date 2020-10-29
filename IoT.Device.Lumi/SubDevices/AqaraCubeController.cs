@@ -37,11 +37,13 @@ namespace IoT.Device.Lumi.SubDevices
             if(!state.TryGetProperty("rotate", out var value) || value.ValueKind != JsonValueKind.String) return;
 
             var str = value.GetString();
+            if(str == null) return;
+
             var i = str.IndexOf(',', StringComparison.InvariantCulture);
 
             if(i <= 0 || i >= str.Length - 1 ||
                !int.TryParse(str.Substring(0, i), out var angle) ||
-               !int.TryParse(str.Substring(i + 1), out var duration))
+               !int.TryParse(str[(i + 1)..], out var duration))
             {
                 return;
             }

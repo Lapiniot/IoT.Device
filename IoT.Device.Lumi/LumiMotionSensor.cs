@@ -1,5 +1,6 @@
-using System.Globalization;
 using System.Text.Json;
+using static System.Globalization.CultureInfo;
+using static System.Globalization.NumberStyles;
 using static System.Text.Json.JsonValueKind;
 
 namespace IoT.Device.Lumi
@@ -39,9 +40,10 @@ namespace IoT.Device.Lumi
                     OnPropertyChanged(nameof(Status));
                 }
             }
-            else if(state.TryGetProperty("no_motion", out value) && value.ValueKind == String)
+            else if(state.TryGetProperty("no_motion", out value) && value.ValueKind == String &&
+                    int.TryParse(value.GetString(), Any, InvariantCulture, out var intVal))
             {
-                NoMotionSeconds = int.Parse(value.GetString(), CultureInfo.InvariantCulture);
+                NoMotionSeconds = intVal;
                 Status = "nomotion";
             }
         }

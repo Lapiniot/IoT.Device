@@ -1,6 +1,7 @@
-using System.Globalization;
 using System.Text.Json;
 using IoT.Device.Metadata;
+using static System.Globalization.CultureInfo;
+using static System.Globalization.NumberStyles;
 using static System.Text.Json.JsonValueKind;
 using static IoT.Device.Metadata.ConnectivityTypes;
 using static IoT.Device.Metadata.PowerSource;
@@ -42,19 +43,23 @@ namespace IoT.Device.Lumi.SubDevices
         {
             base.OnStateChanged(state);
 
-            if(state.TryGetProperty("temperature", out var value) && value.ValueKind == String)
+            if(state.TryGetProperty("temperature", out var value) && value.ValueKind == String &&
+               int.TryParse(value.GetString(), Any, InvariantCulture, out var intVal)
+            )
             {
-                Temperature = new decimal(int.Parse(value.GetString(), CultureInfo.InvariantCulture), 0, 0, false, 2);
+                Temperature = new decimal(intVal, 0, 0, false, 2);
             }
 
-            if(state.TryGetProperty("humidity", out value) && value.ValueKind == String)
+            if(state.TryGetProperty("humidity", out value) && value.ValueKind == String &&
+               int.TryParse(value.GetString(), Any, InvariantCulture, out intVal))
             {
-                Humidity = new decimal(int.Parse(value.GetString(), CultureInfo.InvariantCulture), 0, 0, false, 2);
+                Humidity = new decimal(intVal, 0, 0, false, 2);
             }
 
-            if(state.TryGetProperty("pressure", out value) && value.ValueKind == String)
+            if(state.TryGetProperty("pressure", out value) && value.ValueKind == String &&
+               int.TryParse(value.GetString(), Any, InvariantCulture, out intVal))
             {
-                Pressure = new decimal(int.Parse(value.GetString(), CultureInfo.InvariantCulture), 0, 0, false, 3);
+                Pressure = new decimal(intVal, 0, 0, false, 3);
             }
         }
     }
