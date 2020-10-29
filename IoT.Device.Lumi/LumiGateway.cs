@@ -28,6 +28,7 @@ namespace IoT.Device.Lumi
         private readonly LumiEventListener listener;
         private readonly SemaphoreSlim semaphore;
         private readonly IDisposable subscription;
+        private int disposed;
         private int illumination;
         private int rgbValue;
 
@@ -116,7 +117,7 @@ namespace IoT.Device.Lumi
         {
             var json = await InvokeAsync("get_id_list", Sid, cancellationToken).ConfigureAwait(false);
 
-            var data = Deserialize<JsonElement>(json.GetProperty("data").GetString());
+            var data = Deserialize<JsonElement>(json.GetProperty("data").GetString() ?? string.Empty);
 
             var sids = data.EnumerateArray().Select(a => a.GetString()).ToArray();
 
@@ -133,7 +134,7 @@ namespace IoT.Device.Lumi
 
                     children.Remove(sid);
 
-                    device.Dispose();
+                    await device.DisposeAsync().ConfigureAwait(false);
                 }
 
                 foreach(var (_, value) in children)
@@ -150,7 +151,7 @@ namespace IoT.Device.Lumi
                     var id = info.GetProperty("short_id").GetInt32();
                     var deviceModel = info.GetProperty("model").GetString();
                     device = Cache.CreateInstance(deviceModel, sid, id) ?? new GenericSubDevice(sid, id);
-                    device.OnStateChanged(Deserialize<JsonElement>(d.GetString()));
+                    device.OnStateChanged(Deserialize<JsonElement>(d.GetString() ?? string.Empty));
                     children.Add(sid, device);
                     yield return device;
                 }
@@ -176,24 +177,35 @@ namespace IoT.Device.Lumi
 
         #region Overrides of LumiThing
 
-        protected override void Dispose(bool disposing)
+        public override async ValueTask DisposeAsync()
         {
-            base.Dispose(disposing);
+            if(Interlocked.CompareExchange(ref disposed, 1, 0) != 0) return;
 
-            if(!disposing) return;
+            await base.DisposeAsync().ConfigureAwait(false);
 
-            var _ = client.DisposeAsync();
-            listener.DisposeAsync();
-            semaphore?.Dispose();
-
-            subscription.Dispose();
-
-            foreach(var c in children)
+            try
             {
-                c.Value.Dispose();
-            }
+                try
+                {
+                    using(subscription)
+                    using(semaphore) {}
 
-            children.Clear();
+                    foreach(var c in children)
+                    {
+                        await using(c.Value.ConfigureAwait(false)) {}
+                    }
+
+                    children.Clear();
+                }
+                finally
+                {
+                    await listener.DisposeAsync().ConfigureAwait(false);
+                }
+            }
+            finally
+            {
+                await client.DisposeAsync().ConfigureAwait(false);
+            }
         }
 
         #endregion
@@ -209,12 +221,15 @@ namespace IoT.Device.Lumi
             if(!message.TryGetProperty("sid", out var sid) ||
                !message.TryGetProperty("cmd", out var command) ||
                !message.TryGetProperty("data", out var v) ||
-               !(Deserialize<JsonElement>(v.GetString()) is { } data))
+               !(Deserialize<JsonElement>(v.GetString() ?? string.Empty) is {} data))
             {
                 return;
             }
 
             var key = sid.GetString();
+
+            if(string.IsNullOrEmpty(key)) return;
+
             switch(command.GetString())
             {
                 case "heartbeat":

@@ -10,7 +10,7 @@ using static System.Threading.Tasks.TaskContinuationOptions;
 
 namespace IoT.Device.Lumi
 {
-    public abstract class LumiThing : INotifyPropertyChanged, IProvideOnlineInfo, IDisposable
+    public abstract class LumiThing : INotifyPropertyChanged, IProvideOnlineInfo, IAsyncDisposable
     {
         private bool isOnline;
         private CancellationTokenSource resetWatchTokenSource;
@@ -26,11 +26,24 @@ namespace IoT.Device.Lumi
 
         public string Sid { get; }
 
-        public void Dispose()
+        #region Implementation of IAsyncDisposable
+
+        public virtual ValueTask DisposeAsync()
         {
-            Dispose(true);
             GC.SuppressFinalize(this);
+            var source = resetWatchTokenSource;
+            if(source != null)
+            {
+                source.Cancel();
+                source.Dispose();
+            }
+
+            resetWatchTokenSource = null;
+
+            return new ValueTask();
         }
+
+        #endregion
 
         public bool IsOnline
         {
@@ -64,15 +77,6 @@ namespace IoT.Device.Lumi
         protected virtual void Dispose(bool disposing)
         {
             if(!disposing) return;
-
-            var source = resetWatchTokenSource;
-            if(source != null)
-            {
-                source.Cancel();
-                source.Dispose();
-            }
-
-            resetWatchTokenSource = null;
         }
 
         #region INotifyPropertyChanged Support

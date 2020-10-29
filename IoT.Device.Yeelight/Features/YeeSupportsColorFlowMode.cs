@@ -52,13 +52,13 @@ namespace IoT.Device.Yeelight.Features
             foreach(var (duration, flowTransition, value, brightness) in states)
             {
                 sb.Append(duration);
-                sb.Append(",");
+                sb.Append(',');
                 sb.Append((int)flowTransition);
-                sb.Append(",");
+                sb.Append(',');
                 sb.Append(value);
-                sb.Append(",");
+                sb.Append(',');
                 sb.Append(brightness);
-                sb.Append(",");
+                sb.Append(',');
             }
 
             if(sb[^1] == ',') sb.Length--;
