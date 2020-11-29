@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using IoT.Protocol.Soap;
@@ -19,7 +20,9 @@ namespace IoT.Device.Xiaomi.Umi.Services
 
         public async Task<string> GetStringAsync(string variableName, CancellationToken cancellationToken = default)
         {
-            return (await InvokeAsync("GetString", cancellationToken, ("VariableName", variableName)).ConfigureAwait(false))["StringValue"];
+            return (await InvokeAsync("GetString", new Dictionary<string, string>() {
+                { "VariableName", variableName } },
+                cancellationToken).ConfigureAwait(false))["StringValue"];
         }
     }
 }
