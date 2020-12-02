@@ -1,23 +1,26 @@
 ﻿using System;
+using System.Net.Http;
 using IoT.Device.Upnp;
 using IoT.Device.Xiaomi.Umi.Services;
 using IoT.Protocol.Soap;
 using IoT.Protocol.Upnp.Services;
-using static System.Threading.LazyThreadSafetyMode;
 using static System.UriKind;
 using static System.UriPartial;
+using static System.Net.DecompressionMethods;
 
 namespace IoT.Device.Xiaomi.Umi
 {
-    public class UmiSpeakerDevice : UpnpDevice
+    public sealed class UmiSpeakerDevice : UpnpDevice, IDisposable
     {
-        private readonly Lazy<AVTransportService> avTransportLazy;
-        private readonly Lazy<ConnectionManagerService> connectionManagerLazy;
-        private readonly Lazy<ContentDirectoryService> contentDirectoryLazy;
-        private readonly Lazy<SoapControlEndpoint> endpointLazy;
-        private readonly Lazy<PlaylistService> playlistLazy;
-        private readonly Lazy<RenderingControlService> renderingControlLazy;
-        private readonly Lazy<SystemPropertiesService> systemPropertiesLazy;
+        private HttpClientHandler handler;
+        private HttpClient client;
+        private SoapControlEndpoint endpoint;
+        private AVTransportService avTransport;
+        private ConnectionManagerService connectionManager;
+        private ContentDirectoryService contentDirectory;
+        private PlaylistService playlist;
+        private RenderingControlService renderingControl;
+        private SystemPropertiesService systemProperties;
 
         public UmiSpeakerDevice(Uri descriptionUri, string usn) : base(descriptionUri, usn)
         {
@@ -25,48 +28,49 @@ namespace IoT.Device.Xiaomi.Umi
 
             if(string.IsNullOrEmpty(usn)) throw new ArgumentException("message", nameof(usn));
 
-            DeviceId = usn.Split(new[] {':'}, 3)[1];
+            DeviceId = usn.Split(new[] { ':' }, 3)[1];
 
             BaseUri = new Uri(descriptionUri.GetLeftPart(Authority));
 
-            endpointLazy = new Lazy<SoapControlEndpoint>(() => new SoapControlEndpoint(BaseUri), ExecutionAndPublication);
+            handler = new() { AutomaticDecompression = GZip | Deflate, UseCookies = false };
 
-            contentDirectoryLazy = new Lazy<ContentDirectoryService>(() =>
-                new ContentDirectoryService(Endpoint,
-                    new Uri($"{DeviceId}-MS/upnp.org-ContentDirectory-1/control", Relative)));
-            playlistLazy = new Lazy<PlaylistService>(() =>
-                new PlaylistService(Endpoint,
-                    new Uri($"{DeviceId}-MR/xiaomi.com-Playlist-1/control", Relative)));
-            avTransportLazy = new Lazy<AVTransportService>(() =>
-                new AVTransportService(Endpoint,
-                    new Uri($"{DeviceId}-MR/upnp.org-AVTransport-1/control", Relative)));
-            systemPropertiesLazy = new Lazy<SystemPropertiesService>(() =>
-                new SystemPropertiesService(Endpoint,
-                    new Uri($"{DeviceId}/xiaomi.com-SystemProperties-1/control", Relative)));
-            connectionManagerLazy = new Lazy<ConnectionManagerService>(() =>
-                new ConnectionManagerService(Endpoint,
-                    new Uri($"{DeviceId}-MR/upnp.org-ConnectionManager-1/control", Relative)));
-            renderingControlLazy = new Lazy<RenderingControlService>(() =>
-                new RenderingControlService(Endpoint,
-                    new Uri($"{DeviceId}-MR/upnp.org-RenderingControl-1/control", Relative)));
+            client = new(handler, false) { BaseAddress = BaseUri, DefaultRequestHeaders = { { "Accept-Encoding", "gzip" } } };
         }
 
         public string DeviceId { get; }
 
         public Uri BaseUri { get; }
 
-        internal SoapControlEndpoint Endpoint => endpointLazy.Value;
+        internal SoapControlEndpoint Endpoint => endpoint ??= new(client);
 
-        public ContentDirectoryService ContentDirectory => contentDirectoryLazy.Value;
+        public ContentDirectoryService ContentDirectory =>
+            contentDirectory ??= new(Endpoint,
+                    new Uri($"{DeviceId}-MS/upnp.org-ContentDirectory-1/control", Relative));
 
-        public PlaylistService Playlist => playlistLazy.Value;
+        public PlaylistService Playlist =>
+            playlist ??= new(Endpoint,
+                    new Uri($"{DeviceId}-MR/xiaomi.com-Playlist-1/control", Relative));
 
-        public AVTransportService AVTransport => avTransportLazy.Value;
+        public AVTransportService AVTransport =>
+            avTransport ??= new(Endpoint,
+                    new Uri($"{DeviceId}-MR/upnp.org-AVTransport-1/control", Relative));
 
-        public SystemPropertiesService SystemProperties => systemPropertiesLazy.Value;
+        public SystemPropertiesService SystemProperties =>
+            systemProperties ??= new(Endpoint,
+                    new Uri($"{DeviceId}/xiaomi.com-SystemProperties-1/control", Relative));
 
-        public ConnectionManagerService ConnectionManager => connectionManagerLazy.Value;
+        public ConnectionManagerService ConnectionManager =>
+            connectionManager ??= new(Endpoint,
+                    new Uri($"{DeviceId}-MR/upnp.org-ConnectionManager-1/control", Relative));
 
-        public RenderingControlService RenderingControl => renderingControlLazy.Value;
+        public RenderingControlService RenderingControl =>
+            renderingControl ??= new(Endpoint,
+                    new Uri($"{DeviceId}-MR/upnp.org-RenderingControl-1/control", Relative));
+
+        public void Dispose()
+        {
+            handler.Dispose();
+            client.Dispose();
+        }
     }
 }
