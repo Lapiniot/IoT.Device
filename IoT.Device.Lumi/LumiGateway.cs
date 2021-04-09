@@ -150,7 +150,7 @@ namespace IoT.Device.Lumi
 
                     var id = info.GetProperty("short_id").GetInt32();
                     var deviceModel = info.GetProperty("model").GetString();
-                    device = Cache.CreateInstance(deviceModel, sid, id) ?? new GenericSubDevice(sid, id);
+                    device = Cache.CreateInstance(deviceModel, sid, id);
                     device.OnStateChanged(Deserialize<JsonElement>(d.GetString() ?? string.Empty));
                     children.Add(sid, device);
                     yield return device;

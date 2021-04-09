@@ -38,10 +38,10 @@ namespace IoT.Device.Yeelight.Features
 
         public Task SetColorHSVAsync(uint hsv, CancellationToken cancellationToken = default)
         {
-            return SetColorHsvAsync(hsv, Effect.Sudden, 0, cancellationToken);
+            return SetColorHSVAsync(hsv, Effect.Sudden, 0, cancellationToken);
         }
 
-        public Task SetColorHsvAsync(uint hsv, Effect effect = Effect.Smooth, int durationMilliseconds = 500, CancellationToken cancellationToken = default)
+        public Task SetColorHSVAsync(uint hsv, Effect effect = Effect.Smooth, int durationMilliseconds = 500, CancellationToken cancellationToken = default)
         {
             return Device.InvokeAsync(propSetHSV, new object[] { hsv, effect.ToString().ToLowerInvariant(), durationMilliseconds }, cancellationToken);
         }

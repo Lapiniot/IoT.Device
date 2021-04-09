@@ -32,7 +32,7 @@ namespace IoT.Device.Xiaomi.Umi
 
             BaseUri = new Uri(descriptionUri.GetLeftPart(Authority));
 
-            handler = new() { AutomaticDecompression = GZip | Deflate, UseCookies = false };
+            handler = new() { AutomaticDecompression = GZip | Deflate, UseCookies = false, CheckCertificateRevocationList = true };
 
             client = new(handler, false) { BaseAddress = BaseUri, DefaultRequestHeaders = { { "Accept-Encoding", "gzip" } } };
         }

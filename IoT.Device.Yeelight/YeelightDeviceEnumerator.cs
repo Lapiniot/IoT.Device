@@ -15,12 +15,12 @@ namespace IoT.Device.Yeelight
             base(new YeelightEnumerator(discoveryPolicy), new SsdpReplyComparer("id"))
         { }
 
-        protected override YeelightDevice Convert(SsdpReply reply)
+        protected override YeelightDevice Convert(SsdpReply thing)
         {
-            if(reply is null) throw new ArgumentNullException(nameof(reply));
+            if(thing is null) throw new ArgumentNullException(nameof(thing));
 
-            if(!reply.TryGetValue("Location", out var location) ||
-               !reply.TryGetValue("id", out var value) ||
+            if(!thing.TryGetValue("Location", out var location) ||
+               !thing.TryGetValue("id", out var value) ||
                !HexConverter.TryParse(value, out uint deviceId))
             {
                 return null;
@@ -32,9 +32,9 @@ namespace IoT.Device.Yeelight
 
             try
             {
-                var capabilities = reply["support"].Split(' ', ',');
+                var capabilities = thing["support"].Split(' ', ',');
 
-                return YeelightFactory.CreateInstance(reply["model"], endpoint, capabilities) ??
+                return YeelightFactory.CreateInstance(thing["model"], endpoint, capabilities) ??
                        new YeelightGenericDevice(endpoint, capabilities);
             }
             catch

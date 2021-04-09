@@ -18,7 +18,7 @@ namespace IoT.Device.Lumi
         {
             if(thing.Address == null || string.IsNullOrEmpty(thing.Sid))
             {
-                throw new ApplicationException("Lumi gateway device does not exist or did not respond properly.");
+                throw new InvalidOperationException("Lumi gateway device does not exist or did not respond properly.");
             }
 
             return new LumiGateway(thing.Address, thing.Port, thing.Sid);

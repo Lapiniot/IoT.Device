@@ -4,7 +4,7 @@ namespace IoT.Device.Lumi
 {
     public sealed class ExportSubDeviceAttribute : ExportDeviceAttributeBase
     {
-        public ExportSubDeviceAttribute(string model, Type implementation) :
-            base(model, implementation) {}
+        public ExportSubDeviceAttribute(string model, Type implementationType) :
+            base(model, implementationType) {}
     }
 }

@@ -20,21 +20,21 @@ namespace IoT.Device.Yeelight.Features
             propSetRGB = propSet;
         }
 
-        public override IEnumerable<string> SupportedMethods => new[] {propSetRGB};
+        public override IEnumerable<string> SupportedMethods => new[] { propSetRGB };
 
-        public override IEnumerable<string> SupportedProperties => new[] {propRGB};
+        public override IEnumerable<string> SupportedProperties => new[] { propRGB };
 
         public async Task<uint> GetColorRGBAsync(CancellationToken cancellationToken = default)
         {
             return (await Device.GetPropertyAsync(propRGB, cancellationToken).ConfigureAwait(false)).GetUInt32();
         }
 
-        public Task SetColorRGBAsync(uint rgb, CancellationToken cancellationToken = default)
+        public Task SetColorRGBAsync(uint argb, CancellationToken cancellationToken = default)
         {
-            return SetColorRgbAsync(rgb, Effect.Sudden, 0, cancellationToken);
+            return SetColorRGBAsync(argb, Effect.Sudden, 0, cancellationToken);
         }
 
-        public Task SetColorRgbAsync(uint rgb, Effect effect = Effect.Smooth,
+        public Task SetColorRGBAsync(uint rgb, Effect effect = Effect.Smooth,
             int durationMilliseconds = 500, CancellationToken cancellationToken = default)
         {
             return Device.InvokeAsync(propSetRGB, new object[] { rgb, effect.ToString().ToLowerInvariant(), durationMilliseconds }, cancellationToken);
