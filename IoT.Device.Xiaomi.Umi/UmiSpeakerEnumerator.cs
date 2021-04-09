@@ -13,11 +13,11 @@ namespace IoT.Device.Xiaomi.Umi
 
         #region Overrides of ConvertingEnumerator<SsdpReply,UmiSpeakerDevice>
 
-        protected override UmiSpeakerDevice Convert(SsdpReply reply)
+        protected override UmiSpeakerDevice Convert(SsdpReply thing)
         {
-            if(reply is null) throw new ArgumentNullException(nameof(reply));
-            return reply.StartLine.StartsWith("HTTP", StringComparison.InvariantCulture)
-                ? new UmiSpeakerDevice(new Uri(reply.Location), reply.UniqueServiceName)
+            if(thing is null) throw new ArgumentNullException(nameof(thing));
+            return thing.StartLine.StartsWith("HTTP", StringComparison.InvariantCulture)
+                ? new UmiSpeakerDevice(new Uri(thing.Location), thing.UniqueServiceName)
                 : null;
         }
 

@@ -13,11 +13,11 @@ namespace IoT.Device.Upnp
         public UpnpDeviceEnumerator(IRepeatPolicy discoveryPolicy) :
             base(new SsdpSearchEnumerator("ssdp:all", discoveryPolicy), new UpnpReplyComparer()) {}
 
-        protected override UpnpDevice Convert(SsdpReply reply)
+        protected override UpnpDevice Convert(SsdpReply thing)
         {
-            if(reply is null) throw new ArgumentNullException(nameof(reply));
-            return reply.StartLine.StartsWith("HTTP", StringComparison.InvariantCulture)
-                ? new UpnpDevice(new Uri(reply.Location), reply.UniqueServiceName)
+            if(thing is null) throw new ArgumentNullException(nameof(thing));
+            return thing.StartLine.StartsWith("HTTP", StringComparison.InvariantCulture)
+                ? new UpnpDevice(new Uri(thing.Location), thing.UniqueServiceName)
                 : null;
         }
     }

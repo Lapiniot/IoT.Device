@@ -3,7 +3,7 @@
 namespace IoT.Device.Metadata
 {
     [AttributeUsage(AttributeTargets.Class)]
-    public class ConnectivityTypeAttribute : Attribute
+    public sealed class ConnectivityTypeAttribute : Attribute
     {
         public ConnectivityTypeAttribute(ConnectivityTypes type)
         {
