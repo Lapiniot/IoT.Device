@@ -32,7 +32,7 @@ namespace IoT.Device.Lumi
         private int illumination;
         private int rgbValue;
 
-        public LumiGateway(IPAddress address, ushort port, string sid) : base(sid)
+        public LumiGateway(IPAddress address, int port, string sid) : base(sid)
         {
             semaphore = new SemaphoreSlim(1, 1);
             children = new Dictionary<string, LumiSubDevice>();

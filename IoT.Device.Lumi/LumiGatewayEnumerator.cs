@@ -7,14 +7,14 @@ using IoT.Protocol.Lumi;
 
 namespace IoT.Device.Lumi
 {
-    public class LumiGatewayEnumerator : ConvertingEnumerator<(IPAddress Address, ushort Port, string Sid), LumiGateway>
+    public class LumiGatewayEnumerator : ConvertingEnumerator<(IPAddress Address, int Port, string Sid), LumiGateway>
     {
         public LumiGatewayEnumerator(IRepeatPolicy discoveryPolicy) :
             base(new LumiEnumerator(discoveryPolicy), new LumiDeviceComparer()) {}
 
         #region Overrides of ConvertingEnumerator<(IPAddress Address, ushort Port, string Sid),LumiGateway>
 
-        protected override LumiGateway Convert((IPAddress Address, ushort Port, string Sid) thing)
+        protected override LumiGateway Convert((IPAddress Address, int Port, string Sid) thing)
         {
             if(thing.Address == null || string.IsNullOrEmpty(thing.Sid))
             {
@@ -26,16 +26,16 @@ namespace IoT.Device.Lumi
 
         #endregion
 
-        private class LumiDeviceComparer : IEqualityComparer<(IPAddress Address, ushort Port, string Sid)>
+        private class LumiDeviceComparer : IEqualityComparer<(IPAddress Address, int Port, string Sid)>
         {
             #region Implementation of IEqualityComparer<in (IPAddress Address, ushort Port, string Sid)>
 
-            public bool Equals((IPAddress Address, ushort Port, string Sid) x, (IPAddress Address, ushort Port, string Sid) y)
+            public bool Equals((IPAddress Address, int Port, string Sid) x, (IPAddress Address, int Port, string Sid) y)
             {
                 return StringComparer.OrdinalIgnoreCase.Equals(x.Sid, y.Sid);
             }
 
-            public int GetHashCode((IPAddress Address, ushort Port, string Sid) obj)
+            public int GetHashCode((IPAddress Address, int Port, string Sid) obj)
             {
                 return obj.Sid?.GetHashCode(StringComparison.InvariantCulture) ?? 0;
             }
