@@ -1,10 +1,11 @@
 ﻿using System;
-using System.Converters;
 using System.Net;
 using System.Policies;
 using IoT.Protocol;
 using IoT.Protocol.Upnp;
 using IoT.Protocol.Yeelight;
+using System.Globalization;
+using static System.Globalization.NumberStyles;
 using YeelightFactory = IoT.Device.Container<IoT.Device.Yeelight.ExportYeelightDeviceAttribute, IoT.Device.Yeelight.YeelightDevice>;
 
 namespace IoT.Device.Yeelight
@@ -21,7 +22,7 @@ namespace IoT.Device.Yeelight
 
             if(!thing.TryGetValue("Location", out var location) ||
                !thing.TryGetValue("id", out var value) ||
-               !HexConverter.TryParse(value, out uint deviceId))
+               !TryParseNumber(value, out uint deviceId))
             {
                 return null;
             }
@@ -34,14 +35,19 @@ namespace IoT.Device.Yeelight
             {
                 var capabilities = thing["support"].Split(' ', ',');
 
-                return YeelightFactory.CreateInstance(thing["model"], endpoint, capabilities) ??
-                       new YeelightGenericDevice(endpoint, capabilities);
+                return YeelightFactory.CreateInstance(thing["model"], endpoint, capabilities);
             }
             catch
             {
                 var _ = endpoint.DisposeAsync();
                 throw;
             }
+        }
+
+        private static bool TryParseNumber(string s, out uint result)
+        {
+            return s.StartsWith("0x", false, CultureInfo.InvariantCulture) && uint.TryParse(s[2..], HexNumber, null, out result) ||
+                   uint.TryParse(s, Integer & ~AllowLeadingSign, null, out result);
         }
     }
 }
