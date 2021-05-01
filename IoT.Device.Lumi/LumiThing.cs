@@ -30,6 +30,8 @@ namespace IoT.Device.Lumi
 
         public virtual ValueTask DisposeAsync()
         {
+            GC.SuppressFinalize(this);
+            
             var source = resetWatchTokenSource;
             if(source != null)
             {

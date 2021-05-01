@@ -43,10 +43,12 @@ namespace IoT.Device.Yeelight.Features
             return Device.GetPropertyAsync(propFlowParams, cancellationToken);
         }
 
-        public Task StartColorFlowAsync(uint count = 0, PostFlowAction mode = PostFlowAction.RestoreState,
-            CancellationToken cancellationToken = default,
-            params (int Duration, FlowTransition Mode, int Value, int Brightness)[] states)
+        public Task StartColorFlowAsync(uint count, PostFlowAction mode,
+            (int Duration, FlowTransition Mode, int Value, int Brightness)[] states,
+            CancellationToken cancellationToken)
         {
+            if(states is null) throw new ArgumentNullException(nameof(states));
+
             var sb = new StringBuilder();
 
             foreach(var (duration, flowTransition, value, brightness) in states)
