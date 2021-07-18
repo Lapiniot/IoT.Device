@@ -42,7 +42,7 @@ namespace IoT.Device.Lumi.SubDevices
             var i = str.IndexOf(',', StringComparison.InvariantCulture);
 
             if(i <= 0 || i >= str.Length - 1 ||
-               !int.TryParse(str.Substring(0, i), out var angle) ||
+               !int.TryParse(str.AsSpan(0, i), out var angle) ||
                !int.TryParse(str[(i + 1)..], out var duration))
             {
                 return;
