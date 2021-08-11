@@ -1,7 +1,6 @@
 using System.Text.Json;
 using static System.Globalization.CultureInfo;
 using static System.Globalization.NumberStyles;
-using static System.Text.Json.JsonValueKind;
 
 namespace IoT.Device.Lumi
 {
@@ -24,7 +23,7 @@ namespace IoT.Device.Lumi
 
             base.OnStateChanged(state);
 
-            if(state.TryGetProperty("status", out var value) && value.ValueKind == String)
+            if(state.TryGetProperty("status", out var value) && value.ValueKind == JsonValueKind.String)
             {
                 NoMotionSeconds = 0;
 
@@ -40,7 +39,7 @@ namespace IoT.Device.Lumi
                     OnPropertyChanged(nameof(Status));
                 }
             }
-            else if(state.TryGetProperty("no_motion", out value) && value.ValueKind == String &&
+            else if(state.TryGetProperty("no_motion", out value) && value.ValueKind == JsonValueKind.String &&
                     int.TryParse(value.GetString(), Any, InvariantCulture, out var intVal))
             {
                 NoMotionSeconds = intVal;

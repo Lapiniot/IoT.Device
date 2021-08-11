@@ -1,6 +1,5 @@
 using System.Text.Json;
 using IoT.Device.Metadata;
-using static System.Text.Json.JsonValueKind;
 
 namespace IoT.Device.Lumi.SubDevices
 {
@@ -11,7 +10,7 @@ namespace IoT.Device.Lumi.SubDevices
     {
         private bool alarm;
 
-        internal HonneywellFireSmokeSensor(string sid, int id) : base(sid, id) {}
+        internal HonneywellFireSmokeSensor(string sid, int id) : base(sid, id) { }
 
         public override string Model { get; } = "sensor_smoke.v1";
 
@@ -25,7 +24,7 @@ namespace IoT.Device.Lumi.SubDevices
         {
             base.OnStateChanged(state);
 
-            if(state.TryGetProperty("alarm", out var value) && value.ValueKind == String)
+            if(state.TryGetProperty("alarm", out var value) && value.ValueKind == JsonValueKind.String)
             {
                 Alarm = value.GetString() == "1";
             }

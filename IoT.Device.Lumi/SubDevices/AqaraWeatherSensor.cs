@@ -2,7 +2,6 @@ using System.Text.Json;
 using IoT.Device.Metadata;
 using static System.Globalization.CultureInfo;
 using static System.Globalization.NumberStyles;
-using static System.Text.Json.JsonValueKind;
 using static IoT.Device.Metadata.ConnectivityTypes;
 using static IoT.Device.Metadata.PowerSource;
 
@@ -17,7 +16,7 @@ namespace IoT.Device.Lumi.SubDevices
         private decimal pressure;
         private decimal temperature;
 
-        internal AqaraWeatherSensor(string sid, int id) : base(sid, id) {}
+        internal AqaraWeatherSensor(string sid, int id) : base(sid, id) { }
 
         public override string Model { get; } = "weather.v1";
 
@@ -43,20 +42,20 @@ namespace IoT.Device.Lumi.SubDevices
         {
             base.OnStateChanged(state);
 
-            if(state.TryGetProperty("temperature", out var value) && value.ValueKind == String &&
+            if(state.TryGetProperty("temperature", out var value) && value.ValueKind == JsonValueKind.String &&
                int.TryParse(value.GetString(), Any, InvariantCulture, out var intVal)
             )
             {
                 Temperature = new decimal(intVal, 0, 0, false, 2);
             }
 
-            if(state.TryGetProperty("humidity", out value) && value.ValueKind == String &&
+            if(state.TryGetProperty("humidity", out value) && value.ValueKind == JsonValueKind.String &&
                int.TryParse(value.GetString(), Any, InvariantCulture, out intVal))
             {
                 Humidity = new decimal(intVal, 0, 0, false, 2);
             }
 
-            if(state.TryGetProperty("pressure", out value) && value.ValueKind == String &&
+            if(state.TryGetProperty("pressure", out value) && value.ValueKind == JsonValueKind.String &&
                int.TryParse(value.GetString(), Any, InvariantCulture, out intVal))
             {
                 Pressure = new decimal(intVal, 0, 0, false, 3);

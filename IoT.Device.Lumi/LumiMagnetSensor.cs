@@ -1,5 +1,4 @@
 using System.Text.Json;
-using static System.Text.Json.JsonValueKind;
 
 namespace IoT.Device.Lumi
 {
@@ -20,7 +19,7 @@ namespace IoT.Device.Lumi
             base.OnStateChanged(state);
 
             if(state.TryGetProperty("no_close", out var value) &&
-               value.ValueKind == String &&
+               value.ValueKind == JsonValueKind.String &&
                int.TryParse(value.GetString(), out var seconds))
             {
                 NoCloseSeconds = seconds;
