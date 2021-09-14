@@ -5,61 +5,60 @@ using static System.Globalization.NumberStyles;
 using static IoT.Device.Metadata.ConnectivityTypes;
 using static IoT.Device.Metadata.PowerSource;
 
-namespace IoT.Device.Lumi.SubDevices
+namespace IoT.Device.Lumi.SubDevices;
+
+[ModelID("WSDCGQ11LM")]
+[PowerSource(CR2032)]
+[ConnectivityType(ZigBee)]
+public sealed class AqaraWeatherSensor : LumiSubDevice
 {
-    [ModelID("WSDCGQ11LM")]
-    [PowerSource(CR2032)]
-    [ConnectivityType(ZigBee)]
-    public sealed class AqaraWeatherSensor : LumiSubDevice
+    private decimal humidity;
+    private decimal pressure;
+    private decimal temperature;
+
+    internal AqaraWeatherSensor(string sid, int id) : base(sid, id) { }
+
+    public override string Model { get; } = "weather.v1";
+
+    public decimal Temperature
     {
-        private decimal humidity;
-        private decimal pressure;
-        private decimal temperature;
+        get => temperature;
+        private set => Set(ref temperature, value);
+    }
 
-        internal AqaraWeatherSensor(string sid, int id) : base(sid, id) { }
+    public decimal Humidity
+    {
+        get => humidity;
+        private set => Set(ref humidity, value);
+    }
 
-        public override string Model { get; } = "weather.v1";
+    public decimal Pressure
+    {
+        get => pressure;
+        private set => Set(ref pressure, value);
+    }
 
-        public decimal Temperature
+    protected internal override void OnStateChanged(JsonElement state)
+    {
+        base.OnStateChanged(state);
+
+        if(state.TryGetProperty("temperature", out var value) && value.ValueKind == JsonValueKind.String &&
+           int.TryParse(value.GetString(), Any, InvariantCulture, out var intVal)
+        )
         {
-            get => temperature;
-            private set => Set(ref temperature, value);
+            Temperature = new decimal(intVal, 0, 0, false, 2);
         }
 
-        public decimal Humidity
+        if(state.TryGetProperty("humidity", out value) && value.ValueKind == JsonValueKind.String &&
+           int.TryParse(value.GetString(), Any, InvariantCulture, out intVal))
         {
-            get => humidity;
-            private set => Set(ref humidity, value);
+            Humidity = new decimal(intVal, 0, 0, false, 2);
         }
 
-        public decimal Pressure
+        if(state.TryGetProperty("pressure", out value) && value.ValueKind == JsonValueKind.String &&
+           int.TryParse(value.GetString(), Any, InvariantCulture, out intVal))
         {
-            get => pressure;
-            private set => Set(ref pressure, value);
-        }
-
-        protected internal override void OnStateChanged(JsonElement state)
-        {
-            base.OnStateChanged(state);
-
-            if(state.TryGetProperty("temperature", out var value) && value.ValueKind == JsonValueKind.String &&
-               int.TryParse(value.GetString(), Any, InvariantCulture, out var intVal)
-            )
-            {
-                Temperature = new decimal(intVal, 0, 0, false, 2);
-            }
-
-            if(state.TryGetProperty("humidity", out value) && value.ValueKind == JsonValueKind.String &&
-               int.TryParse(value.GetString(), Any, InvariantCulture, out intVal))
-            {
-                Humidity = new decimal(intVal, 0, 0, false, 2);
-            }
-
-            if(state.TryGetProperty("pressure", out value) && value.ValueKind == JsonValueKind.String &&
-               int.TryParse(value.GetString(), Any, InvariantCulture, out intVal))
-            {
-                Pressure = new decimal(intVal, 0, 0, false, 3);
-            }
+            Pressure = new decimal(intVal, 0, 0, false, 3);
         }
     }
 }

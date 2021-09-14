@@ -1,15 +1,12 @@
-﻿using System;
+﻿namespace IoT.Device.Metadata;
 
-namespace IoT.Device.Metadata
+[AttributeUsage(AttributeTargets.Class)]
+public sealed class ConnectivityTypeAttribute : Attribute
 {
-    [AttributeUsage(AttributeTargets.Class)]
-    public sealed class ConnectivityTypeAttribute : Attribute
+    public ConnectivityTypeAttribute(ConnectivityTypes connectivity)
     {
-        public ConnectivityTypeAttribute(ConnectivityTypes connectivity)
-        {
-            Connectivity = connectivity;
-        }
-
-        public ConnectivityTypes Connectivity { get; }
+        Connectivity = connectivity;
     }
+
+    public ConnectivityTypes Connectivity { get; }
 }

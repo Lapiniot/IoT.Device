@@ -2,15 +2,14 @@
 using static IoT.Device.Metadata.PowerSource;
 using static IoT.Device.Metadata.ConnectivityTypes;
 
-namespace IoT.Device.Lumi.SubDevices
-{
-    [ModelID("WXKG01LM")]
-    [PowerSource(CR2032)]
-    [ConnectivityType(ZigBee)]
-    public sealed class ButtonSwitchV2 : LumiSubDevice
-    {
-        private ButtonSwitchV2(string sid, int id) : base(sid, id) {}
+namespace IoT.Device.Lumi.SubDevices;
 
-        public override string Model { get; } = "sensor_switch.v2";
-    }
+[ModelID("WXKG01LM")]
+[PowerSource(CR2032)]
+[ConnectivityType(ZigBee)]
+public sealed class ButtonSwitchV2 : LumiSubDevice
+{
+    private ButtonSwitchV2(string sid, int id) : base(sid, id) { }
+
+    public override string Model { get; } = "sensor_switch.v2";
 }

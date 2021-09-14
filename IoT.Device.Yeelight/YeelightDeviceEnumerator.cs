@@ -1,5 +1,4 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using System.Policies;
 using IoT.Protocol;
 using IoT.Protocol.Upnp;

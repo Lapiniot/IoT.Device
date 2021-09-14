@@ -1,30 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
+namespace IoT.Device.Yeelight.Features;
 
-namespace IoT.Device.Yeelight.Features
+public class YeeProvideColorMode : YeelightDeviceFeature
 {
-    public class YeeProvideColorMode : YeelightDeviceFeature
+    public static readonly Type Type = typeof(YeeProvideColorMode);
+
+    private readonly string property;
+
+    protected YeeProvideColorMode(YeelightDevice device, string colorModeProp) : base(device)
     {
-        public static readonly Type Type = typeof(YeeProvideColorMode);
+        property = colorModeProp;
+    }
 
-        private readonly string property;
+    public YeeProvideColorMode(YeelightDevice device) : this(device, "color_mode") { }
 
-        protected YeeProvideColorMode(YeelightDevice device, string colorModeProp) : base(device)
-        {
-            property = colorModeProp;
-        }
+    public override IEnumerable<string> SupportedMethods => Array.Empty<string>();
 
-        public YeeProvideColorMode(YeelightDevice device) : this(device, "color_mode") { }
+    public override IEnumerable<string> SupportedProperties => new[] { property };
 
-        public override IEnumerable<string> SupportedMethods => Array.Empty<string>();
-
-        public override IEnumerable<string> SupportedProperties => new[] {property};
-
-        public async Task<ColorMode> GetColorModeAsync(CancellationToken cancellationToken = default)
-        {
-            return (ColorMode)(await Device.GetPropertyAsync(property, cancellationToken).ConfigureAwait(false)).GetInt32();
-        }
+    public async Task<ColorMode> GetColorModeAsync(CancellationToken cancellationToken = default)
+    {
+        return (ColorMode)(await Device.GetPropertyAsync(property, cancellationToken).ConfigureAwait(false)).GetInt32();
     }
 }

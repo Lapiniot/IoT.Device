@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using IoT.Protocol.Yeelight;
 
 namespace IoT.Device.Yeelight

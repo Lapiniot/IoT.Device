@@ -1,11 +1,8 @@
-﻿using System;
+namespace IoT.Device.Yeelight.Features;
 
-namespace IoT.Device.Yeelight.Features
+public class YeeChangeAmbientColorRGB : YeeChangeColorRGB
 {
-    public class YeeChangeAmbientColorRGB : YeeChangeColorRGB
-    {
-        public new static readonly Type Type = typeof(YeeChangeAmbientColorRGB);
+    public new static readonly Type Type = typeof(YeeChangeAmbientColorRGB);
 
-        public YeeChangeAmbientColorRGB(YeelightDevice device) : base(device, "bg_rgb", "bg_set_rgb") { }
-    }
+    public YeeChangeAmbientColorRGB(YeelightDevice device) : base(device, "bg_rgb", "bg_set_rgb") { }
 }

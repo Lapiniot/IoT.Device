@@ -1,29 +1,28 @@
 using System.Text.Json;
 
-namespace IoT.Device.Lumi
+namespace IoT.Device.Lumi;
+
+public abstract class LumiMagnetSensor : LumiSubDeviceWithStatus
 {
-    public abstract class LumiMagnetSensor : LumiSubDeviceWithStatus
+    private int noCloseSeconds;
+
+    protected LumiMagnetSensor(string sid, int id) : base(sid, id) { }
+
+    public int NoCloseSeconds
     {
-        private int noCloseSeconds;
+        get => noCloseSeconds;
+        private set => Set(ref noCloseSeconds, value);
+    }
 
-        protected LumiMagnetSensor(string sid, int id) : base(sid, id) {}
+    protected internal override void OnStateChanged(JsonElement state)
+    {
+        base.OnStateChanged(state);
 
-        public int NoCloseSeconds
+        if(state.TryGetProperty("no_close", out var value) &&
+           value.ValueKind == JsonValueKind.String &&
+           int.TryParse(value.GetString(), out var seconds))
         {
-            get => noCloseSeconds;
-            private set => Set(ref noCloseSeconds, value);
-        }
-
-        protected internal override void OnStateChanged(JsonElement state)
-        {
-            base.OnStateChanged(state);
-
-            if(state.TryGetProperty("no_close", out var value) &&
-               value.ValueKind == JsonValueKind.String &&
-               int.TryParse(value.GetString(), out var seconds))
-            {
-                NoCloseSeconds = seconds;
-            }
+            NoCloseSeconds = seconds;
         }
     }
 }

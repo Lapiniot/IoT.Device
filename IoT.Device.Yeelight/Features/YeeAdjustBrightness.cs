@@ -1,11 +1,8 @@
-﻿using System;
+namespace IoT.Device.Yeelight.Features;
 
-namespace IoT.Device.Yeelight.Features
+public class YeeAdjustBrightness : YeeAdjustPropertyValue
 {
-    public class YeeAdjustBrightness : YeeAdjustPropertyValue
-    {
-        public static readonly Type Type = typeof(YeeAdjustBrightness);
+    public static readonly Type Type = typeof(YeeAdjustBrightness);
 
-        public YeeAdjustBrightness(YeelightDevice device) : base(device, "adjust_bright") { }
-    }
+    public YeeAdjustBrightness(YeelightDevice device) : base(device, "adjust_bright") { }
 }

@@ -1,20 +1,17 @@
-﻿using System;
+﻿namespace IoT.Device.Upnp;
 
-namespace IoT.Device.Upnp
+public class UpnpDevice
 {
-    public class UpnpDevice
+    public UpnpDevice(Uri descriptionUri, string usn)
     {
-        public UpnpDevice(Uri descriptionUri, string usn)
-        {
-            DescriptionUri = descriptionUri ?? throw new ArgumentNullException(nameof(descriptionUri));
+        DescriptionUri = descriptionUri ?? throw new ArgumentNullException(nameof(descriptionUri));
 
-            if(string.IsNullOrWhiteSpace(usn)) throw new ArgumentException("valid USN must be provided", nameof(usn));
+        if(string.IsNullOrWhiteSpace(usn)) throw new ArgumentException("valid USN must be provided", nameof(usn));
 
-            Usn = usn;
-        }
-
-        public string Usn { get; }
-
-        public Uri DescriptionUri { get; }
+        Usn = usn;
     }
+
+    public string Usn { get; }
+
+    public Uri DescriptionUri { get; }
 }

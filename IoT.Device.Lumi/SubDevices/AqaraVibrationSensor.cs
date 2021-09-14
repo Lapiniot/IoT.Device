@@ -3,57 +3,56 @@ using IoT.Device.Metadata;
 using static IoT.Device.Metadata.ConnectivityTypes;
 using static IoT.Device.Metadata.PowerSource;
 
-namespace IoT.Device.Lumi.SubDevices
+namespace IoT.Device.Lumi.SubDevices;
+
+[ModelID("DJT11LM")]
+[PowerSource(CR2032)]
+[ConnectivityType(ZigBee)]
+public class AqaraVibrationSensor : LumiSubDeviceWithStatus
 {
-    [ModelID("DJT11LM")]
-    [PowerSource(CR2032)]
-    [ConnectivityType(ZigBee)]
-    public class AqaraVibrationSensor : LumiSubDeviceWithStatus
+    private int bedActivity;
+    private string coordinates;
+    private int finalTiltAngle;
+
+    internal AqaraVibrationSensor(string sid, int id) : base(sid, id) { }
+
+    public override string Model => "vibration";
+
+    public int FinalTiltAngle
     {
-        private int bedActivity;
-        private string coordinates;
-        private int finalTiltAngle;
+        get => finalTiltAngle;
+        set => Set(ref finalTiltAngle, value);
+    }
 
-        internal AqaraVibrationSensor(string sid, int id) : base(sid, id) { }
+    public string Coordinates
+    {
+        get => coordinates;
+        set => Set(ref coordinates, value);
+    }
 
-        public override string Model => "vibration";
+    public int BedActivity
+    {
+        get => bedActivity;
+        set => Set(ref bedActivity, value);
+    }
 
-        public int FinalTiltAngle
+    protected internal override void OnStateChanged(JsonElement state)
+    {
+        base.OnStateChanged(state);
+
+        if(state.TryGetProperty("final_tilt_angle", out var value) && value.ValueKind == JsonValueKind.Number)
         {
-            get => finalTiltAngle;
-            set => Set(ref finalTiltAngle, value);
+            FinalTiltAngle = value.GetInt32();
         }
 
-        public string Coordinates
+        if(state.TryGetProperty("coordination", out value) && value.ValueKind == JsonValueKind.String)
         {
-            get => coordinates;
-            set => Set(ref coordinates, value);
+            Coordinates = value.GetString();
         }
 
-        public int BedActivity
+        if(state.TryGetProperty("bed_activity", out value) && value.ValueKind == JsonValueKind.Number)
         {
-            get => bedActivity;
-            set => Set(ref bedActivity, value);
-        }
-
-        protected internal override void OnStateChanged(JsonElement state)
-        {
-            base.OnStateChanged(state);
-
-            if(state.TryGetProperty("final_tilt_angle", out var value) && value.ValueKind == JsonValueKind.Number)
-            {
-                FinalTiltAngle = value.GetInt32();
-            }
-
-            if(state.TryGetProperty("coordination", out value) && value.ValueKind == JsonValueKind.String)
-            {
-                Coordinates = value.GetString();
-            }
-
-            if(state.TryGetProperty("bed_activity", out value) && value.ValueKind == JsonValueKind.Number)
-            {
-                BedActivity = value.GetInt32();
-            }
+            BedActivity = value.GetInt32();
         }
     }
 }

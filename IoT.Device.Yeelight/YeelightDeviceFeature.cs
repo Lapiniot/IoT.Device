@@ -1,21 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace IoT.Device.Yeelight;
 
-namespace IoT.Device.Yeelight
+public abstract class YeelightDeviceFeature
 {
-    public abstract class YeelightDeviceFeature
+    protected static readonly object[] EmptyArgs = Array.Empty<object>();
+
+    protected YeelightDeviceFeature(YeelightDevice device)
     {
-        protected static readonly object[] EmptyArgs = Array.Empty<object>();
-
-        protected YeelightDeviceFeature(YeelightDevice device)
-        {
-            Device = device;
-        }
-
-        protected YeelightDevice Device { get; }
-
-        public abstract IEnumerable<string> SupportedMethods { get; }
-
-        public abstract IEnumerable<string> SupportedProperties { get; }
+        Device = device;
     }
+
+    protected YeelightDevice Device { get; }
+
+    public abstract IEnumerable<string> SupportedMethods { get; }
+
+    public abstract IEnumerable<string> SupportedProperties { get; }
 }

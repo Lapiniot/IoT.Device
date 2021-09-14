@@ -1,7 +1,6 @@
-namespace IoT.Device.Lumi.Interfaces
+namespace IoT.Device.Lumi.Interfaces;
+
+public interface IProvideOnlineInfo
 {
-    public interface IProvideOnlineInfo
-    {
-        bool IsOnline { get; }
-    }
+    bool IsOnline { get; }
 }

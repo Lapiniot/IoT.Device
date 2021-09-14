@@ -1,9 +1,8 @@
-namespace IoT.Device.Lumi.SubDevices
-{
-    public sealed class GenericSubDevice : LumiSubDevice
-    {
-        internal GenericSubDevice(string sid, int id) : base(sid, id) {}
+namespace IoT.Device.Lumi.SubDevices;
 
-        public override string Model { get; } = "generic.unknown";
-    }
+public sealed class GenericSubDevice : LumiSubDevice
+{
+    internal GenericSubDevice(string sid, int id) : base(sid, id) { }
+
+    public override string Model { get; } = "generic.unknown";
 }

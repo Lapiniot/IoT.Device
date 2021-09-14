@@ -1,7 +1,6 @@
-namespace IoT.Device.Lumi.Interfaces
+namespace IoT.Device.Lumi.Interfaces;
+
+public interface IProvideVoltageInfo
 {
-    public interface IProvideVoltageInfo
-    {
-        decimal Voltage { get; }
-    }
+    decimal Voltage { get; }
 }

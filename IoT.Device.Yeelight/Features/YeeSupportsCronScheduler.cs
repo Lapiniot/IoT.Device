@@ -1,40 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace IoT.Device.Yeelight.Features
+namespace IoT.Device.Yeelight.Features;
+
+public class YeeSupportsCronScheduler : YeelightDeviceFeature
 {
-    public class YeeSupportsCronScheduler : YeelightDeviceFeature
+    public static readonly Type Type = typeof(YeeSupportsCronScheduler);
+
+    public YeeSupportsCronScheduler(YeelightDevice device) : base(device) { }
+
+    public override IEnumerable<string> SupportedMethods => new[] { "cron_get", "cron_add", "cron_del" };
+
+    public override IEnumerable<string> SupportedProperties => Array.Empty<string>();
+
+    public async Task<JsonElement[]> CronGetAsync(uint type, CancellationToken cancellationToken = default)
     {
-        public static readonly Type Type = typeof(YeeSupportsCronScheduler);
+        return (await Device.InvokeAsync("cron_get", new[] { type }, cancellationToken).ConfigureAwait(false)).EnumerateArray().ToArray();
+    }
 
-        public YeeSupportsCronScheduler(YeelightDevice device) : base(device) { }
+    public Task CronAddAsync(uint type, uint delay, CancellationToken cancellationToken = default)
+    {
+        return Device.InvokeAsync("cron_add", new[] { type, delay }, cancellationToken);
+    }
 
-        public override IEnumerable<string> SupportedMethods => new[] {"cron_get", "cron_add", "cron_del"};
+    public Task CronDelAsync(uint type, CancellationToken cancellationToken = default)
+    {
+        return Device.InvokeAsync("cron_del", new[] { type }, cancellationToken);
+    }
 
-        public override IEnumerable<string> SupportedProperties => Array.Empty<string>();
-
-        public async Task<JsonElement[]> CronGetAsync(uint type, CancellationToken cancellationToken = default)
-        {
-            return (await Device.InvokeAsync("cron_get", new[] {type}, cancellationToken).ConfigureAwait(false)).EnumerateArray().ToArray();
-        }
-
-        public Task CronAddAsync(uint type, uint delay, CancellationToken cancellationToken = default)
-        {
-            return Device.InvokeAsync("cron_add", new[] {type, delay}, cancellationToken);
-        }
-
-        public Task CronDelAsync(uint type, CancellationToken cancellationToken = default)
-        {
-            return Device.InvokeAsync("cron_del", new[] {type}, cancellationToken);
-        }
-
-        public async Task<uint> GetDelayOffAsync(CancellationToken cancellationToken = default)
-        {
-            return (await Device.GetPropertyAsync("delayoff", cancellationToken).ConfigureAwait(false)).GetUInt32();
-        }
+    public async Task<uint> GetDelayOffAsync(CancellationToken cancellationToken = default)
+    {
+        return (await Device.GetPropertyAsync("delayoff", cancellationToken).ConfigureAwait(false)).GetUInt32();
     }
 }

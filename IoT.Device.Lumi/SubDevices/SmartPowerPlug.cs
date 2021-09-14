@@ -1,4 +1,3 @@
-using System;
 using System.Text.Json;
 using IoT.Device.Metadata;
 using static System.Text.Json.JsonValueKind;
@@ -6,74 +5,73 @@ using static System.TimeSpan;
 using static IoT.Device.Metadata.PowerSource;
 using static IoT.Device.Metadata.ConnectivityTypes;
 
-namespace IoT.Device.Lumi.SubDevices
+namespace IoT.Device.Lumi.SubDevices;
+
+[ModelID("ZNCZ02LM")]
+[PowerSource(Plugged)]
+[ConnectivityType(ZigBee)]
+public sealed class SmartPowerPlug : LumiSubDeviceWithStatus
 {
-    [ModelID("ZNCZ02LM")]
-    [PowerSource(Plugged)]
-    [ConnectivityType(ZigBee)]
-    public sealed class SmartPowerPlug : LumiSubDeviceWithStatus
+    private bool inUse;
+    private decimal loadPower;
+    private decimal loadVoltage;
+    private decimal powerConsumed;
+
+    internal SmartPowerPlug(string sid, int id) : base(sid, id) { }
+
+    public override string Model { get; } = "plug.v1";
+
+    // Plugged devices usually send heartbeat every ~10 minutes.
+    // We give extra 10 seconds before transition to offline state.
+    protected override TimeSpan HeartbeatTimeout { get; } =
+        FromMinutes(10) + FromSeconds(10);
+
+    public bool InUse
     {
-        private bool inUse;
-        private decimal loadPower;
-        private decimal loadVoltage;
-        private decimal powerConsumed;
+        get => inUse;
+        private set => Set(ref inUse, value);
+    }
 
-        internal SmartPowerPlug(string sid, int id) : base(sid, id) {}
+    public decimal LoadVoltage
+    {
+        get => loadVoltage;
+        private set => Set(ref loadVoltage, value);
+    }
 
-        public override string Model { get; } = "plug.v1";
+    public decimal LoadPower
+    {
+        get => loadPower;
+        private set => Set(ref loadPower, value);
+    }
 
-        // Plugged devices usually send heartbeat every ~10 minutes.
-        // We give extra 10 seconds before transition to offline state.
-        protected override TimeSpan HeartbeatTimeout { get; } =
-            FromMinutes(10) + FromSeconds(10);
+    public decimal PowerConsumed
+    {
+        get => powerConsumed;
+        private set => Set(ref powerConsumed, value);
+    }
 
-        public bool InUse
+    protected internal override void OnStateChanged(JsonElement state)
+    {
+        base.OnStateChanged(state);
+
+        if(state.TryGetProperty("inuse", out var value) && value.ValueKind == JsonValueKind.String)
         {
-            get => inUse;
-            private set => Set(ref inUse, value);
+            InUse = value.GetString() == "1";
         }
 
-        public decimal LoadVoltage
+        if(state.TryGetProperty("load_voltage", out value) && value.ValueKind == Number)
         {
-            get => loadVoltage;
-            private set => Set(ref loadVoltage, value);
+            LoadVoltage = new decimal(value.GetInt32(), 0, 0, false, 3);
         }
 
-        public decimal LoadPower
+        if(state.TryGetProperty("load_power", out value) && value.ValueKind == Number)
         {
-            get => loadPower;
-            private set => Set(ref loadPower, value);
+            LoadPower = value.GetDecimal();
         }
 
-        public decimal PowerConsumed
+        if(state.TryGetProperty("power_consumed", out value) && value.ValueKind == Number)
         {
-            get => powerConsumed;
-            private set => Set(ref powerConsumed, value);
-        }
-
-        protected internal override void OnStateChanged(JsonElement state)
-        {
-            base.OnStateChanged(state);
-
-            if(state.TryGetProperty("inuse", out var value) && value.ValueKind == JsonValueKind.String)
-            {
-                InUse = value.GetString() == "1";
-            }
-
-            if(state.TryGetProperty("load_voltage", out value) && value.ValueKind == Number)
-            {
-                LoadVoltage = new decimal(value.GetInt32(), 0, 0, false, 3);
-            }
-
-            if(state.TryGetProperty("load_power", out value) && value.ValueKind == Number)
-            {
-                LoadPower = value.GetDecimal();
-            }
-
-            if(state.TryGetProperty("power_consumed", out value) && value.ValueKind == Number)
-            {
-                PowerConsumed = value.GetDecimal();
-            }
+            PowerConsumed = value.GetDecimal();
         }
     }
 }

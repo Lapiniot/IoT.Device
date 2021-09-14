@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
-using IoT.Device.Lumi.SubDevices;
 using IoT.Device.Metadata;
 using IoT.Protocol.Lumi;
 using static System.Text.Json.JsonSerializer;
@@ -16,144 +10,66 @@ using static IoT.Device.Metadata.PowerSource;
 using static IoT.Device.Metadata.ConnectivityTypes;
 using Cache = IoT.Device.Container<IoT.Device.Lumi.ExportSubDeviceAttribute, IoT.Device.Lumi.LumiSubDevice>;
 
-namespace IoT.Device.Lumi
+namespace IoT.Device.Lumi;
+
+[ModelID("DGNWG02LM")]
+[PowerSource(Plugged)]
+[ConnectivityType(WiFi24 | ZigBee)]
+public sealed class LumiGateway : LumiThing, IConnectedObject, IObserver<JsonElement>
 {
-    [ModelID("DGNWG02LM")]
-    [PowerSource(Plugged)]
-    [ConnectivityType(WiFi24 | ZigBee)]
-    public sealed class LumiGateway : LumiThing, IConnectedObject, IObserver<JsonElement>
+    private readonly Dictionary<string, LumiSubDevice> children;
+    private readonly LumiControlEndpoint client;
+    private readonly LumiEventListener listener;
+    private readonly SemaphoreSlim semaphore;
+    private readonly IDisposable subscription;
+    private int disposed;
+    private int illumination;
+    private int rgbValue;
+
+    public LumiGateway(IPAddress address, int port, string sid) : base(sid)
     {
-        private readonly Dictionary<string, LumiSubDevice> children;
-        private readonly LumiControlEndpoint client;
-        private readonly LumiEventListener listener;
-        private readonly SemaphoreSlim semaphore;
-        private readonly IDisposable subscription;
-        private int disposed;
-        private int illumination;
-        private int rgbValue;
+        semaphore = new SemaphoreSlim(1, 1);
+        children = new Dictionary<string, LumiSubDevice>();
+        client = new LumiControlEndpoint(new IPEndPoint(address, port));
+        listener = new LumiEventListener(new IPEndPoint(IPAddress.Parse("224.0.0.50"), port));
+        subscription = listener.Subscribe(this);
+    }
 
-        public LumiGateway(IPAddress address, int port, string sid) : base(sid)
+    public string Token { get; private set; }
+
+    public int RgbValue
+    {
+        get => rgbValue;
+        private set => Set(ref rgbValue, value);
+    }
+
+    public int Illumination
+    {
+        get => illumination;
+        private set => Set(ref illumination, value);
+    }
+
+    public override string Model { get; } = "gateway";
+
+    // Gateway sends heartbeats every 10 seconds.
+    // We give extra 2 seconds to the timeout value.
+    protected override TimeSpan HeartbeatTimeout { get; } = FromSeconds(10) + FromSeconds(2);
+
+    public bool IsConnected { get; private set; }
+
+    public async Task ConnectAsync(CancellationToken cancellationToken = default)
+    {
+        if(!IsConnected)
         {
-            semaphore = new SemaphoreSlim(1, 1);
-            children = new Dictionary<string, LumiSubDevice>();
-            client = new LumiControlEndpoint(new IPEndPoint(address, port));
-            listener = new LumiEventListener(new IPEndPoint(IPAddress.Parse("224.0.0.50"), port));
-            subscription = listener.Subscribe(this);
-        }
-
-        public string Token { get; private set; }
-
-        public int RgbValue
-        {
-            get => rgbValue;
-            private set => Set(ref rgbValue, value);
-        }
-
-        public int Illumination
-        {
-            get => illumination;
-            private set => Set(ref illumination, value);
-        }
-
-        public override string Model { get; } = "gateway";
-
-        // Gateway sends heartbeats every 10 seconds.
-        // We give extra 2 seconds to the timeout value.
-        protected override TimeSpan HeartbeatTimeout { get; } = FromSeconds(10) + FromSeconds(2);
-
-        public bool IsConnected { get; private set; }
-
-        public async Task ConnectAsync(CancellationToken cancellationToken = default)
-        {
-            if(!IsConnected)
-            {
-                await semaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
-
-                try
-                {
-                    if(!IsConnected)
-                    {
-                        await client.ConnectAsync(cancellationToken).ConfigureAwait(false);
-                        await listener.ConnectAsync(cancellationToken).ConfigureAwait(false);
-                        IsConnected = true;
-                    }
-                }
-                finally
-                {
-                    semaphore.Release();
-                }
-            }
-        }
-
-        public async Task DisconnectAsync()
-        {
-            if(IsConnected)
-            {
-                await semaphore.WaitAsync().ConfigureAwait(false);
-
-                try
-                {
-                    if(IsConnected)
-                    {
-                        await client.DisconnectAsync().ConfigureAwait(false);
-                        await listener.DisconnectAsync().ConfigureAwait(false);
-                    }
-                }
-                finally
-                {
-                    IsConnected = false;
-
-                    semaphore.Release();
-                }
-            }
-        }
-
-        public Task<JsonElement> InvokeAsync(string command, string sid = null, CancellationToken cancellationToken = default)
-        {
-            return client.InvokeAsync(command, sid ?? Sid, cancellationToken);
-        }
-
-        public async IAsyncEnumerable<LumiSubDevice> GetChildrenAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
-        {
-            var json = await InvokeAsync("get_id_list", Sid, cancellationToken).ConfigureAwait(false);
-
-            var data = Deserialize<JsonElement>(json.GetProperty("data").GetString() ?? string.Empty);
-
-            var sids = data.EnumerateArray().Select(a => a.GetString()).ToArray();
-
             await semaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
 
             try
             {
-                var adds = sids.Except(children.Keys).ToArray();
-                var removes = children.Keys.Except(sids).ToArray();
-
-                foreach(var sid in removes)
+                if(!IsConnected)
                 {
-                    if(!children.TryGetValue(sid, out var device)) continue;
-
-                    children.Remove(sid);
-
-                    await device.DisposeAsync().ConfigureAwait(false);
-                }
-
-                foreach(var (_, value) in children)
-                {
-                    yield return value;
-                }
-
-                foreach(var sid in adds)
-                {
-                    var info = await InvokeAsync("read", sid, cancellationToken).ConfigureAwait(false);
-
-                    if(!info.TryGetProperty("data", out var d) || children.TryGetValue(sid, out var device)) continue;
-
-                    var id = info.GetProperty("short_id").GetInt32();
-                    var deviceModel = info.GetProperty("model").GetString();
-                    device = Cache.CreateInstance(deviceModel, sid, id);
-                    device.OnStateChanged(Deserialize<JsonElement>(d.GetString() ?? string.Empty));
-                    children.Add(sid, device);
-                    yield return device;
+                    await client.ConnectAsync(cancellationToken).ConfigureAwait(false);
+                    await listener.ConnectAsync(cancellationToken).ConfigureAwait(false);
+                    IsConnected = true;
                 }
             }
             finally
@@ -161,78 +77,156 @@ namespace IoT.Device.Lumi
                 semaphore.Release();
             }
         }
+    }
 
-        protected internal override void OnStateChanged(JsonElement state)
+    public async Task DisconnectAsync()
+    {
+        if(IsConnected)
         {
-            if(state.TryGetProperty("rgb", out var value) && value.ValueKind == Number)
-            {
-                RgbValue = value.GetInt32();
-            }
-
-            if(state.TryGetProperty("illumination", out value) && value.ValueKind == Number)
-            {
-                Illumination = value.GetInt32();
-            }
-        }
-
-        #region Overrides of LumiThing
-
-        public override async ValueTask DisposeAsync()
-        {
-            if(Interlocked.CompareExchange(ref disposed, 1, 0) != 0) return;
-
-            await base.DisposeAsync().ConfigureAwait(false);
+            await semaphore.WaitAsync().ConfigureAwait(false);
 
             try
             {
-                try
+                if(IsConnected)
                 {
-                    using(subscription)
-                    using(semaphore) {}
-
-                    foreach(var c in children)
-                    {
-                        await using(c.Value.ConfigureAwait(false)) {}
-                    }
-
-                    children.Clear();
-                }
-                finally
-                {
-                    await listener.DisposeAsync().ConfigureAwait(false);
+                    await client.DisconnectAsync().ConfigureAwait(false);
+                    await listener.DisconnectAsync().ConfigureAwait(false);
                 }
             }
             finally
             {
-                await client.DisposeAsync().ConfigureAwait(false);
+                IsConnected = false;
+
+                semaphore.Release();
             }
         }
+    }
 
-        #endregion
+    public Task<JsonElement> InvokeAsync(string command, string sid = null, CancellationToken cancellationToken = default)
+    {
+        return client.InvokeAsync(command, sid ?? Sid, cancellationToken);
+    }
 
-        #region Implementation of IObserver<in JsonElement>
+    public async IAsyncEnumerable<LumiSubDevice> GetChildrenAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        var json = await InvokeAsync("get_id_list", Sid, cancellationToken).ConfigureAwait(false);
 
-        void IObserver<JsonElement>.OnCompleted() {}
+        var data = Deserialize<JsonElement>(json.GetProperty("data").GetString() ?? string.Empty);
 
-        void IObserver<JsonElement>.OnError(Exception error) {}
+        var sids = data.EnumerateArray().Select(a => a.GetString()).ToArray();
 
-        void IObserver<JsonElement>.OnNext(JsonElement message)
+        await semaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
+
+        try
         {
-            if(!message.TryGetProperty("sid", out var sid) ||
-               !message.TryGetProperty("cmd", out var command) ||
-               !message.TryGetProperty("data", out var v) ||
-               !(Deserialize<JsonElement>(v.GetString() ?? string.Empty) is {} data))
+            var adds = sids.Except(children.Keys).ToArray();
+            var removes = children.Keys.Except(sids).ToArray();
+
+            foreach(var sid in removes)
             {
-                return;
+                if(!children.TryGetValue(sid, out var device)) continue;
+
+                children.Remove(sid);
+
+                await device.DisposeAsync().ConfigureAwait(false);
             }
 
-            var key = sid.GetString();
-
-            if(string.IsNullOrEmpty(key)) return;
-
-            switch(command.GetString())
+            foreach(var (_, value) in children)
             {
-                case "heartbeat":
+                yield return value;
+            }
+
+            foreach(var sid in adds)
+            {
+                var info = await InvokeAsync("read", sid, cancellationToken).ConfigureAwait(false);
+
+                if(!info.TryGetProperty("data", out var d) || children.TryGetValue(sid, out var device)) continue;
+
+                var id = info.GetProperty("short_id").GetInt32();
+                var deviceModel = info.GetProperty("model").GetString();
+                device = Cache.CreateInstance(deviceModel, sid, id);
+                device.OnStateChanged(Deserialize<JsonElement>(d.GetString() ?? string.Empty));
+                children.Add(sid, device);
+                yield return device;
+            }
+        }
+        finally
+        {
+            semaphore.Release();
+        }
+    }
+
+    protected internal override void OnStateChanged(JsonElement state)
+    {
+        if(state.TryGetProperty("rgb", out var value) && value.ValueKind == Number)
+        {
+            RgbValue = value.GetInt32();
+        }
+
+        if(state.TryGetProperty("illumination", out value) && value.ValueKind == Number)
+        {
+            Illumination = value.GetInt32();
+        }
+    }
+
+    #region Overrides of LumiThing
+
+    public override async ValueTask DisposeAsync()
+    {
+        if(Interlocked.CompareExchange(ref disposed, 1, 0) != 0) return;
+
+        await base.DisposeAsync().ConfigureAwait(false);
+
+        try
+        {
+            try
+            {
+                using(subscription)
+                using(semaphore) { }
+
+                foreach(var c in children)
+                {
+                    await using(c.Value.ConfigureAwait(false)) { }
+                }
+
+                children.Clear();
+            }
+            finally
+            {
+                await listener.DisposeAsync().ConfigureAwait(false);
+            }
+        }
+        finally
+        {
+            await client.DisposeAsync().ConfigureAwait(false);
+        }
+    }
+
+    #endregion
+
+    #region Implementation of IObserver<in JsonElement>
+
+    void IObserver<JsonElement>.OnCompleted() { }
+
+    void IObserver<JsonElement>.OnError(Exception error) { }
+
+    void IObserver<JsonElement>.OnNext(JsonElement message)
+    {
+        if(!message.TryGetProperty("sid", out var sid) ||
+           !message.TryGetProperty("cmd", out var command) ||
+           !message.TryGetProperty("data", out var v) ||
+           !(Deserialize<JsonElement>(v.GetString() ?? string.Empty) is { } data))
+        {
+            return;
+        }
+
+        var key = sid.GetString();
+
+        if(string.IsNullOrEmpty(key)) return;
+
+        switch(command.GetString())
+        {
+            case "heartbeat":
                 {
                     if(key == Sid)
                     {
@@ -244,8 +238,8 @@ namespace IoT.Device.Lumi
                         device.OnHeartbeat(data);
                     }
                 }
-                    break;
-                case "report":
+                break;
+            case "report":
                 {
                     if(key == Sid)
                     {
@@ -256,10 +250,9 @@ namespace IoT.Device.Lumi
                         device.OnStateChanged(data);
                     }
                 }
-                    break;
-            }
+                break;
         }
-
-        #endregion
     }
+
+    #endregion
 }
