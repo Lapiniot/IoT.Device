@@ -4,10 +4,13 @@ public class UpnpDevice
 {
     public UpnpDevice(Uri descriptionUri, string usn)
     {
-        DescriptionUri = descriptionUri ?? throw new ArgumentNullException(nameof(descriptionUri));
+        ArgumentNullException.ThrowIfNull(descriptionUri);
+        if(string.IsNullOrWhiteSpace(usn))
+        {
+            throw new ArgumentException("valid USN must be provided", nameof(usn));
+        }
 
-        if(string.IsNullOrWhiteSpace(usn)) throw new ArgumentException("valid USN must be provided", nameof(usn));
-
+        DescriptionUri = descriptionUri;
         Usn = usn;
     }
 

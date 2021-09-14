@@ -43,7 +43,7 @@ public class YeeSupportsColorFlowMode : YeelightDeviceFeature
         (int Duration, FlowTransition Mode, int Value, int Brightness)[] states,
         CancellationToken cancellationToken)
     {
-        if(states is null) throw new ArgumentNullException(nameof(states));
+        ArgumentNullException.ThrowIfNull(states);
 
         var sb = new StringBuilder();
 

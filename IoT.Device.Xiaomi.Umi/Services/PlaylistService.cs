@@ -29,10 +29,10 @@ public sealed class PlaylistService : SoapActionInvoker
             cancellationToken);
     }
 
-    public Task<IReadOnlyDictionary<string, string>> DeleteAsync(uint instanceId = 0, string updateId = "0",
-        int[] indices = null, CancellationToken cancellationToken = default)
+    public Task<IReadOnlyDictionary<string, string>> DeleteAsync(int[] indices, uint instanceId = 0,
+        string updateId = "0", CancellationToken cancellationToken = default)
     {
-        if(indices == null) throw new ArgumentNullException(nameof(indices));
+        ArgumentNullException.ThrowIfNull(indices);
         if(indices.Length == 0) throw new ArgumentException("Must not be empty!", nameof(indices));
 
         return InvokeAsync("ReorderPlaylists", new Dictionary<string, string>() {
@@ -68,10 +68,10 @@ public sealed class PlaylistService : SoapActionInvoker
             cancellationToken);
     }
 
-    public Task<IReadOnlyDictionary<string, string>> RemoveItemsAsync(uint instanceId = 0, string objectId = "", string updateId = "0",
-        int[] indices = null, CancellationToken cancellationToken = default)
+    public Task<IReadOnlyDictionary<string, string>> RemoveItemsAsync(int[] indices, uint instanceId = 0,
+        string objectId = "", string updateId = "0", CancellationToken cancellationToken = default)
     {
-        if(indices == null) throw new ArgumentNullException(nameof(indices));
+        ArgumentNullException.ThrowIfNull(indices);
         if(indices.Length == 0) throw new ArgumentException("Must not be empty!", nameof(indices));
 
         return InvokeAsync("Reorder", new Dictionary<string, string>() {

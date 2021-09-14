@@ -22,7 +22,7 @@ public sealed class UmiSpeakerDevice : UpnpDevice, IDisposable
 
     public UmiSpeakerDevice(Uri descriptionUri, string usn) : base(descriptionUri, usn)
     {
-        if(descriptionUri is null) throw new ArgumentNullException(nameof(descriptionUri));
+        ArgumentNullException.ThrowIfNull(descriptionUri);
 
         if(string.IsNullOrEmpty(usn)) throw new ArgumentException("message", nameof(usn));
 

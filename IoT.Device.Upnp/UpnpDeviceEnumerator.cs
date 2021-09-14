@@ -16,7 +16,6 @@ public class UpnpDeviceEnumerator : ConvertingEnumerator<SsdpReply, UpnpDevice>
 
     protected override UpnpDevice Convert(SsdpReply thing)
     {
-        if(thing is null) throw new ArgumentNullException(nameof(thing));
         return thing.StartLine.StartsWith("HTTP", StringComparison.InvariantCulture)
             ? new UpnpDevice(new Uri(thing.Location), thing.UniqueServiceName)
             : null;

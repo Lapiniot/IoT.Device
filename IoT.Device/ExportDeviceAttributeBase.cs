@@ -5,8 +5,10 @@ public abstract class ExportDeviceAttributeBase : Attribute
 {
     protected ExportDeviceAttributeBase(string model, Type implementationType)
     {
+        ArgumentNullException.ThrowIfNull(implementationType);
+
         Model = model;
-        ImplementationType = implementationType ?? throw new ArgumentNullException(nameof(implementationType));
+        ImplementationType = implementationType;
     }
 
     public string Model { get; }

@@ -15,7 +15,6 @@ public class UmiSpeakerEnumerator : ConvertingEnumerator<SsdpReply, UmiSpeakerDe
 
     protected override UmiSpeakerDevice Convert(SsdpReply thing)
     {
-        if(thing is null) throw new ArgumentNullException(nameof(thing));
         return thing.StartLine.StartsWith("HTTP", StringComparison.InvariantCulture)
             ? new UmiSpeakerDevice(new Uri(thing.Location), thing.UniqueServiceName)
             : null;
