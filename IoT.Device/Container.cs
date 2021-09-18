@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
+﻿using System.Reflection;
 using static System.AppDomain;
 using static System.Reflection.BindingFlags;
 using static System.StringComparison;
@@ -23,7 +22,6 @@ public static class Container<TAttr, TImpl>
         return (TImpl)Activator.CreateInstance(type, Public | NonPublic | Instance, null, args, null, null);
     }
 
-    [SuppressMessage("Design", "CA1000: Do not declare static members on generic types", Justification = "<Pending>")]
     public static TImpl CreateInstance(string deviceModel, params object[] args)
     {
         var v = Models.TryGetValue(deviceModel, out var type);
