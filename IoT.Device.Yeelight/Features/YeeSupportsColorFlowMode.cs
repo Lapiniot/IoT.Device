@@ -49,14 +49,14 @@ public class YeeSupportsColorFlowMode : YeelightDeviceFeature
 
         foreach(var (duration, flowTransition, value, brightness) in states)
         {
-            sb.Append(duration);
-            sb.Append(',');
-            sb.Append((int)flowTransition);
-            sb.Append(',');
-            sb.Append(value);
-            sb.Append(',');
-            sb.Append(brightness);
-            sb.Append(',');
+            _ = sb.Append(duration);
+            _ = sb.Append(',');
+            _ = sb.Append((int)flowTransition);
+            _ = sb.Append(',');
+            _ = sb.Append(value);
+            _ = sb.Append(',');
+            _ = sb.Append(brightness);
+            _ = sb.Append(',');
         }
 
         if(sb[^1] == ',') sb.Length--;

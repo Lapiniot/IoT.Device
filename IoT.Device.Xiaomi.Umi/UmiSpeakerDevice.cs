@@ -10,8 +10,8 @@ namespace IoT.Device.Xiaomi.Umi;
 
 public sealed class UmiSpeakerDevice : UpnpDevice, IDisposable
 {
-    private HttpClientHandler handler;
-    private HttpClient client;
+    private readonly HttpClientHandler handler;
+    private readonly HttpClient client;
     private SoapControlEndpoint endpoint;
     private AVTransportService avTransport;
     private ConnectionManagerService connectionManager;

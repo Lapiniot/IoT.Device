@@ -9,7 +9,7 @@ namespace IoT.Device.Lumi.SubDevices;
 [ConnectivityType(ZigBee)]
 public sealed class DoorWindowSensor : LumiMagnetSensor
 {
-    private DoorWindowSensor(string sid, int id) : base(sid, id) { }
+    internal DoorWindowSensor(string sid, int id) : base(sid, id) { }
 
     public override string Model { get; } = "sensor_magnet.v2";
 }

@@ -23,8 +23,8 @@ public class UpnpReplyComparer : IEqualityComparer<SsdpReply>
     {
         if(obj is null) return 0;
 
-        obj.TryGetValue(Location, out var location);
-        obj.TryGetValue(Usn, out var usn);
+        _ = obj.TryGetValue(Location, out var location);
+        _ = obj.TryGetValue(Usn, out var usn);
 
         return HashCode.Combine(location, usn);
     }

@@ -22,7 +22,7 @@ public sealed class QueueService : SoapActionInvoker
         string enqueuedUri, string enqueuedUriMetaData, uint desiredFirstTrackNumberEnqueued, bool enqueueAsNext,
         CancellationToken cancellationToken)
     {
-        return this.InvokeAsync("AddURI", new Dictionary<string, string> {
+        return InvokeAsync("AddURI", new Dictionary<string, string> {
                 { "InstanceID", instanceId.ToString(InvariantCulture) },
                 { "ObjectID", objectId },
                 { "UpdateID", updateId.ToString(InvariantCulture) },
@@ -35,7 +35,7 @@ public sealed class QueueService : SoapActionInvoker
     public Task<IReadOnlyDictionary<string, string>> RemoveAllAsync(uint instanceId, string objectId, uint updateId,
         CancellationToken cancellationToken)
     {
-        return this.InvokeAsync("RemoveAll", new Dictionary<string, string> {
+        return InvokeAsync("RemoveAll", new Dictionary<string, string> {
                 { "InstanceID", instanceId.ToString(InvariantCulture) },
                 { "ObjectID", objectId },
                 { "UpdateID", updateId.ToString(InvariantCulture) } }, cancellationToken);
@@ -44,7 +44,7 @@ public sealed class QueueService : SoapActionInvoker
     public Task<IReadOnlyDictionary<string, string>> ReorderAsync(uint instanceId, string objectId, uint updateId,
         string trackList, string newPositionList, CancellationToken cancellationToken)
     {
-        return this.InvokeAsync("Reorder", new Dictionary<string, string> {
+        return InvokeAsync("Reorder", new Dictionary<string, string> {
                 { "InstanceID", instanceId.ToString(InvariantCulture) },
                 { "ObjectID", objectId },
                 { "UpdateID", updateId.ToString(InvariantCulture) },

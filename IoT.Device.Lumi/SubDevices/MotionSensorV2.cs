@@ -9,7 +9,7 @@ namespace IoT.Device.Lumi.SubDevices;
 [ConnectivityType(ZigBee)]
 public sealed class MotionSensorV2 : LumiMotionSensor
 {
-    private MotionSensorV2(string sid, int id) : base(sid, id) { }
+    internal MotionSensorV2(string sid, int id) : base(sid, id) { }
 
     public override string Model { get; } = "sensor_motion.v2";
 }

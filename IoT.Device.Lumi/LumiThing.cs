@@ -64,7 +64,7 @@ public abstract class LumiThing : INotifyPropertyChanged, IProvideOnlineInfo, IA
     {
         var newCts = new CancellationTokenSource();
 
-        Task.Delay(HeartbeatTimeout, newCts.Token).ContinueWith(t => IsOnline = t.IsCanceled,
+        _ = Task.Delay(HeartbeatTimeout, newCts.Token).ContinueWith(t => IsOnline = t.IsCanceled,
             default, ExecuteSynchronously, TaskScheduler.Default);
 
         using var oldCts = Interlocked.Exchange(ref resetWatchTokenSource, newCts);

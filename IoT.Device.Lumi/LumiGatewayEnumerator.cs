@@ -15,12 +15,9 @@ public class LumiGatewayEnumerator : ConvertingEnumerator<(IPAddress Address, in
 
     protected override LumiGateway Convert((IPAddress Address, int Port, string Sid) thing)
     {
-        if(thing.Address == null || string.IsNullOrEmpty(thing.Sid))
-        {
-            throw new InvalidOperationException("Lumi gateway device does not exist or did not respond properly.");
-        }
-
-        return new LumiGateway(thing.Address, thing.Port, thing.Sid);
+        return thing.Address is not null && !string.IsNullOrEmpty(thing.Sid)
+            ? new LumiGateway(thing.Address, thing.Port, thing.Sid)
+            : throw new InvalidOperationException("Lumi gateway device does not exist or did not respond properly.");
     }
 
     #endregion

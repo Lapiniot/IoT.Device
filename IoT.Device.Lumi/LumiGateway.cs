@@ -74,7 +74,7 @@ public sealed class LumiGateway : LumiThing, IConnectedObject, IObserver<JsonEle
             }
             finally
             {
-                semaphore.Release();
+                _ = semaphore.Release();
             }
         }
     }
@@ -97,7 +97,7 @@ public sealed class LumiGateway : LumiThing, IConnectedObject, IObserver<JsonEle
             {
                 IsConnected = false;
 
-                semaphore.Release();
+                _ = semaphore.Release();
             }
         }
     }
@@ -126,7 +126,7 @@ public sealed class LumiGateway : LumiThing, IConnectedObject, IObserver<JsonEle
             {
                 if(!children.TryGetValue(sid, out var device)) continue;
 
-                children.Remove(sid);
+                _ = children.Remove(sid);
 
                 await device.DisposeAsync().ConfigureAwait(false);
             }
@@ -152,7 +152,7 @@ public sealed class LumiGateway : LumiThing, IConnectedObject, IObserver<JsonEle
         }
         finally
         {
-            semaphore.Release();
+            _ = semaphore.Release();
         }
     }
 
