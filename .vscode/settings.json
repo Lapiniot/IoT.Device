@@ -10,5 +10,6 @@
         "**/obj": true,
         "*/**/.vscode": true,
         "**/*.sln": true        
-    }
+    },
+    "omnisharp.enableRoslynAnalyzers": true
 }
