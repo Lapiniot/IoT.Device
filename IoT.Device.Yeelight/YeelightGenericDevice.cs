@@ -16,7 +16,7 @@ namespace IoT.Device.Yeelight
             supportedCapabilities = capabilities;
         }
 
-        public override string ModelName { get; } = "yeelight.unknown";
+        public override string ModelName { get; } = "yeelight.generic";
 
         public override IEnumerable<string> SupportedCapabilities => supportedCapabilities ?? Array.Empty<string>();
 

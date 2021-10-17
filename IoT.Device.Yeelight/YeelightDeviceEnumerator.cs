@@ -35,7 +35,8 @@ namespace IoT.Device.Yeelight
             {
                 var capabilities = thing["support"].Split(' ', ',');
 
-                return YeelightFactory.CreateInstance(thing["model"], endpoint, capabilities);
+                return YeelightFactory.CreateInstance(thing["model"], endpoint, capabilities) ??
+                    new YeelightGenericDevice(endpoint, capabilities);
             }
             catch
             {
