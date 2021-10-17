@@ -27,8 +27,13 @@ public static class DeviceFactory<T>
         {
             return type.IsGenericType && type.BaseType.IsGenericType &&
                 type.BaseType.GetGenericTypeDefinition() == exportAttributeType &&
-                type.GetGenericTypeDefinition().BaseType.GetGenericArguments()[0].BaseType == targetType;
+                HasConstraintOfType(type.GetGenericTypeDefinition().BaseType.GetGenericArguments()[0], targetType);
         }
+    }
+
+    private static bool HasConstraintOfType(Type genericArgumentType, Type constraintType)
+    {
+        return genericArgumentType.GetGenericParameterConstraints().Any(type => type == constraintType);
     }
 
     [SuppressMessage("Design", "CA1000: Do not declare static members on generic types")]
