@@ -2,7 +2,7 @@ using IoT.Device.Yeelight;
 using IoT.Device.Yeelight.Features;
 using IoT.Protocol.Yeelight;
 
-[assembly: ExportYeelightDevice("ceiling4", typeof(YeelightMoonCeilingLight650))]
+[assembly: ExportYeelightDevice<YeelightMoonCeilingLight650>("ceiling4")]
 
 namespace IoT.Device.Yeelight;
 

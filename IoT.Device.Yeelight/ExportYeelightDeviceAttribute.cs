@@ -1,8 +1,7 @@
 namespace IoT.Device.Yeelight;
 
-public sealed class ExportYeelightDeviceAttribute : ExportDeviceAttributeBase
+public sealed class ExportYeelightDeviceAttribute<T> : ExportAttribute<T> where T : YeelightDevice
 {
-    public ExportYeelightDeviceAttribute(string model, Type implementationType) :
-        base(model, implementationType)
+    public ExportYeelightDeviceAttribute(string model) : base(model)
     { }
 }

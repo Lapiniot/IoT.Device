@@ -8,7 +8,7 @@ using static System.Text.Json.JsonValueKind;
 using static System.TimeSpan;
 using static IoT.Device.Metadata.PowerSource;
 using static IoT.Device.Metadata.ConnectivityTypes;
-using Cache = IoT.Device.Container<IoT.Device.Lumi.ExportSubDeviceAttribute, IoT.Device.Lumi.LumiSubDevice>;
+using Factory = IoT.Device.DeviceFactory<IoT.Device.Lumi.LumiSubDevice>;
 
 namespace IoT.Device.Lumi;
 
@@ -144,7 +144,7 @@ public sealed class LumiGateway : LumiThing, IConnectedObject, IObserver<JsonEle
 
                 var id = info.GetProperty("short_id").GetInt32();
                 var deviceModel = info.GetProperty("model").GetString();
-                device = Cache.CreateInstance(deviceModel, sid, id);
+                device = Factory.Create(deviceModel, sid, id);
                 device.OnStateChanged(Deserialize<JsonElement>(d.GetString() ?? string.Empty));
                 children.Add(sid, device);
                 yield return device;

@@ -4,8 +4,8 @@ using IoT.Protocol;
 using IoT.Protocol.Upnp;
 using IoT.Protocol.Yeelight;
 using System.Globalization;
+using YeelightFactory = IoT.Device.DeviceFactory<IoT.Device.Yeelight.YeelightDevice>;
 using static System.Globalization.NumberStyles;
-using YeelightFactory = IoT.Device.Container<IoT.Device.Yeelight.ExportYeelightDeviceAttribute, IoT.Device.Yeelight.YeelightDevice>;
 
 namespace IoT.Device.Yeelight
 {
@@ -34,8 +34,7 @@ namespace IoT.Device.Yeelight
             {
                 var capabilities = thing["support"].Split(' ', ',');
 
-                return YeelightFactory.CreateInstance(thing["model"], endpoint, capabilities) ??
-                    new YeelightGenericDevice(endpoint, capabilities);
+                return YeelightFactory.Create(thing["model"], endpoint, capabilities);
             }
             catch
             {

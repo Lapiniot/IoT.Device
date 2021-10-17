@@ -2,7 +2,7 @@ using IoT.Device.Yeelight;
 using IoT.Device.Yeelight.Features;
 using IoT.Protocol.Yeelight;
 
-[assembly: ExportYeelightDevice("color", typeof(YeelightColorBulb2))]
+[assembly: ExportYeelightDevice<YeelightColorBulb2>("color")]
 
 namespace IoT.Device.Yeelight;
 
