@@ -9,6 +9,7 @@ using static System.TimeSpan;
 using static IoT.Device.Metadata.PowerSource;
 using static IoT.Device.Metadata.ConnectivityTypes;
 using Factory = IoT.Device.DeviceFactory<IoT.Device.Lumi.LumiSubDevice>;
+using IoT.Device.Lumi.SubDevices;
 
 namespace IoT.Device.Lumi;
 
@@ -144,7 +145,7 @@ public sealed class LumiGateway : LumiThing, IConnectedObject, IObserver<JsonEle
 
                 var id = info.GetProperty("short_id").GetInt32();
                 var deviceModel = info.GetProperty("model").GetString();
-                device = Factory.Create(deviceModel, sid, id);
+                device = Factory.Create(deviceModel, sid, id) ?? new GenericSubDevice(sid, id);
                 device.OnStateChanged(Deserialize<JsonElement>(d.GetString() ?? string.Empty));
                 children.Add(sid, device);
                 yield return device;
@@ -152,7 +153,7 @@ public sealed class LumiGateway : LumiThing, IConnectedObject, IObserver<JsonEle
         }
         finally
         {
-            _ = semaphore.Release();
+            semaphore.Release();
         }
     }
 
