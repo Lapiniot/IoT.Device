@@ -1,12 +1,11 @@
-﻿using IoT.Device.Upnp;
-using IoT.Device.Xiaomi.Umi.Services;
-using IoT.Protocol.Soap;
+﻿using IoT.Protocol.Soap;
 using IoT.Protocol.Upnp.Services;
 using static System.UriKind;
 using static System.UriPartial;
 using static System.Net.DecompressionMethods;
+using IoT.Device.Upnp.Umi.Services;
 
-namespace IoT.Device.Xiaomi.Umi;
+namespace IoT.Device.Upnp.Umi;
 
 public sealed class UmiSpeakerDevice : UpnpDevice, IDisposable
 {

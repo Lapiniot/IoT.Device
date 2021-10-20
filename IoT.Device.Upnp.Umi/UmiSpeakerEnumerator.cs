@@ -1,10 +1,9 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Policies;
-using IoT.Device.Upnp;
 using IoT.Protocol;
 using IoT.Protocol.Upnp;
 
-namespace IoT.Device.Xiaomi.Umi;
+namespace IoT.Device.Upnp.Umi;
 
 public class UmiSpeakerEnumerator : ConvertingEnumerator<SsdpReply, UmiSpeakerDevice>
 {

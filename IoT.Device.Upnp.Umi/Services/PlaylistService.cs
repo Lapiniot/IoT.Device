@@ -2,7 +2,7 @@
 using IoT.Protocol.Upnp.Services;
 using static System.Globalization.CultureInfo;
 
-namespace IoT.Device.Xiaomi.Umi.Services;
+namespace IoT.Device.Upnp.Umi.Services;
 
 [ServiceSchema(ServiceSchema)]
 public sealed class PlaylistService : SoapActionInvoker

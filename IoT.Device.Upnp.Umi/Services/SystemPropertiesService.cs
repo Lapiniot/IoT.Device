@@ -1,7 +1,7 @@
 ﻿using IoT.Protocol.Soap;
 using IoT.Protocol.Upnp.Services;
 
-namespace IoT.Device.Xiaomi.Umi.Services;
+namespace IoT.Device.Upnp.Umi.Services;
 
 [ServiceSchema(ServiceSchema)]
 public sealed class SystemPropertiesService : SoapActionInvoker

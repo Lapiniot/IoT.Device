@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IoT.Device.Lumi", "IoT.Devi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IoT.Device.Upnp", "IoT.Device.Upnp\IoT.Device.Upnp.csproj", "{164BE944-6B6C-4341-8307-10AF904C09CF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IoT.Device.Xiaomi.Umi", "IoT.Device.Xiaomi.Umi\IoT.Device.Xiaomi.Umi.csproj", "{1E5ECF1A-B106-4007-93F5-B397AA5217E2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IoT.Device.Upnp.Umi", "IoT.Device.Upnp.Umi\IoT.Device.Upnp.Umi.csproj", "{1E5ECF1A-B106-4007-93F5-B397AA5217E2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IoT.Protocol", "IoT.Protocol\IoT.Protocol\IoT.Protocol.csproj", "{E3B27618-0F10-4ECD-BA71-14EF67323E96}"
 EndProject
