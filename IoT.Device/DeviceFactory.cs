@@ -36,11 +36,13 @@ public static class DeviceFactory<T>
         return genericArgumentType.GetGenericParameterConstraints().Any(type => type == constraintType);
     }
 
+#nullable enable
+
     [SuppressMessage("Design", "CA1000: Do not declare static members on generic types")]
-    public static T Create(string model, params object[] args)
+    public static T? Create(string model, params object[] args)
     {
         return cache.TryGetValue(model, out var type)
-            ? (T)Activator.CreateInstance(type, Public | NonPublic | Instance, null, args, null, null)
+            ? (T?)Activator.CreateInstance(type, Public | NonPublic | Instance, null, args, null)
             : default;
     }
 }

@@ -145,7 +145,9 @@ public sealed class LumiGateway : LumiThing, IConnectedObject, IObserver<JsonEle
 
                 var id = info.GetProperty("short_id").GetInt32();
                 var deviceModel = info.GetProperty("model").GetString();
+#pragma warning disable CA1508 // CA1508: Avoid dead conditional code - probably false noise from code analyzer
                 device = Factory.Create(deviceModel, sid, id) ?? new GenericSubDevice(sid, id);
+#pragma warning restore CA1508
                 device.OnStateChanged(Deserialize<JsonElement>(d.GetString() ?? string.Empty));
                 children.Add(sid, device);
                 yield return device;
@@ -153,7 +155,7 @@ public sealed class LumiGateway : LumiThing, IConnectedObject, IObserver<JsonEle
         }
         finally
         {
-            semaphore.Release();
+            _ = semaphore.Release();
         }
     }
 
