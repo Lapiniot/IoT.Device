@@ -1,6 +1,6 @@
 namespace IoT.Device.Lumi.Interfaces;
 
-public interface IProvideVoltageInfo
+public interface IProvideBatteryVoltage
 {
     decimal Voltage { get; }
 }

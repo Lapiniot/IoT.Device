@@ -5,7 +5,7 @@ using static System.TimeSpan;
 
 namespace IoT.Device.Lumi;
 
-public abstract class LumiSubDevice : LumiThing, IProvideVoltageInfo
+public abstract class LumiSubDevice : LumiThing, IProvideBatteryVoltage
 {
     private readonly int id;
     private decimal voltage;
