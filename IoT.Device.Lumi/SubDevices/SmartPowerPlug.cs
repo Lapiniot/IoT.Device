@@ -1,9 +1,14 @@
 using System.Text.Json;
 using IoT.Device.Metadata;
+using IoT.Device.Lumi;
+using IoT.Device.Lumi.SubDevices;
+
 using static System.Text.Json.JsonValueKind;
 using static System.TimeSpan;
 using static IoT.Device.Metadata.PowerSource;
 using static IoT.Device.Metadata.ConnectivityTypes;
+
+[assembly: ExportSubDevice<SmartPowerPlug>("plug")]
 
 namespace IoT.Device.Lumi.SubDevices;
 

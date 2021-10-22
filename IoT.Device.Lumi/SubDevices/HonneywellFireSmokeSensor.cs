@@ -1,5 +1,9 @@
 using System.Text.Json;
+using IoT.Device.Lumi;
+using IoT.Device.Lumi.SubDevices;
 using IoT.Device.Metadata;
+
+[assembly: ExportSubDevice<HonneywellFireSmokeSensor>("smoke")]
 
 namespace IoT.Device.Lumi.SubDevices;
 

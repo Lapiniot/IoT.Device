@@ -1,9 +1,14 @@
 using System.Text.Json;
+using IoT.Device.Lumi;
+using IoT.Device.Lumi.SubDevices;
 using IoT.Device.Metadata;
+
 using static System.Globalization.CultureInfo;
 using static System.Globalization.NumberStyles;
 using static IoT.Device.Metadata.ConnectivityTypes;
 using static IoT.Device.Metadata.PowerSource;
+
+[assembly: ExportSubDevice<AqaraWeatherSensor>("weather.v1")]
 
 namespace IoT.Device.Lumi.SubDevices;
 

@@ -1,6 +1,11 @@
 using IoT.Device.Metadata;
+using IoT.Device.Lumi;
+using IoT.Device.Lumi.SubDevices;
+
 using static IoT.Device.Metadata.PowerSource;
 using static IoT.Device.Metadata.ConnectivityTypes;
+
+[assembly: ExportSubDevice<DoorWindowSensor>("magnet")]
 
 namespace IoT.Device.Lumi.SubDevices;
 
