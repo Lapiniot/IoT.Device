@@ -1,44 +1,22 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
-using static System.AppDomain;
+﻿using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
+
 using static System.Reflection.BindingFlags;
-using static System.StringComparison;
 
 namespace IoT.Device;
 
+[SuppressMessage("Design", "CA1000: Do not declare static members on generic types")]
 public static class DeviceFactory<T>
 {
-    private static readonly Dictionary<string, Type> cache = BuildCache();
-
-    private static Dictionary<string, Type> BuildCache()
-    {
-        var prefix = $"{typeof(DeviceFactory<>).Assembly.GetName().Name}.";
-        var targetType = typeof(T);
-        var exportAttributeType = typeof(ExportAttribute<>);
-
-        return CurrentDomain.GetAssemblies()
-                .Where(a => a.GetName().Name.StartsWith(prefix, OrdinalIgnoreCase))
-                .SelectMany(a => a.GetCustomAttributes().Where(attr => Matches(attr.GetType())))
-                .ToDictionary(
-                    a => (string)a.GetType().GetProperty(nameof(ExportAttribute<T>.Model)).GetValue(a),
-                    a => a.GetType().BaseType.GetGenericArguments()[0]);
-
-        bool Matches(Type type)
-        {
-            return type.IsGenericType && type.BaseType.IsGenericType &&
-                type.BaseType.GetGenericTypeDefinition() == exportAttributeType &&
-                HasConstraintOfType(type.GetGenericTypeDefinition().BaseType.GetGenericArguments()[0], targetType);
-        }
-    }
-
-    private static bool HasConstraintOfType(Type genericArgumentType, Type constraintType)
-    {
-        return genericArgumentType.GetGenericParameterConstraints().Any(type => type == constraintType);
-    }
+    private static readonly ConcurrentDictionary<string, Type> cache = new();
 
 #nullable enable
 
-    [SuppressMessage("Design", "CA1000: Do not declare static members on generic types")]
+    public static void Register<TImpl>(string model) where TImpl : T
+    {
+        _ = cache.AddOrUpdate(model, typeof(TImpl), (_, _) => typeof(TImpl));
+    }
+
     public static T? Create(string model, params object[] args)
     {
         return cache.TryGetValue(model, out var type)

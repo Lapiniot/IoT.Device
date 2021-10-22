@@ -2,6 +2,11 @@
 
   <Import Project="../common.props" />
 
+  <PropertyGroup>
+    <EmitCompilerGeneratedFiles>false</EmitCompilerGeneratedFiles>
+    <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)\GeneratedFiles</CompilerGeneratedFilesOutputPath>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\IoT.Device\IoT.Device.csproj" />
     <ProjectReference Include="..\IoT.Protocol\IoT.Protocol.Yeelight\IoT.Protocol.Yeelight.csproj" />

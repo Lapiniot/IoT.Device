@@ -5,10 +5,10 @@ using Microsoft.CodeAnalysis.Text;
 namespace IoT.Device.Generators;
 
 [Generator]
-public partial class LibraryInitGenerator : ISourceGenerator
+public class LibraryInitGenerator : ISourceGenerator
 {
 #pragma warning disable RS2008
-    private static readonly DiagnosticDescriptor NoDefNamespaceWarningDescriptor = new("LIGEN001",
+    private static readonly DiagnosticDescriptor NoDefNamespaceWarning = new("LIGEN001",
         title: "Generation warning",
         messageFormat: "Cannot get library's default namespace",
         category: "LibraryInitGenerator",
@@ -21,16 +21,21 @@ public partial class LibraryInitGenerator : ISourceGenerator
 
         if(string.IsNullOrEmpty(assemblyName))
         {
-            context.ReportDiagnostic(Diagnostic.Create(NoDefNamespaceWarningDescriptor, Location.None));
+            context.ReportDiagnostic(Diagnostic.Create(NoDefNamespaceWarning, Location.None));
             return;
         }
 
-        var code = CodeGenerator.GenerateLibInitClass(assemblyName, "Library", "Init");
+        var body = context.SyntaxContextReceiver is FilterExportAttributesSyntaxContextReceiver sr
+            ? CodeGenerator.GenerateExportStatements(sr.Exports)
+            : null;
+
+        var code = CodeGenerator.GenerateLibInitClass(assemblyName, "Library", "Init", body);
 
         context.AddSource("LibraryInit.Generated.cs", SourceText.From(code.ToFullString(), Encoding.UTF8));
     }
 
     public void Initialize(GeneratorInitializationContext context)
     {
+        context.RegisterForSyntaxNotifications(() => new FilterExportAttributesSyntaxContextReceiver());
     }
 }
