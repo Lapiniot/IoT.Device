@@ -1,17 +1,10 @@
 ﻿namespace IoT.Device.Yeelight;
 
-public abstract class YeelightDeviceFeature
+public abstract class YeelightDeviceFeature : DeviceFeature<YeelightDevice>
 {
     protected static readonly object[] EmptyArgs = Array.Empty<object>();
 
-    protected YeelightDeviceFeature(YeelightDevice device)
+    protected YeelightDeviceFeature(YeelightDevice device) : base(device)
     {
-        Device = device;
     }
-
-    protected YeelightDevice Device { get; }
-
-    public abstract IEnumerable<string> SupportedMethods { get; }
-
-    public abstract IEnumerable<string> SupportedProperties { get; }
 }
