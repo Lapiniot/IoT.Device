@@ -1,19 +1,19 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxKind;
 
 namespace IoT.Device.Generators;
 
-internal static class CodeGenerator
+internal static class LibraryInitSyntaxGenerator
 {
     public static SyntaxNode GenerateLibInitClass(string namespaceName, string className = "Library",
         string initMethodName = "Init", BlockSyntax? initMethodBody = null)
     {
         return NamespaceDeclaration(ParseName(namespaceName))
-            .AddUsings(UsingDirective(ParseName("System.Runtime.CompilerServices")))
-            .AddUsings(UsingDirective(ParseName("IoT.Device")))
+            .AddUsings(UsingDirective(ParseName("System.Runtime.CompilerServices")), UsingDirective(ParseName("IoT.Device")))
             .AddMembers(ClassDeclaration(className)
                 .AddModifiers(Token(PublicKeyword), Token(StaticKeyword))
                 .AddMembers(
@@ -23,7 +23,7 @@ internal static class CodeGenerator
                     MethodDeclaration(PredefinedType(Token(VoidKeyword)), "ModuleInit")
                         .AddModifiers(Token(InternalKeyword), Token(StaticKeyword))
                         .AddAttributeLists(AttributeList(SingletonSeparatedList(Attribute(IdentifierName("ModuleInitializer")))))
-                        .WithBody(initMethodBody ?? Block(ParseStatement(string.Empty)))))
+                        .WithBody(initMethodBody ?? Block())))
             .NormalizeWhitespace();
     }
 

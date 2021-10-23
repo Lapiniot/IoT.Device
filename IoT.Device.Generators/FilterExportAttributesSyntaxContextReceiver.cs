@@ -26,7 +26,7 @@ internal class FilterExportAttributesSyntaxContextReceiver : ISyntaxContextRecei
                         IsGenericType: true,
                         Name: "ExportAttribute",
                         ContainingAssembly.Name: "IoT.Device",
-                        ContainingNamespace: { Name: "Device", ContainingNamespace: { Name: "IoT" } },
+                        ContainingNamespace: { Name: "Device", ContainingNamespace: { Name: "IoT", ContainingNamespace.IsGlobalNamespace: true } },
                         TypeArguments: { Length: 1 } typeArguments
                     },
                     TypeParameters: { Length: 1 } typeParameters

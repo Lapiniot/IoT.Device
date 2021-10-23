@@ -2,6 +2,8 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 
+using SG = IoT.Device.Generators.LibraryInitSyntaxGenerator;
+
 namespace IoT.Device.Generators;
 
 [Generator]
@@ -26,10 +28,10 @@ public class LibraryInitGenerator : ISourceGenerator
         }
 
         var body = context.SyntaxContextReceiver is FilterExportAttributesSyntaxContextReceiver sr
-            ? CodeGenerator.GenerateExportStatements(sr.Exports)
+            ? SG.GenerateExportStatements(sr.Exports)
             : null;
 
-        var code = CodeGenerator.GenerateLibInitClass(assemblyName, "Library", "Init", body);
+        var code = SG.GenerateLibInitClass(assemblyName, "Library", "Init", body);
 
         context.AddSource("LibraryInit.Generated.cs", SourceText.From(code.ToFullString(), Encoding.UTF8));
     }
