@@ -12,10 +12,13 @@ internal static class GetFeatureSyntaxGenerator
     public static SyntaxNode GenerateAugmentation(ITypeSymbol @class, INamedTypeSymbol[] attributes)
     {
         var imports = attributes.SelectMany(a => ExtractTypeArgsNamespaces(a.TypeArguments)).Distinct().OrderBy(ns => ns);
+        var implementationTypes = attributes.Select(a => a.TypeArguments.Length > 1 ? a.TypeArguments[1] : a.TypeArguments[0]).
+            Distinct<ITypeSymbol>(SymbolEqualityComparer.Default);
+
         return NamespaceDeclaration(ParseName(@class.ContainingNamespace.ToDisplayString()))
             .AddUsings(imports.Select(i => UsingDirective(ParseName(i))).ToArray())
             .AddMembers(ClassDeclaration(@class.Name).AddModifiers(Token(PublicKeyword), Token(PartialKeyword))
-                .AddMembers(attributes.Select(a => CreateFeatureInstanceField(a)).ToArray())
+                .AddMembers(implementationTypes.Select(a => CreateFeatureInstanceField(a)).ToArray())
                 .AddMembers(MethodDeclaration(IdentifierName("T"), Identifier("GetFeature"))
                     .AddTypeParameterListParameters(TypeParameter(Identifier("T")))
                     .AddModifiers(Token(PublicKeyword), Token(OverrideKeyword))
@@ -42,12 +45,9 @@ internal static class GetFeatureSyntaxGenerator
         }
     }
 
-    private static FieldDeclarationSyntax CreateFeatureInstanceField(INamedTypeSymbol attributeType, bool fullType = false)
+    private static FieldDeclarationSyntax CreateFeatureInstanceField(ITypeSymbol type, bool fullType = false)
     {
-        var args = attributeType.TypeArguments;
-        var type = args.Length > 1 ? args[1] : args[0];
-        return FieldDeclaration(
-            VariableDeclaration(
+        return FieldDeclaration(VariableDeclaration(
                 ParseTypeName(fullType ? type.ToDisplayString() : type.Name),
                 SingletonSeparatedList(VariableDeclarator(Identifier(GetFeatureFieldName(type.Name))))))
             .AddModifiers(Token(PrivateKeyword));
@@ -65,20 +65,13 @@ internal static class GetFeatureSyntaxGenerator
 
         foreach(var attr in attributes)
         {
-            if(attr is { TypeArguments: { Length: 1 } args } &&
-                args[0] is { Name: var shortName } type)
+            if(attr is { TypeArguments: { Length: 1 } args })
             {
-                yield return IfStatement(
-                    GenerateTypeTestCondition(type.EnumerateRelatedFeatureTypes(), fullTypeNames),
-                    Block(ReturnStatement(BinaryExpression(
-                        AsExpression,
-                        ParenthesizedExpression(AssignmentExpression(
-                            CoalesceAssignmentExpression,
-                            IdentifierName(GetFeatureFieldName(shortName)),
-                            ObjectCreationExpression(
-                                ParseTypeName(fullTypeNames ? type.ToDisplayString() : shortName),
-                                ArgumentList(SingletonSeparatedList(Argument(ThisExpression()))), null))),
-                        ParseTypeName("T")))));
+                yield return GenerateTypeTestConditionBlock(args[0].EnumerateRelatedFeatureTypes(), args[0], fullTypeNames);
+            }
+            else if(attr is { TypeArguments: { Length: 2 } dargs })
+            {
+                yield return GenerateTypeTestConditionBlock(dargs[0].EnumerateRelatedFeatureTypes(), dargs[1], fullTypeNames);
             }
         }
 
@@ -88,6 +81,22 @@ internal static class GetFeatureSyntaxGenerator
                 BaseExpression(),
                 GenericName(Identifier("GetFeature"), TypeArgumentList(SingletonSeparatedList(ParseTypeName("T"))))))
             : LiteralExpression(NullLiteralExpression));
+    }
+
+    private static StatementSyntax GenerateTypeTestConditionBlock(IEnumerable<ITypeSymbol> featureTypes, ITypeSymbol implType, bool fullTypeNames)
+    {
+        return IfStatement(
+            GenerateTypeTestCondition(featureTypes, fullTypeNames),
+            Block(ReturnStatement(
+                BinaryExpression(
+                    AsExpression,
+                    ParenthesizedExpression(AssignmentExpression(
+                        CoalesceAssignmentExpression,
+                        IdentifierName(GetFeatureFieldName(implType.Name)),
+                        ObjectCreationExpression(
+                            ParseTypeName(fullTypeNames ? implType.ToDisplayString() : implType.Name),
+                            ArgumentList(SingletonSeparatedList(Argument(ThisExpression()))), null))),
+                    ParseTypeName("T")))));
     }
 
     private static ExpressionSyntax GenerateTypeTestCondition(IEnumerable<ITypeSymbol> types, bool fullTypes)

@@ -29,6 +29,12 @@ internal static class SemanticModelExtensions
         }
     }
 
+    /// <summary>
+    /// Checks wether supplied symbol designates known generic SupportsFeatureAttribute
+    /// with either 1 or 2 generic parameters
+    /// </summary>
+    /// <param name="symbol">Type symbol to check</param>
+    /// <returns><value>true</value> when matches, otherwise <value>false</value></returns>
     public static bool IsSupportsFeatureAtribute(this ITypeSymbol? symbol)
     {
         return symbol is INamedTypeSymbol
