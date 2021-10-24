@@ -5,3 +5,10 @@ public sealed class ExportYeelightDeviceAttribute<T> : ExportAttribute<T> where 
     public ExportYeelightDeviceAttribute(string model) : base(model)
     { }
 }
+
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = false)]
+public sealed class ExportYeelightDeviceAttribute : ExportAttribute<ILANControlledYeelightDevice>
+{
+    public ExportYeelightDeviceAttribute(string model) : base(model)
+    { }
+}
