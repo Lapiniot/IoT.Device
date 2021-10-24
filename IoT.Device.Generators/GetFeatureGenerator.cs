@@ -8,8 +8,6 @@ namespace IoT.Device.Generators;
 
 // TODO: Filter off inaccessible feature types (abstract classes, missing suitable constructor etc.)
 // TODO: Emit warnings about wrongly supplied feature types
-// TODO: Add support for features described via interfaces
-// TODO: Add support for SupportsFeatureAttribute<TFeature, TImpl>
 [Generator]
 public class GetFeatureGenerator : ISourceGenerator
 {

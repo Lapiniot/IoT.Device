@@ -4,7 +4,7 @@ namespace IoT.Device.Generators;
 
 internal static class SemanticModelExtensions
 {
-    public static IEnumerable<ITypeSymbol> EnumerateRelatedFeatureTypes(this ITypeSymbol? symbol)
+    public static IEnumerable<ITypeSymbol> EnumerateRelatedFeatureTypes(this ITypeSymbol? symbol, bool includeInterfaces = true)
     {
         while(symbol is { } and not
             {
@@ -25,6 +25,13 @@ internal static class SemanticModelExtensions
             })
         {
             yield return symbol;
+            if(includeInterfaces)
+            {
+                foreach(var iface in symbol.Interfaces)
+                {
+                    yield return iface;
+                }
+            }
             symbol = symbol.BaseType;
         }
     }
