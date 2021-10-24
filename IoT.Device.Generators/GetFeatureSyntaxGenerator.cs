@@ -5,8 +5,6 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxKind;
 
-using SR = IoT.Device.Generators.FilterSupportsFeatureAttributesSyntaxContextReceiver;
-
 namespace IoT.Device.Generators;
 
 internal static class GetFeatureSyntaxGenerator
@@ -21,7 +19,7 @@ internal static class GetFeatureSyntaxGenerator
                 .AddMembers(MethodDeclaration(IdentifierName("T"), Identifier("GetFeature"))
                     .AddTypeParameterListParameters(TypeParameter(Identifier("T")))
                     .AddModifiers(Token(PublicKeyword), Token(OverrideKeyword))
-                    .WithBody(Block(GenerateGetFeatureBody(attributes)))))
+                    .WithBody(Block(GenerateGetFeatureBody(attributes, invokeBaseImpl: @class.BaseType.HasOverrideForGetFeatureMethod())))))
             .NormalizeWhitespace();
     }
 
@@ -32,7 +30,7 @@ internal static class GetFeatureSyntaxGenerator
         {
             if(order++ == 0)
             {
-                foreach(var type in SR.EnumerateRelatedFeatureTypes(argType))
+                foreach(var type in argType.EnumerateRelatedFeatureTypes())
                 {
                     yield return type.ContainingNamespace.ToDisplayString();
                 }
@@ -60,28 +58,36 @@ internal static class GetFeatureSyntaxGenerator
         return $"{char.ToLowerInvariant(typeName[0])}{typeName[1..]}Feature";
     }
 
-    private static IEnumerable<StatementSyntax> GenerateGetFeatureBody(IEnumerable<INamedTypeSymbol> attributes, bool fullTypes = false)
+    private static IEnumerable<StatementSyntax> GenerateGetFeatureBody(IEnumerable<INamedTypeSymbol> attributes,
+        bool fullTypeNames = false, bool invokeBaseImpl = false)
     {
         yield return LocalDeclarationStatement(VariableDeclaration(ParseTypeName("Type"), SingletonSeparatedList(VariableDeclarator(Identifier("type"), null, EqualsValueClause(TypeOfExpression(ParseTypeName("T")))))));
+
         foreach(var attr in attributes)
         {
             if(attr is { TypeArguments: { Length: 1 } args } &&
                 args[0] is { Name: var shortName } type)
             {
                 yield return IfStatement(
-                    GenerateTypeTestCondition(SR.EnumerateRelatedFeatureTypes(type), fullTypes),
+                    GenerateTypeTestCondition(type.EnumerateRelatedFeatureTypes(), fullTypeNames),
                     Block(ReturnStatement(BinaryExpression(
                         AsExpression,
                         ParenthesizedExpression(AssignmentExpression(
                             CoalesceAssignmentExpression,
                             IdentifierName(GetFeatureFieldName(shortName)),
                             ObjectCreationExpression(
-                                ParseTypeName(fullTypes ? type.ToDisplayString() : shortName),
+                                ParseTypeName(fullTypeNames ? type.ToDisplayString() : shortName),
                                 ArgumentList(SingletonSeparatedList(Argument(ThisExpression()))), null))),
                         ParseTypeName("T")))));
             }
         }
-        yield return ReturnStatement(LiteralExpression(NullLiteralExpression));
+
+        yield return ReturnStatement(invokeBaseImpl
+            ? InvocationExpression(MemberAccessExpression(
+                SimpleMemberAccessExpression,
+                BaseExpression(),
+                GenericName(Identifier("GetFeature"), TypeArgumentList(SingletonSeparatedList(ParseTypeName("T"))))))
+            : LiteralExpression(NullLiteralExpression));
     }
 
     private static ExpressionSyntax GenerateTypeTestCondition(IEnumerable<ITypeSymbol> types, bool fullTypes)
@@ -100,8 +106,7 @@ internal static class GetFeatureSyntaxGenerator
                         EqualsExpression,
                         IdentifierName("type"),
                         TypeOfExpression(ParseTypeName(fullTypes ? item.ToDisplayString() : item.Name))),
-                    expression
-                );
+                    expression);
         }
         return expression ?? LiteralExpression(FalseLiteralExpression);
     }
