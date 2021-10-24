@@ -1,15 +1,12 @@
 using System.Text.Json;
 using IoT.Device.Metadata;
-using IoT.Device.Lumi;
-using IoT.Device.Lumi.SubDevices;
 
 using static IoT.Device.Metadata.PowerSource;
 using static IoT.Device.Metadata.ConnectivityTypes;
 
-[assembly: ExportSubDevice<AqaraCubeController>("sensor_cube.aqgl01")]
-
 namespace IoT.Device.Lumi.SubDevices;
 
+[ExportSubDevice("sensor_cube.aqgl01")]
 [ModelID("MFKZQ01LM")]
 [PowerSource(CR2450)]
 [ConnectivityType(ZigBee)]

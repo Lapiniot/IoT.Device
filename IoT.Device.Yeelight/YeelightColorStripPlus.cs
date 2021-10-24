@@ -1,11 +1,9 @@
-using IoT.Device.Yeelight;
 using IoT.Device.Yeelight.Features;
 using IoT.Protocol.Yeelight;
 
-[assembly: ExportYeelightDevice<YeelightColorStripPlus>("stripe")]
-
 namespace IoT.Device.Yeelight;
 
+[ExportYeelightDevice("stripe")]
 [SupportsFeature<YeeChangePowerState>, SupportsFeature<YeeChangeBrightness>, SupportsFeature<YeeChangeColorRGB>,
 SupportsFeature<YeeChangeColorHSV>, SupportsFeature<YeeProvideColorMode>, SupportsFeature<YeeSupportsColorFlowMode>,
 SupportsFeature<YeeSupportsScenes>, SupportsFeature<YeeAdjustProperty>, SupportsFeature<YeeAdjustBrightness>,

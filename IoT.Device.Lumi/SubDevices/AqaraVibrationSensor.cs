@@ -1,15 +1,12 @@
 ﻿using System.Text.Json;
-using IoT.Device.Lumi;
-using IoT.Device.Lumi.SubDevices;
 using IoT.Device.Metadata;
 
 using static IoT.Device.Metadata.ConnectivityTypes;
 using static IoT.Device.Metadata.PowerSource;
 
-[assembly: ExportSubDevice<AqaraVibrationSensor>("vibration")]
-
 namespace IoT.Device.Lumi.SubDevices;
 
+[ExportSubDevice("vibration")]
 [ModelID("DJT11LM")]
 [PowerSource(CR2032)]
 [ConnectivityType(ZigBee)]

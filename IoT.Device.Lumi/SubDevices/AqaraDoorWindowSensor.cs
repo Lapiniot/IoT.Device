@@ -1,14 +1,11 @@
-using IoT.Device.Lumi;
-using IoT.Device.Lumi.SubDevices;
 using IoT.Device.Metadata;
 
 using static IoT.Device.Metadata.ConnectivityTypes;
 using static IoT.Device.Metadata.PowerSource;
 
-[assembly: ExportSubDevice<AqaraDoorWindowSensor>("sensor_magnet.aq2")]
-
 namespace IoT.Device.Lumi.SubDevices;
 
+[ExportSubDevice("sensor_magnet.aq2")]
 [ModelID("MCCGQ11LM")]
 [PowerSource(CR1632)]
 [ConnectivityType(ZigBee)]

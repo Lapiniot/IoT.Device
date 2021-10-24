@@ -1,6 +1,4 @@
 using System.Text.Json;
-using IoT.Device.Lumi;
-using IoT.Device.Lumi.SubDevices;
 using IoT.Device.Metadata;
 
 using static System.Globalization.CultureInfo;
@@ -8,10 +6,9 @@ using static System.Globalization.NumberStyles;
 using static IoT.Device.Metadata.ConnectivityTypes;
 using static IoT.Device.Metadata.PowerSource;
 
-[assembly: ExportSubDevice<AqaraWeatherSensor>("weather.v1")]
-
 namespace IoT.Device.Lumi.SubDevices;
 
+[ExportSubDevice("weather.v1")]
 [ModelID("WSDCGQ11LM")]
 [PowerSource(CR2032)]
 [ConnectivityType(ZigBee)]

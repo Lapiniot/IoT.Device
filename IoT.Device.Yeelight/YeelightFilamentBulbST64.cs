@@ -2,10 +2,9 @@ using IoT.Device.Yeelight;
 using IoT.Device.Yeelight.Features;
 using IoT.Protocol.Yeelight;
 
-[assembly: ExportYeelightDevice<YeelightFilamentBulbST64>("mono5")]
-
 namespace IoT.Device.Yeelight;
 
+[ExportYeelightDevice("mono5")]
 [SupportsFeature<YeeChangePowerState>, SupportsFeature<YeeChangeBrightness>, SupportsFeature<YeeProvideColorMode>,
 SupportsFeature<YeeSupportsColorFlowMode>, SupportsFeature<YeeSupportsScenes>, SupportsFeature<YeeAdjustProperty>,
 SupportsFeature<YeeAdjustBrightness>, SupportsFeature<YeeSupportsCronScheduler>,

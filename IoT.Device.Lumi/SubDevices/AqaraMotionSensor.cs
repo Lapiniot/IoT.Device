@@ -1,16 +1,13 @@
 using System.Text.Json;
-using IoT.Device.Lumi;
-using IoT.Device.Lumi.SubDevices;
 using IoT.Device.Metadata;
 
 using static System.Text.Json.JsonValueKind;
 using static IoT.Device.Metadata.ConnectivityTypes;
 using static IoT.Device.Metadata.PowerSource;
 
-[assembly: ExportSubDevice<AqaraMotionSensor>("sensor_motion.aq2")]
-
 namespace IoT.Device.Lumi.SubDevices;
 
+[ExportSubDevice("sensor_motion.aq2")]
 [ModelID("RTCGQ11LM")]
 [PowerSource(CR2450)]
 [ConnectivityType(ZigBee)]

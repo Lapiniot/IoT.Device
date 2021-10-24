@@ -1,14 +1,11 @@
 using IoT.Device.Yeelight;
 using IoT.Protocol.Yeelight;
 
-[assembly: ExportYeelightDevice<YeelightColorStripPlusS1>("strip6")]
 
-namespace IoT.Device.Yeelight
+namespace IoT.Device.Yeelight;
+
+[ExportYeelightDevice("strip6")]
+public class YeelightColorStripPlusS1 : YeelightColorStripPlus
 {
-    public class YeelightColorStripPlusS1 : YeelightColorStripPlus
-    {
-        public YeelightColorStripPlusS1(YeelightControlEndpoint endpoint) : base(endpoint)
-        {
-        }
-    }
+    public YeelightColorStripPlusS1(YeelightControlEndpoint endpoint) : base(endpoint) { }
 }

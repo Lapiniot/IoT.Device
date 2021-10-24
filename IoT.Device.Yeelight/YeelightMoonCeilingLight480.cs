@@ -2,10 +2,9 @@ using IoT.Device.Yeelight;
 using IoT.Device.Yeelight.Features;
 using IoT.Protocol.Yeelight;
 
-[assembly: ExportYeelightDevice<YeelightMoonCeilingLight480>("ceiling3")]
-
 namespace IoT.Device.Yeelight;
 
+[ExportYeelightDevice("ceiling3")]
 [SupportsFeature<YeeChangePowerState>, SupportsFeature<YeeChangeBrightness>, SupportsFeature<YeeChangeColorTemperature>,
 SupportsFeature<YeeProvideLightMode>, SupportsFeature<YeeProvideColorMode>, SupportsFeature<YeeSupportsScenes>,
 SupportsFeature<YeeAdjustProperty>, SupportsFeature<YeeAdjustBrightness>,

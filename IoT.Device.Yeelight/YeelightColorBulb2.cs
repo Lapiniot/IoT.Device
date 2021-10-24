@@ -2,10 +2,10 @@ using IoT.Device.Yeelight;
 using IoT.Device.Yeelight.Features;
 using IoT.Protocol.Yeelight;
 
-[assembly: ExportYeelightDevice<YeelightColorBulb2>("color")]
 
 namespace IoT.Device.Yeelight;
 
+[ExportYeelightDevice("color")]
 [SupportsFeature<YeeChangePowerState>, SupportsFeature<YeeChangeBrightness>, SupportsFeature<YeeChangeColorTemperature>,
 SupportsFeature<YeeChangeColorRGB>, SupportsFeature<YeeChangeColorHSV>, SupportsFeature<YeeProvideColorMode>,
 SupportsFeature<YeeAdjustProperty>, SupportsFeature<YeeAdjustBrightness>, SupportsFeature<YeeAdjustColorTemperature>,
