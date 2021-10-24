@@ -23,10 +23,15 @@ public class GetFeatureGenerator : ISourceGenerator
     {
         if(context.SyntaxContextReceiver is FilterSupportsFeatureAttributesSyntaxContextReceiver sr)
         {
-            foreach(var (Class, Attributes) in sr.Classes)
+            foreach(var symbol in sr.Candidates)
             {
-                context.AddSource($"{Class.Name}.GetFeature.Generated.cs",
-                    SourceText.From(SG.GenerateAugmentation(Class, Attributes).ToFullString(), encoding: Encoding.UTF8));
+                var attributes = symbol.GetSupportsFeatureAttributes();
+
+                if(attributes.Length > 0)
+                {
+                    context.AddSource($"{symbol.Name}.GetFeature.Generated.cs",
+                        SourceText.From(SG.GenerateAugmentation(symbol, attributes).ToFullString(), encoding: Encoding.UTF8));
+                }
             }
         }
     }

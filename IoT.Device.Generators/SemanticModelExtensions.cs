@@ -65,6 +65,13 @@ internal static class SemanticModelExtensions
         };
     }
 
+    public static INamedTypeSymbol[] GetSupportsFeatureAttributes(this ITypeSymbol symbol)
+    {
+        return symbol.GetAttributes()
+            .Where(a => a.AttributeClass.IsSupportsFeatureAtribute()).Select(a => a.AttributeClass!)
+            .Distinct<INamedTypeSymbol>(SymbolEqualityComparer.Default).ToArray();
+    }
+
     public static bool HasOverrideForGetFeatureMethod(this ITypeSymbol? symbol)
     {
         while(symbol is { })

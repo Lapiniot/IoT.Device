@@ -7,7 +7,7 @@ namespace IoT.Device.Generators;
 
 internal class FilterSupportsFeatureAttributesSyntaxContextReceiver : ISyntaxContextReceiver
 {
-    public List<(ITypeSymbol Class, INamedTypeSymbol[] Attributes)> Classes { get; } = new();
+    public List<ITypeSymbol> Candidates { get; } = new();
 
     public void OnVisitSyntaxNode(GeneratorSyntaxContext context)
     {
@@ -17,14 +17,7 @@ internal class FilterSupportsFeatureAttributesSyntaxContextReceiver : ISyntaxCon
             !cd.Modifiers.Any(m => m.IsKind(StaticKeyword)) &&
             context.SemanticModel.GetDeclaredSymbol(context.Node) is ITypeSymbol symbol)
         {
-            var attributes = symbol.GetAttributes().Where(a => a.AttributeClass.IsSupportsFeatureAtribute()).Select(a => a.AttributeClass!)
-                .Distinct<INamedTypeSymbol>(SymbolEqualityComparer.Default)
-                .ToArray();
-
-            if(attributes.Length != 0)
-            {
-                Classes.Add((symbol, attributes));
-            }
+            Candidates.Add(symbol);
         }
     }
 
