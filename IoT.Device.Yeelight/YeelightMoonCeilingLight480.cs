@@ -18,7 +18,7 @@ public partial class YeelightMoonCeilingLight480 : YeelightWhiteLamp
 
     public override string ModelName => "yeelink.light.ceiling3";
 
-    public override IEnumerable<string> SupportedCapabilities => new[]
+    public override IEnumerable<string> SupportedMethods => new[]
     {
         "get_prop", "set_default", "set_power", "toggle", "set_bright", "set_scene",
         "cron_add", "cron_get", "cron_del", "start_cf", "stop_cf", "set_ct_abx",

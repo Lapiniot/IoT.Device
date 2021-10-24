@@ -15,7 +15,7 @@ public partial class YeelightFilamentBulbST64 : YeelightWhiteLamp
 
     public override string ModelName { get; } = "yeelink.light.mono5";
 
-    public override IEnumerable<string> SupportedCapabilities => new[]
+    public override IEnumerable<string> SupportedMethods => new[]
     {
         "get_prop", "set_default", "set_power", "toggle", "set_bright", "start_cf", "stop_cf", "set_scene",
         "cron_add", "cron_get", "cron_del", "set_adjust", "adjust_bright", "set_name"

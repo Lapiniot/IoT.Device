@@ -1,4 +1,3 @@
-using IoT.Device.Yeelight;
 using IoT.Device.Yeelight.Features;
 using IoT.Protocol.Yeelight;
 
@@ -18,7 +17,7 @@ public partial class YeelightColorBulb2 : YeelightColorLamp
 
     public override string ModelName { get; } = "yeelink.light.color2";
 
-    public override IEnumerable<string> SupportedCapabilities => new[]
+    public override IEnumerable<string> SupportedMethods => new[]
     {
         "get_prop", "set_default", "set_power", "toggle", "set_bright", "start_cf",
         "stop_cf", "set_scene", "cron_add", "cron_get", "cron_del", "set_ct_abx", "set_rgb",

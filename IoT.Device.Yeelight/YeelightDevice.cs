@@ -16,7 +16,7 @@ public abstract class YeelightDevice : IConnectedObject, IAsyncDisposable
 
     public abstract string ModelName { get; }
 
-    public abstract IEnumerable<string> SupportedCapabilities { get; }
+    public abstract IEnumerable<string> SupportedMethods { get; }
 
     public abstract IEnumerable<string> SupportedProperties { get; }
 
