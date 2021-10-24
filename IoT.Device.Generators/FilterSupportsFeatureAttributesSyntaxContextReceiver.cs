@@ -17,7 +17,9 @@ internal class FilterSupportsFeatureAttributesSyntaxContextReceiver : ISyntaxCon
             !cd.Modifiers.Any(m => m.IsKind(StaticKeyword)) &&
             context.SemanticModel.GetDeclaredSymbol(context.Node) is ITypeSymbol symbol)
         {
-            var attributes = symbol.GetAttributes().Where(a => a.AttributeClass.IsSupportsFeatureAtribute()).Select(a => a.AttributeClass!).ToArray();
+            var attributes = symbol.GetAttributes().Where(a => a.AttributeClass.IsSupportsFeatureAtribute()).Select(a => a.AttributeClass!)
+                .Distinct<INamedTypeSymbol>(SymbolEqualityComparer.Default)
+                .ToArray();
 
             if(attributes.Length != 0)
             {
