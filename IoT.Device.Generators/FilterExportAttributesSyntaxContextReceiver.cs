@@ -10,7 +10,7 @@ internal class FilterExportAttributesSyntaxContextReceiver : ISyntaxContextRecei
     private const string DeviceNsName = "Device";
     private const string IoTNsName = "IoT";
 
-    public List<(string Type, string ImplType, string Model)> Exports { get; } = new();
+    public List<(ITypeSymbol Type, ITypeSymbol ImplType, string Model)> Exports { get; } = new();
 
     public void OnVisitSyntaxNode(GeneratorSyntaxContext context)
     {
@@ -37,12 +37,12 @@ internal class FilterExportAttributesSyntaxContextReceiver : ISyntaxContextRecei
                     },
                     TypeParameters: { Length: 1 } typeParameters
                 } &&
-                typeArguments[0] is INamedTypeSymbol argument &&
+                typeArguments[0] is ITypeSymbol argumentType &&
                 typeParameters[0] is { ConstraintTypes: { Length: > 0 } cts } &&
-                cts[0] is INamedTypeSymbol constraint &&
+                cts[0] is ITypeSymbol constraintType &&
                 context.SemanticModel.GetConstantValue(arguments[0].Expression) is { HasValue: true, Value: string { } value })
             {
-                Exports.Add((constraint.ToDisplayString(), argument.ToDisplayString(), value));
+                Exports.Add((constraintType, argumentType, value));
             }
         }
         else if(attribute is { Parent: AttributeListSyntax { Parent: TypeDeclarationSyntax parent }, ArgumentList: { Arguments: { Count: > 0 } args } })
@@ -62,7 +62,7 @@ internal class FilterExportAttributesSyntaxContextReceiver : ISyntaxContextRecei
                 context.SemanticModel.GetDeclaredSymbol(parent) is ITypeSymbol implType &&
                 context.SemanticModel.GetConstantValue(args[0].Expression) is { HasValue: true, Value: string { } value })
             {
-                Exports.Add((typeArguments[0].ToDisplayString(), implType.ToDisplayString(), value));
+                Exports.Add((typeArguments[0], implType, value));
             }
         }
     }

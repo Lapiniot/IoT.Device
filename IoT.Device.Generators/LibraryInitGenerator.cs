@@ -27,13 +27,12 @@ public class LibraryInitGenerator : ISourceGenerator
             return;
         }
 
-        var body = context.SyntaxContextReceiver is FilterExportAttributesSyntaxContextReceiver sr
-            ? SG.GenerateExportStatements(sr.Exports)
-            : null;
+        if(context.SyntaxContextReceiver is FilterExportAttributesSyntaxContextReceiver sr)
+        {
+            var code = SG.GenerateLibInitClass(assemblyName, "Library", "Init", sr.Exports);
 
-        var code = SG.GenerateLibInitClass(assemblyName, "Library", "Init", body);
-
-        context.AddSource("LibraryInit.Generated.cs", SourceText.From(code.ToFullString(), Encoding.UTF8));
+            context.AddSource("LibraryInit.Generated.cs", SourceText.From(code.ToFullString(), Encoding.UTF8));
+        }
     }
 
     public void Initialize(GeneratorInitializationContext context)
