@@ -1,13 +1,13 @@
 using Microsoft.CodeAnalysis;
-using TreeNode = IoT.Device.Generators.HashTreeNode<string, (string Ns, Microsoft.CodeAnalysis.ITypeSymbol? Symbol)>;
+using TreeNode = IoT.Device.Generators.Helpers.HashTreeNode<string, (string Ns, Microsoft.CodeAnalysis.ITypeSymbol? Symbol)>;
 
-namespace IoT.Device.Generators;
+namespace IoT.Device.Generators.Helpers;
 
 internal static class NameHelper
 {
-    public static List<(string Type, string ImplType, string Model)> ExtractNames(
-        List<(ITypeSymbol Type, ITypeSymbol ImplType, string Model)> exports,
-        out List<string> namespaces)
+    public static IEnumerable<(string Type, string ImplType, string Model)> ReduceTypeNames(
+        IEnumerable<(ITypeSymbol Type, ITypeSymbol ImplType, string Model)> exports,
+        out IEnumerable<string> namespaces)
     {
         var ns = new HashSet<string>();
         var list = new List<(string Type, string ImplType, string Model)>();
@@ -15,6 +15,7 @@ internal static class NameHelper
 #pragma warning disable RS1024
         var map = new Dictionary<ISymbol, string>(SymbolEqualityComparer.Default);
 
+        exports = exports.ToList();
         var types = exports.Select(e => e.Type)
             .Concat(exports.Select(e => e.ImplType))
             .Distinct<ITypeSymbol>(SymbolEqualityComparer.Default);
@@ -34,7 +35,7 @@ internal static class NameHelper
             }
             else
             {
-                var reducedTypeNames = ReduceNames(symbols, out var resolvedNamespaces);
+                var reducedTypeNames = ResolveAmbiguousNames(symbols, out var resolvedNamespaces);
 
                 foreach(var (symbol, shortName) in reducedTypeNames)
                 {
@@ -60,7 +61,8 @@ internal static class NameHelper
         return list;
     }
 
-    internal static IEnumerable<(ITypeSymbol Symbol, string ShortName)> ReduceNames(IEnumerable<ITypeSymbol> symbols, out IEnumerable<string> resolvedNamespaces)
+    public static IEnumerable<(ITypeSymbol Symbol, string ShortName)> ResolveAmbiguousNames(
+        IEnumerable<ITypeSymbol> symbols, out IEnumerable<string> resolvedNamespaces)
     {
         var list = new List<(ITypeSymbol, string)>();
         var ns = new List<string>();
@@ -96,7 +98,7 @@ internal static class NameHelper
         return list;
     }
 
-    private static TreeNode BuildNamespacesHierarchy(IEnumerable<ITypeSymbol> symbols)
+    public static TreeNode BuildNamespacesHierarchy(IEnumerable<ITypeSymbol> symbols)
     {
         var root = new TreeNode();
 

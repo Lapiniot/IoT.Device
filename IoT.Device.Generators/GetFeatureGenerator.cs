@@ -1,4 +1,5 @@
 using System.Text;
+using IoT.Device.Generators.Helpers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 
@@ -11,14 +12,6 @@ namespace IoT.Device.Generators;
 [Generator]
 public class GetFeatureGenerator : ISourceGenerator
 {
-#pragma warning disable RS2008
-    private static readonly DiagnosticDescriptor GeneralWarning = new("GFGEN001",
-        title: "Generation warning",
-        messageFormat: "{0}",
-        category: nameof(GetFeatureGenerator),
-        DiagnosticSeverity.Warning,
-        isEnabledByDefault: true);
-
     public void Execute(GeneratorExecutionContext context)
     {
         if(context.SyntaxContextReceiver is FilterSupportsFeatureAttributesSyntaxContextReceiver sr)

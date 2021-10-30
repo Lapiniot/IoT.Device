@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 
-namespace IoT.Device.Generators;
+namespace IoT.Device.Generators.Helpers;
 
 internal static class SemanticModelExtensions
 {

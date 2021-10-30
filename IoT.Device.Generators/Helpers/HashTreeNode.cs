@@ -1,8 +1,8 @@
 using System.Collections;
 
-namespace IoT.Device.Generators;
+namespace IoT.Device.Generators.Helpers;
 
-public class HashTreeNode<TKey, TValue> : IEnumerable<HashTreeNode<TKey, TValue>>
+internal class HashTreeNode<TKey, TValue> : IEnumerable<HashTreeNode<TKey, TValue>>
 {
     private readonly Dictionary<TKey, HashTreeNode<TKey, TValue>> store = new();
 

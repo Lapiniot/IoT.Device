@@ -1,3 +1,4 @@
+using IoT.Device.Generators.Helpers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -11,9 +12,9 @@ internal static class LibraryInitSyntaxGenerator
 {
     public static SyntaxNode GenerateLibInitClass(string namespaceName,
         string className, string initMethodName,
-        List<(ITypeSymbol Type, ITypeSymbol ImplType, string Model)> exports)
+        IEnumerable<(ITypeSymbol Type, ITypeSymbol ImplType, string Model)> exports)
     {
-        var reduced = NameHelper.ExtractNames(exports, out var namespaces);
+        var reduced = NameHelper.ReduceTypeNames(exports, out var namespaces);
 
         return NamespaceDeclaration(ParseName(namespaceName))
             .AddUsings(UsingDirective(ParseName("System.Runtime.CompilerServices")), UsingDirective(ParseName("IoT.Device")))
@@ -31,7 +32,7 @@ internal static class LibraryInitSyntaxGenerator
             .NormalizeWhitespace();
     }
 
-    private static IEnumerable<StatementSyntax> GenerateExportStatements(List<(string Type, string ImplType, string Model)> exports)
+    private static IEnumerable<StatementSyntax> GenerateExportStatements(IEnumerable<(string Type, string ImplType, string Model)> exports)
     {
         return exports.OrderBy(d => d.Type).ThenBy(d => d.ImplType).ThenBy(d => d.Model)
             .Select(d => ExpressionStatement(
