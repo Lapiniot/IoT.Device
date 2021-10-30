@@ -14,7 +14,7 @@ internal static class LibraryInitSyntaxGenerator
         string className, string initMethodName,
         IEnumerable<(ITypeSymbol Type, ITypeSymbol ImplType, string Model)> exports)
     {
-        var reduced = NameHelper.ReduceTypeNames(exports, out var namespaces);
+        var reduced = ReduceTypeNames(exports, out var namespaces);
 
         return NamespaceDeclaration(ParseName(namespaceName))
             .AddUsings(UsingDirective(ParseName("System.Runtime.CompilerServices")), UsingDirective(ParseName("IoT.Device")))
@@ -41,5 +41,30 @@ internal static class LibraryInitSyntaxGenerator
                         GenericName(Identifier("DeviceFactory"), TypeArgumentList(SingletonSeparatedList(ParseTypeName(d.Type)))),
                         GenericName(Identifier("Register"), TypeArgumentList(SingletonSeparatedList(ParseTypeName(d.ImplType))))),
                     ArgumentList(SingletonSeparatedList(Argument(LiteralExpression(StringLiteralExpression, Literal(d.Model))))))));
+    }
+
+    private static IEnumerable<(string Type, string ImplType, string Model)> ReduceTypeNames(
+        IEnumerable<(ITypeSymbol Type, ITypeSymbol ImplType, string Model)> exports,
+        out IEnumerable<string> namespaces)
+    {
+        var list = new List<(string Type, string ImplType, string Model)>();
+
+        exports = exports.ToList();
+        var types = exports.Select(e => e.Type)
+            .Concat(exports.Select(e => e.ImplType))
+            .Distinct<ITypeSymbol>(SymbolEqualityComparer.Default);
+
+        var map = NameHelper.ResolveTypeNames(types, out var ns);
+
+        foreach(var (type, implType, model) in exports)
+        {
+            if(map.TryGetValue(type, out var typeName) && map.TryGetValue(implType, out var implTypeName))
+            {
+                list.Add((typeName, implTypeName, model));
+            }
+        }
+
+        namespaces = ns.ToList();
+        return list;
     }
 }

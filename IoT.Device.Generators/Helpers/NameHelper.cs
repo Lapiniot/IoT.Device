@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 using TreeNode = IoT.Device.Generators.Helpers.HashTreeNode<string, (string Ns, Microsoft.CodeAnalysis.ITypeSymbol? Symbol)>;
 
@@ -5,23 +6,12 @@ namespace IoT.Device.Generators.Helpers;
 
 internal static class NameHelper
 {
-    public static IEnumerable<(string Type, string ImplType, string Model)> ReduceTypeNames(
-        IEnumerable<(ITypeSymbol Type, ITypeSymbol ImplType, string Model)> exports,
-        out IEnumerable<string> namespaces)
+    [SuppressMessage("Roslyn", "RS1024: Compare symbols correctly", Justification = "False positive due to the buggy analyzer")]
+    public static IDictionary<ISymbol, string> ResolveTypeNames(IEnumerable<ITypeSymbol> typeSymbols, out IEnumerable<string> namespaces)
     {
         var ns = new HashSet<string>();
-        var list = new List<(string Type, string ImplType, string Model)>();
-
-#pragma warning disable RS1024
         var map = new Dictionary<ISymbol, string>(SymbolEqualityComparer.Default);
-
-        exports = exports.ToList();
-        var types = exports.Select(e => e.Type)
-            .Concat(exports.Select(e => e.ImplType))
-            .Distinct<ITypeSymbol>(SymbolEqualityComparer.Default);
-
-        var lookup = types.ToLookup(s => s.Name);
-#pragma warning restore
+        var lookup = typeSymbols.ToLookup(s => s.Name);
 
         foreach(var group in lookup)
         {
@@ -49,48 +39,27 @@ internal static class NameHelper
             }
         }
 
-        foreach(var (type, implType, model) in exports)
-        {
-            if(map.TryGetValue(type, out var typeName) && map.TryGetValue(implType, out var implTypeName))
-            {
-                list.Add((typeName, implTypeName, model));
-            }
-        }
-
-        namespaces = ns.ToList();
-        return list;
+        namespaces = ns;
+        return map;
     }
 
     public static IEnumerable<(ITypeSymbol Symbol, string ShortName)> ResolveAmbiguousNames(
         IEnumerable<ITypeSymbol> symbols, out IEnumerable<string> resolvedNamespaces)
     {
         var list = new List<(ITypeSymbol, string)>();
-        var ns = new List<string>();
+        var ns = new HashSet<string>();
 
-        var tree = BuildNamespacesHierarchy(symbols);
+        var root = BuildNamespacesHierarchy(symbols);
 
-        foreach(var current in tree.TraverseTree())
+        foreach(var current in root.TraverseTree())
         {
             if(current.Value.Symbol is { Name: { } name } symbol)
             {
                 // node is terminal, emit current type name + containing namespace
-                ns.Add(string.Join(".", current.Path.Reverse().Skip(1).Select(n => n.Value.Ns)));
-                list.Add((symbol, name));
-
-                // also detach children and emit them as potential types in contained namespaces
-                var detached = current.ToList();
-                current.Clear();
-                foreach(var node in detached)
-                {
-                    foreach(var child in node.TraverseTree())
-                    {
-                        if(child is { Value: { Symbol: { Name: { } n } s } })
-                        {
-                            list.Add((s, $"{string.Join(".", child.Path.Reverse().Select(n => n.Value.Ns))}.{n}"));
-                        }
-                    }
-                }
-                continue;
+                var prefix = string.Join(".", current.Path.TakeWhile(p => p != root && p.Count <= 1).Reverse().Select(p => p.Value.Ns));
+                var nspace = string.Join(".", current.Path.SkipWhile(p => p.Count <= 1).Reverse().Skip(1).Select(p => p.Value.Ns));
+                if(!string.IsNullOrEmpty(nspace)) _ = ns.Add(nspace);
+                list.Add((symbol, !string.IsNullOrEmpty(prefix) ? $"{prefix}.{symbol.Name}" : symbol.Name));
             }
         }
 
