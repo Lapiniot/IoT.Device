@@ -1,4 +1,3 @@
-using IoT.Device.Yeelight;
 using IoT.Device.Yeelight.Features;
 using IoT.Protocol.Yeelight;
 
@@ -12,8 +11,6 @@ SupportsFeature<YeeChangeDeviceName>, SupportsFeature<YeeSupportsSaveState>]
 public partial class YeelightFilamentBulbST64 : YeelightWhiteLamp
 {
     public YeelightFilamentBulbST64(YeelightControlEndpoint endpoint) : base(endpoint) { }
-
-    public override string ModelName { get; } = "yeelink.light.mono5";
 
     public override IEnumerable<string> SupportedMethods => new[]
     {

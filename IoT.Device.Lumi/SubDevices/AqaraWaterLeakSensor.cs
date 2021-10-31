@@ -9,9 +9,7 @@ namespace IoT.Device.Lumi.SubDevices;
 [ModelID("SJCGQ11LM")]
 [PowerSource(CR2032)]
 [ConnectivityType(ZigBee)]
-public sealed class AqaraWaterLeakSensor : LumiSubDeviceWithStatus
+public sealed partial class AqaraWaterLeakSensor : LumiSubDeviceWithStatus
 {
     internal AqaraWaterLeakSensor(string sid, int id) : base(sid, id) { }
-
-    public override string Model { get; } = "sensor_wleak.aq1";
 }

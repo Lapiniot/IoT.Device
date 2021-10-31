@@ -9,9 +9,7 @@ namespace IoT.Device.Lumi.SubDevices;
 [ModelID("RTCGQ01LM")]
 [PowerSource(CR2450)]
 [ConnectivityType(ZigBee)]
-public sealed class MotionSensorV2 : LumiMotionSensor
+public sealed partial class MotionSensorV2 : LumiMotionSensor
 {
     internal MotionSensorV2(string sid, int id) : base(sid, id) { }
-
-    public override string Model { get; } = "sensor_motion.v2";
 }

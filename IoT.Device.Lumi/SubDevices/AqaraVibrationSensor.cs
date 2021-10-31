@@ -10,15 +10,13 @@ namespace IoT.Device.Lumi.SubDevices;
 [ModelID("DJT11LM")]
 [PowerSource(CR2032)]
 [ConnectivityType(ZigBee)]
-public class AqaraVibrationSensor : LumiSubDeviceWithStatus
+public sealed partial class AqaraVibrationSensor : LumiSubDeviceWithStatus
 {
     private int bedActivity;
     private string coordinates;
     private int finalTiltAngle;
 
     internal AqaraVibrationSensor(string sid, int id) : base(sid, id) { }
-
-    public override string Model => "vibration";
 
     public int FinalTiltAngle
     {

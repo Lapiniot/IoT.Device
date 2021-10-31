@@ -50,7 +50,7 @@ public sealed class LumiGateway : LumiThing, IConnectedObject, IObserver<JsonEle
         private set => Set(ref illumination, value);
     }
 
-    public override string Model { get; } = "gateway";
+    public override string ModelName { get; } = "gateway";
 
     // Gateway sends heartbeats every 10 seconds.
     // We give extra 2 seconds to the timeout value.

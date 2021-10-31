@@ -1,4 +1,3 @@
-using IoT.Device.Yeelight;
 using IoT.Device.Yeelight.Features;
 using IoT.Protocol.Yeelight;
 
@@ -15,8 +14,6 @@ public partial class YeelightMoonCeilingLight480 : YeelightWhiteLamp
     public YeelightMoonCeilingLight480(YeelightControlEndpoint endpoint) : base(endpoint) { }
 
     #region Overrides of YeelightDevice
-
-    public override string ModelName => "yeelink.light.ceiling3";
 
     public override IEnumerable<string> SupportedMethods => new[]
     {

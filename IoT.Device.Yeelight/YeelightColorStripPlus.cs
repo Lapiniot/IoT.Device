@@ -13,8 +13,6 @@ public partial class YeelightColorStripPlus : YeelightDevice
 {
     public YeelightColorStripPlus(YeelightControlEndpoint endpoint) : base(endpoint) { }
 
-    public override string ModelName { get; } = "yeelink.light.strip2";
-
     public override IEnumerable<string> SupportedMethods => new[]
     {
         "get_prop", "set_default", "set_power", "toggle", "set_bright", "start_cf",

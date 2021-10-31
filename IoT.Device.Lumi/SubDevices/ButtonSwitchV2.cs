@@ -9,9 +9,7 @@ namespace IoT.Device.Lumi.SubDevices;
 [ModelID("WXKG01LM")]
 [PowerSource(CR2032)]
 [ConnectivityType(ZigBee)]
-public sealed class ButtonSwitchV2 : LumiSubDevice
+public sealed partial class ButtonSwitchV2 : LumiSubDevice
 {
     internal ButtonSwitchV2(string sid, int id) : base(sid, id) { }
-
-    public override string Model { get; } = "sensor_switch.v2";
 }

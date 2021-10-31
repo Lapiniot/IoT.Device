@@ -12,15 +12,13 @@ namespace IoT.Device.Lumi.SubDevices;
 [ModelID("WSDCGQ11LM")]
 [PowerSource(CR2032)]
 [ConnectivityType(ZigBee)]
-public sealed class AqaraWeatherSensor : LumiSubDevice
+public sealed partial class AqaraWeatherSensor : LumiSubDevice
 {
     private decimal humidity;
     private decimal pressure;
     private decimal temperature;
 
     internal AqaraWeatherSensor(string sid, int id) : base(sid, id) { }
-
-    public override string Model { get; } = "weather.v1";
 
     public decimal Temperature
     {

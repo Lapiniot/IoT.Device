@@ -11,13 +11,11 @@ namespace IoT.Device.Lumi.SubDevices;
 [ModelID("RTCGQ11LM")]
 [PowerSource(CR2450)]
 [ConnectivityType(ZigBee)]
-public sealed class AqaraMotionSensor : LumiMotionSensor
+public sealed partial class AqaraMotionSensor : LumiMotionSensor
 {
     private int lux;
 
     internal AqaraMotionSensor(string sid, int id) : base(sid, id) { }
-
-    public override string Model { get; } = "sensor_motion.aq2";
 
     public int Lux
     {

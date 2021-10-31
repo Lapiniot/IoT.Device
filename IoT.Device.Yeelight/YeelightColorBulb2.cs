@@ -1,7 +1,6 @@
 using IoT.Device.Yeelight.Features;
 using IoT.Protocol.Yeelight;
 
-
 namespace IoT.Device.Yeelight;
 
 [ExportYeelightDevice("color")]
@@ -14,8 +13,6 @@ SupportsFeature<YeeSupportsSaveState>]
 public partial class YeelightColorBulb2 : YeelightColorLamp
 {
     public YeelightColorBulb2(YeelightControlEndpoint endpoint) : base(endpoint) { }
-
-    public override string ModelName { get; } = "yeelink.light.color2";
 
     public override IEnumerable<string> SupportedMethods => new[]
     {

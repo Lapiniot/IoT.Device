@@ -10,14 +10,12 @@ namespace IoT.Device.Lumi.SubDevices;
 [ModelID("MFKZQ01LM")]
 [PowerSource(CR2450)]
 [ConnectivityType(ZigBee)]
-public sealed class AqaraCubeController : LumiSubDevice
+public sealed partial class AqaraCubeController : LumiSubDevice
 {
     private int rotateAngle;
     private int rotateDuration;
 
     internal AqaraCubeController(string sid, int id) : base(sid, id) { }
-
-    public override string Model { get; } = "sensor_cube.aqgl01";
 
     public int RotateAngle
     {

@@ -9,9 +9,7 @@ namespace IoT.Device.Lumi.SubDevices;
 [ModelID("MCCGQ01LM")]
 [PowerSource(CR1632)]
 [ConnectivityType(ZigBee)]
-public sealed class DoorWindowSensor : LumiMagnetSensor
+public sealed partial class DoorWindowSensor : LumiMagnetSensor
 {
     internal DoorWindowSensor(string sid, int id) : base(sid, id) { }
-
-    public override string Model { get; } = "sensor_magnet.v2";
 }

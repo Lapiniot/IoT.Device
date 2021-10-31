@@ -37,6 +37,6 @@ public abstract class LumiSubDevice : LumiThing, IProvideBatteryVoltage
 
     public override string ToString()
     {
-        return $"{{\"model\": \"{Model}\", \"sid\": \"{Sid}\", \"short_id\": {id}, \"voltage\": {voltage}}}";
+        return $"{{\"model\": \"{ModelName}\", \"sid\": \"{Sid}\", \"short_id\": {id}, \"voltage\": {voltage}}}";
     }
 }

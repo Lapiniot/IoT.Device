@@ -17,7 +17,7 @@ public abstract class LumiThing : INotifyPropertyChanged, IProvideOnlineInfo, IA
         (Sid, isOnline) = (sid, true);
     }
 
-    public abstract string Model { get; }
+    public abstract string ModelName { get; }
 
     protected abstract TimeSpan HeartbeatTimeout { get; }
 
