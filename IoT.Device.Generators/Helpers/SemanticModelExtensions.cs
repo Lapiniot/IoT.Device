@@ -90,4 +90,12 @@ internal static class SemanticModelExtensions
         }
         return false;
     }
+
+    public static IEnumerable<ITypeSymbol> GetBaseTypes(this ITypeSymbol? symbol)
+    {
+        while((symbol = symbol?.BaseType) is { })
+        {
+            yield return symbol;
+        }
+    }
 }
