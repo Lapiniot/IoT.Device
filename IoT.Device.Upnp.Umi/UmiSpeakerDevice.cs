@@ -38,7 +38,7 @@ public sealed class UmiSpeakerDevice : UpnpDevice, IDisposable
 
     public Uri BaseUri { get; }
 
-    internal SoapControlEndpoint Endpoint => endpoint ??= new(client);
+    internal SoapControlEndpoint Endpoint => endpoint ??= new(new SoapHttpClient(client));
 
     public ContentDirectoryService ContentDirectory =>
         contentDirectory ??= new(Endpoint,
