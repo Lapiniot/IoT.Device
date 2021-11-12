@@ -36,45 +36,38 @@ public class ModelNameGenerator : IIncrementalGenerator
             static (context, ct) => Parser.Parse((AttributeSyntax)context.Node, context.SemanticModel, ct))
             .Where(descriptor => descriptor is not null);
 
-        var combined = context.CompilationProvider.Combine(exportDescriptors.Collect());
-
-        context.RegisterSourceOutput(combined, static (context, source) =>
+        context.RegisterSourceOutput(exportDescriptors, static (context, source) =>
         {
-            var (compilation, descriptors) = source;
+            var (_, type, model) = source!;
 
-            foreach(var descriptor in descriptors)
-            {
-                var (_, type, model) = descriptor!;
-
-                if(type.GetBaseTypes().Any(bt => bt.GetMembers("ModelName").Any(p => p is IPropertySymbol
-                    {
-                        IsAbstract: true,
-                        Type: { Name: "String", ContainingNamespace: { Name: "System", ContainingNamespace.IsGlobalNamespace: true } }
-                    })) &&
-                    !type.GetMembers("ModelName").Any(p => p is IPropertySymbol { IsOverride: true }))
+            if(type.GetBaseTypes().Any(bt => bt.GetMembers("ModelName").Any(p => p is IPropertySymbol
                 {
-                    if(type is not { DeclaringSyntaxReferences: { Length: > 0 } dsr } || dsr[0].GetSyntax(context.CancellationToken) is not ClassDeclarationSyntax cds)
-                    {
-                        // Type has no declaration parts in the current context
-                        continue;
-                    }
-
-                    if(!cds.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword)))
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(NoPartialModifier, cds.GetLocation()));
-                        continue;
-                    }
-
-                    if(type.IsAbstract)
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(AbstractClassNotSupported, cds.GetLocation()));
-                        continue;
-                    }
-
-                    var code = Generator.GenerateAugmentationClass(type, model);
-
-                    context.AddSource($"{type.ToDisplayString()}.g.cs", SourceText.From(code.ToFullString(), Encoding.UTF8));
+                    IsAbstract: true,
+                    Type: { Name: "String", ContainingNamespace: { Name: "System", ContainingNamespace.IsGlobalNamespace: true } }
+                })) &&
+                !type.GetMembers("ModelName").Any(p => p is IPropertySymbol { IsOverride: true }))
+            {
+                if(type is not { DeclaringSyntaxReferences: { Length: > 0 } dsr } || dsr[0].GetSyntax(context.CancellationToken) is not ClassDeclarationSyntax cds)
+                {
+                    // Type has no declaration parts in the current context
+                    return;
                 }
+
+                if(!cds.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword)))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(NoPartialModifier, cds.GetLocation()));
+                    return;
+                }
+
+                if(type.IsAbstract)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(AbstractClassNotSupported, cds.GetLocation()));
+                    return;
+                }
+
+                var code = Generator.GenerateAugmentationClass(type, model);
+
+                context.AddSource($"{type.ToDisplayString()}.g.cs", SourceText.From(code.ToFullString(), Encoding.UTF8));
             }
         });
     }
