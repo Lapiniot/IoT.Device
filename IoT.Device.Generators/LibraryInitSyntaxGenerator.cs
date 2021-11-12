@@ -10,24 +10,18 @@ namespace IoT.Device.Generators;
 
 internal static class LibraryInitSyntaxGenerator
 {
-    public static SyntaxNode GenerateLibInitClass(string namespaceName,
-        string className, string initMethodName,
-        IEnumerable<(ITypeSymbol Type, ITypeSymbol ImplType, string Model)> exports)
+    public static SyntaxNode GenerateLibInitClass(string namespaceName, string className, string initMethodName, IEnumerable<ExportDescriptor> exports)
     {
         var reduced = ReduceTypeNames(exports, out var namespaces);
 
         return NamespaceDeclaration(ParseName(namespaceName))
-            .AddUsings(UsingDirective(ParseName("System.Runtime.CompilerServices")), UsingDirective(ParseName("IoT.Device")))
+            .AddUsings(UsingDirective(ParseName("IoT.Device")))
             .AddUsings(namespaces.OrderBy(n => n).Select(ns => UsingDirective(ParseName(ns))).ToArray())
             .AddMembers(ClassDeclaration(className)
                 .AddModifiers(Token(PublicKeyword), Token(StaticKeyword))
                 .AddMembers(
                     MethodDeclaration(PredefinedType(Token(VoidKeyword)), initMethodName)
                         .AddModifiers(Token(PublicKeyword), Token(StaticKeyword))
-                        .WithBody(Block(ParseStatement(string.Empty))),
-                    MethodDeclaration(PredefinedType(Token(VoidKeyword)), "ModuleInit")
-                        .AddModifiers(Token(InternalKeyword), Token(StaticKeyword))
-                        .AddAttributeLists(AttributeList(SingletonSeparatedList(Attribute(IdentifierName("ModuleInitializer")))))
                         .WithBody(Block(GenerateExportStatements(reduced)))))
             .NormalizeWhitespace();
     }
@@ -44,7 +38,7 @@ internal static class LibraryInitSyntaxGenerator
     }
 
     private static IEnumerable<(string Type, string ImplType, string Model)> ReduceTypeNames(
-        IEnumerable<(ITypeSymbol Type, ITypeSymbol ImplType, string Model)> exports,
+        IEnumerable<ExportDescriptor> exports,
         out IEnumerable<string> namespaces)
     {
         var list = new List<(string Type, string ImplType, string Model)>();

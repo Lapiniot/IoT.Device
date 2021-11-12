@@ -1,13 +1,15 @@
 ﻿using System.Text;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 
-using SG = IoT.Device.Generators.LibraryInitSyntaxGenerator;
+using Generator = IoT.Device.Generators.LibraryInitSyntaxGenerator;
+using Parser = IoT.Device.Generators.ExportAttributeSyntaxParser;
 
 namespace IoT.Device.Generators;
 
 [Generator]
-public class LibraryInitGenerator : ISourceGenerator
+public class LibraryInitGenerator : IIncrementalGenerator
 {
 #pragma warning disable RS2008
     private static readonly DiagnosticDescriptor NoDefNamespaceWarning = new("LIGEN001",
@@ -17,26 +19,30 @@ public class LibraryInitGenerator : ISourceGenerator
         DiagnosticSeverity.Warning,
         isEnabledByDefault: true);
 
-    public void Execute(GeneratorExecutionContext context)
+    public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        string? assemblyName = context.Compilation.AssemblyName;
+        var exportDescriptors = context.SyntaxProvider.CreateSyntaxProvider(
+            static (node, _) => Parser.IsSuitableCandidate(node),
+            static (context, ct) => Parser.Parse((AttributeSyntax)context.Node, context.SemanticModel, ct))
+            .Where(s => s is not null);
 
-        if(string.IsNullOrEmpty(assemblyName))
+        var combined = context.CompilationProvider.Combine(exportDescriptors.Collect());
+
+        context.RegisterSourceOutput(combined, static (ctx, source) =>
         {
-            context.ReportDiagnostic(Diagnostic.Create(NoDefNamespaceWarning, Location.None));
-            return;
-        }
+            var (compilation, descriptors) = source;
 
-        if(context.SyntaxContextReceiver is FilterExportAttributesSyntaxContextReceiver sr)
-        {
-            var code = SG.GenerateLibInitClass(assemblyName, "Library", "Init", sr.Exports);
+            string? assemblyName = compilation.AssemblyName;
 
-            context.AddSource("LibraryInit.Generated.cs", SourceText.From(code.ToFullString(), Encoding.UTF8));
-        }
-    }
+            if(string.IsNullOrEmpty(assemblyName))
+            {
+                ctx.ReportDiagnostic(Diagnostic.Create(NoDefNamespaceWarning, Location.None));
+                return;
+            }
 
-    public void Initialize(GeneratorInitializationContext context)
-    {
-        context.RegisterForSyntaxNotifications(() => new FilterExportAttributesSyntaxContextReceiver());
+            var code = Generator.GenerateLibInitClass(assemblyName, "Library", "Init", descriptors);
+
+            ctx.AddSource("LibraryInit.g.cs", SourceText.From(code.ToFullString(), Encoding.UTF8));
+        });
     }
 }
