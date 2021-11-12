@@ -5,12 +5,15 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 
+using Parser = IoT.Device.Generators.ExportAttributeSyntaxParser;
+using Generator = IoT.Device.Generators.ModelNameSyntaxGenerator;
+
 namespace IoT.Device.Generators;
 
 #pragma warning disable RS2008
 
 [Generator]
-public class ModelNameGenerator : ISourceGenerator
+public class ModelNameGenerator : IIncrementalGenerator
 {
     private static readonly DiagnosticDescriptor NoPartialModifier = new("MNGEN001",
         title: "Generation warning",
@@ -26,12 +29,23 @@ public class ModelNameGenerator : ISourceGenerator
         DiagnosticSeverity.Warning,
         isEnabledByDefault: true);
 
-    public void Execute(GeneratorExecutionContext context)
+    public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        if(context.SyntaxContextReceiver is FilterExportAttributesSyntaxContextReceiver sr)
+        var exportDescriptors = context.SyntaxProvider.CreateSyntaxProvider(
+            static (node, _) => Parser.IsSuitableCandidate(node),
+            static (context, ct) => Parser.Parse((AttributeSyntax)context.Node, context.SemanticModel, ct))
+            .Where(descriptor => descriptor is not null);
+
+        var combined = context.CompilationProvider.Combine(exportDescriptors.Collect());
+
+        context.RegisterSourceOutput(combined, static (context, source) =>
         {
-            foreach(var (_, type, model) in sr.Exports)
+            var (compilation, descriptors) = source;
+
+            foreach(var descriptor in descriptors)
             {
+                var (_, type, model) = descriptor!;
+
                 if(type.GetBaseTypes().Any(bt => bt.GetMembers("ModelName").Any(p => p is IPropertySymbol
                     {
                         IsAbstract: true,
@@ -57,15 +71,11 @@ public class ModelNameGenerator : ISourceGenerator
                         continue;
                     }
 
-                    var code = ModelNameSyntaxGenerator.GenerateAugmentationClass(type, model);
-                    context.AddSource($"{type.ToDisplayString()}.Generated.cs", SourceText.From(code.ToFullString(), Encoding.UTF8));
+                    var code = Generator.GenerateAugmentationClass(type, model);
+
+                    context.AddSource($"{type.ToDisplayString()}.g.cs", SourceText.From(code.ToFullString(), Encoding.UTF8));
                 }
             }
-        }
-    }
-
-    public void Initialize(GeneratorInitializationContext context)
-    {
-        context.RegisterForSyntaxNotifications(() => new FilterExportAttributesSyntaxContextReceiver());
+        });
     }
 }
