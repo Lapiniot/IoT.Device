@@ -1,7 +1,9 @@
 ﻿namespace IoT.Device;
 
 [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true)]
-public abstract class ExportAttribute<T> : Attribute
+public abstract class ExportAttribute<T, TImpl> : Attribute
+    where T : class
+    where TImpl : class, T
 {
     protected ExportAttribute(string model)
     {

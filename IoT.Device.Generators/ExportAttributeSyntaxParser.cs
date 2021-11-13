@@ -42,12 +42,12 @@ internal static class ExportAttributeSyntaxParser
                 Name: ExportAttributeName,
                 ContainingAssembly.Name: AssemblyName,
                 ContainingNamespace: { Name: DeviceNsName, ContainingNamespace: { Name: IoTNsName, ContainingNamespace.IsGlobalNamespace: true } },
-                TypeArguments: { Length: 1 } typeArguments
+                TypeArguments: { Length: 2 } typeArgs
             }
         } &&
         model.GetDeclaredSymbol(attribute.Parent!.Parent!, cancellationToken) is ITypeSymbol implType &&
         model.GetConstantValue(attribute.ArgumentList!.Arguments[0].Expression, cancellationToken) is { HasValue: true, Value: string { } value }
-            ? new(typeArguments[0], implType, value)
+            ? new(typeArgs[0], implType, value)
             : null;
     }
 
@@ -63,15 +63,11 @@ internal static class ExportAttributeSyntaxParser
                 Name: ExportAttributeName,
                 ContainingAssembly.Name: AssemblyName,
                 ContainingNamespace: { Name: DeviceNsName, ContainingNamespace: { Name: IoTNsName, ContainingNamespace.IsGlobalNamespace: true } },
-                TypeArguments: { Length: 1 } typeArguments
-            },
-            TypeParameters: { Length: 1 } typeParameters
+                TypeArguments: { Length: 2 } typeArgs
+            }
         } &&
-        typeArguments[0] is ITypeSymbol argumentType &&
-        typeParameters[0] is { ConstraintTypes: { Length: > 0 } cts } &&
-        cts[0] is ITypeSymbol constraintType &&
         model.GetConstantValue(attribute.ArgumentList!.Arguments[0].Expression, cancellationToken) is { HasValue: true, Value: string { } value }
-            ? new(constraintType, argumentType, value)
+            ? new(typeArgs[0], typeArgs[1], value)
             : null;
     }
 }
