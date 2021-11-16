@@ -4,7 +4,7 @@ using TreeNode = IoT.Device.Generators.Helpers.HashTreeNode<string, (string Ns, 
 
 namespace IoT.Device.Generators.Helpers;
 
-internal static class NameHelper
+public static class NameHelper
 {
     [SuppressMessage("Roslyn", "RS1024: Compare symbols correctly", Justification = "False positive due to the buggy analyzer")]
     public static IDictionary<ISymbol, string> ResolveTypeNames(IEnumerable<ITypeSymbol> typeSymbols, out IEnumerable<string> namespaces)
@@ -46,6 +46,8 @@ internal static class NameHelper
     public static IEnumerable<(ITypeSymbol Symbol, string ShortName)> ResolveAmbiguousNames(
         IEnumerable<ITypeSymbol> symbols, out IEnumerable<string> resolvedNamespaces)
     {
+        if(symbols is null) throw new ArgumentNullException(nameof(symbols));
+
         var list = new List<(ITypeSymbol, string)>();
         var ns = new HashSet<string>();
 
@@ -67,7 +69,7 @@ internal static class NameHelper
         return list;
     }
 
-    public static TreeNode BuildNamespacesHierarchy(IEnumerable<ITypeSymbol> symbols)
+    private static TreeNode BuildNamespacesHierarchy(IEnumerable<ITypeSymbol> symbols)
     {
         var root = new TreeNode();
 

@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace IoT.Device.Generators;
 
-internal static class ExportAttributeSyntaxParser
+public static class ExportAttributeSyntaxParser
 {
     private const string ExportAttributeName = "ExportAttribute";
     private const string AssemblyName = "IoT.Device";
@@ -21,6 +21,8 @@ internal static class ExportAttributeSyntaxParser
 
     public static ExportDescriptor? Parse(AttributeSyntax attribute, SemanticModel model, CancellationToken cancellationToken)
     {
+        if(model is null) throw new ArgumentNullException(nameof(model));
+
         return attribute switch
         {
             { Parent: AttributeListSyntax { Parent: CompilationUnitSyntax }, ArgumentList: { Arguments: { Count: > 0 } } }
@@ -31,7 +33,7 @@ internal static class ExportAttributeSyntaxParser
         };
     }
 
-    public static ExportDescriptor? ParseAsClassAttribute(AttributeSyntax attribute, SemanticModel model, CancellationToken cancellationToken)
+    private static ExportDescriptor? ParseAsClassAttribute(AttributeSyntax attribute, SemanticModel model, CancellationToken cancellationToken)
     {
         return model.GetTypeInfo(attribute, cancellationToken).Type is INamedTypeSymbol
         {
@@ -51,7 +53,7 @@ internal static class ExportAttributeSyntaxParser
             : null;
     }
 
-    public static ExportDescriptor? ParseAsAssemblyAttribute(AttributeSyntax attribute, SemanticModel model, CancellationToken cancellationToken)
+    private static ExportDescriptor? ParseAsAssemblyAttribute(AttributeSyntax attribute, SemanticModel model, CancellationToken cancellationToken)
     {
         return model.GetTypeInfo(attribute, cancellationToken).Type is INamedTypeSymbol
         {
