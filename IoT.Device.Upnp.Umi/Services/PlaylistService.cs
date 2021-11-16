@@ -1,10 +1,9 @@
 ﻿using IoT.Protocol.Soap;
-using IoT.Protocol.Upnp.Services;
 using static System.Globalization.CultureInfo;
 
 namespace IoT.Device.Upnp.Umi.Services;
 
-[ServiceSchema(ServiceSchema)]
+[ExportService(ServiceSchema)]
 public sealed class PlaylistService : SoapActionInvoker
 {
     public const string ServiceSchema = "urn:xiaomi-com:service:Playlist:1";

@@ -1,9 +1,8 @@
 ﻿using IoT.Protocol.Soap;
-using IoT.Protocol.Upnp.Services;
 
 namespace IoT.Device.Upnp.Umi.Services;
 
-[ServiceSchema(ServiceSchema)]
+[ExportService(ServiceSchema)]
 public sealed class SystemPropertiesService : SoapActionInvoker
 {
     public const string ServiceSchema = "urn:xiaomi-com:service:SystemProperties:1";

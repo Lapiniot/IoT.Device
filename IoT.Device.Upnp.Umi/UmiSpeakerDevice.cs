@@ -1,9 +1,9 @@
 ﻿using IoT.Protocol.Soap;
-using IoT.Protocol.Upnp.Services;
+using IoT.Device.Upnp.Services;
+using IoT.Device.Upnp.Umi.Services;
 using static System.UriKind;
 using static System.UriPartial;
 using static System.Net.DecompressionMethods;
-using IoT.Device.Upnp.Umi.Services;
 
 namespace IoT.Device.Upnp.Umi;
 
