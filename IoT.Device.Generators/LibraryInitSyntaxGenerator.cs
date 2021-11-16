@@ -18,11 +18,15 @@ internal static class LibraryInitSyntaxGenerator
             .AddUsings(UsingDirective(ParseName("IoT.Device")))
             .AddUsings(namespaces.OrderBy(n => n).Select(ns => UsingDirective(ParseName(ns))).ToArray())
             .AddMembers(ClassDeclaration(className)
-                .AddModifiers(Token(PublicKeyword), Token(StaticKeyword))
+                .AddModifiers(Token(PublicKeyword), Token(StaticKeyword), Token(PartialKeyword))
                 .AddMembers(
                     MethodDeclaration(PredefinedType(Token(VoidKeyword)), initMethodName)
                         .AddModifiers(Token(PublicKeyword), Token(StaticKeyword))
-                        .WithBody(Block(GenerateExportStatements(reduced)))))
+                        .WithBody(Block(GenerateExportStatements(reduced).Append(
+                            ExpressionStatement(InvocationExpression(IdentifierName($"{initMethodName}Extra")))))),
+                    MethodDeclaration(PredefinedType(Token(VoidKeyword)), $"{initMethodName}Extra")
+                        .AddModifiers(Token(StaticKeyword), Token(PartialKeyword))
+                        .WithSemicolonToken(Token(SemicolonToken))))
             .NormalizeWhitespace();
     }
 
