@@ -27,12 +27,14 @@ public sealed class LumiGateway : LumiThing, IConnectedObject, IObserver<JsonEle
     private int illumination;
     private int rgbValue;
 
-    public LumiGateway(IPAddress address, int port, string sid) : base(sid)
+    public LumiGateway(IPEndPoint endpoint, string sid) : base(sid)
     {
+        ArgumentNullException.ThrowIfNull(endpoint);
+
         semaphore = new SemaphoreSlim(1, 1);
         children = new Dictionary<string, LumiSubDevice>();
-        client = new LumiControlEndpoint(new IPEndPoint(address, port));
-        listener = new LumiEventListener(new IPEndPoint(IPAddress.Parse("224.0.0.50"), port));
+        client = new LumiControlEndpoint(endpoint);
+        listener = new LumiEventListener(new IPEndPoint(IPAddress.Parse("224.0.0.50"), endpoint.Port));
         subscription = listener.Subscribe(this);
     }
 
