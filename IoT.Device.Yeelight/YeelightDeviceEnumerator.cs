@@ -21,7 +21,7 @@ namespace IoT.Device.Yeelight
 
             if(!thing.TryGetValue("Location", out var location) ||
                !thing.TryGetValue("id", out var value) ||
-               !TryParseNumber(value, out uint deviceId))
+               !TryParseNumber(value, out var deviceId))
             {
                 return null;
             }
@@ -38,7 +38,7 @@ namespace IoT.Device.Yeelight
             }
             catch
             {
-                var _ = endpoint.DisposeAsync();
+                _ = endpoint.DisposeAsync();
                 throw;
             }
         }
