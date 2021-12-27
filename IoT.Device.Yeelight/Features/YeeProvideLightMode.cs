@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace IoT.Device.Yeelight.Features;
 
 public class YeeProvideLightMode : YeelightDeviceFeature
@@ -12,6 +14,8 @@ public class YeeProvideLightMode : YeelightDeviceFeature
 
     public async Task<LightMode> GetModeAsync(CancellationToken cancellationToken = default)
     {
-        return (LightMode)(await Device.GetPropertyAsync("active_mode", cancellationToken).ConfigureAwait(false)).GetInt32();
+        return (LightMode)int.Parse(
+            (await Device.GetPropertyAsync("active_mode", cancellationToken).ConfigureAwait(false)).GetString(),
+            CultureInfo.InvariantCulture);
     }
 }

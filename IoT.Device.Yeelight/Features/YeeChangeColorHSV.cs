@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace IoT.Device.Yeelight.Features;
 
 public class YeeChangeColorHSV : YeelightDeviceFeature
@@ -23,12 +25,16 @@ public class YeeChangeColorHSV : YeelightDeviceFeature
 
     public async Task<uint> GetHueAsync(CancellationToken cancellationToken = default)
     {
-        return (await Device.GetPropertyAsync(propHue, cancellationToken).ConfigureAwait(false)).GetUInt32();
+        return uint.Parse(
+            (await Device.GetPropertyAsync(propHue, cancellationToken).ConfigureAwait(false)).GetString(),
+            CultureInfo.InvariantCulture);
     }
 
     public async Task<uint> GetSaturationAsync(CancellationToken cancellationToken = default)
     {
-        return (await Device.GetPropertyAsync(propSaturation, cancellationToken).ConfigureAwait(false)).GetUInt32();
+        return uint.Parse(
+            (await Device.GetPropertyAsync(propSaturation, cancellationToken).ConfigureAwait(false)).GetString(),
+            CultureInfo.InvariantCulture);
     }
 
     public Task SetColorHSVAsync(uint hsv, CancellationToken cancellationToken = default)

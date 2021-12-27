@@ -14,7 +14,9 @@ public class YeeSupportsSaveState : YeelightDeviceFeature
 
     public async Task<SwitchState> GetAutoSaveStateAsync(CancellationToken cancellationToken = default)
     {
-        return (SwitchState)(await Device.GetPropertyAsync("save_state", cancellationToken).ConfigureAwait(false)).GetInt32();
+        return (SwitchState)int.Parse(
+            (await Device.GetPropertyAsync("save_state", cancellationToken).ConfigureAwait(false)).GetString(),
+            CultureInfo.InvariantCulture);
     }
 
     public Task SetAutoSaveStateAsync(SwitchState state = SwitchState.On, CancellationToken cancellationToken = default)
@@ -22,9 +24,11 @@ public class YeeSupportsSaveState : YeelightDeviceFeature
         return Device.InvokeAsync("set_ps", new[] { "cfg_save_state", ((int)state).ToString(CultureInfo.InvariantCulture) }, cancellationToken);
     }
 
-    public async Task<SwitchState> GetInitPowerStateAsync(CancellationToken cancellationToken = default)
+    public async Task<int> GetInitPowerStateAsync(CancellationToken cancellationToken = default)
     {
-        return (SwitchState)(await Device.GetPropertyAsync("init_power_opt", cancellationToken).ConfigureAwait(false)).GetInt32();
+        return int.Parse(
+            (await Device.GetPropertyAsync("init_power_opt", cancellationToken).ConfigureAwait(false)).GetString(),
+            CultureInfo.InvariantCulture);
     }
 
     public Task SetInitPowerStateAsync(SwitchState state = SwitchState.On, CancellationToken cancellationToken = default)

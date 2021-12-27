@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace IoT.Device.Yeelight.Features;
 
 public class YeeChangeBrightness : YeelightDeviceFeature
@@ -21,7 +23,9 @@ public class YeeChangeBrightness : YeelightDeviceFeature
 
     public async Task<uint> GetBrightnessAsync(CancellationToken cancellationToken = default)
     {
-        return (await Device.GetPropertyAsync(propBright, cancellationToken).ConfigureAwait(false)).GetUInt32();
+        return uint.Parse(
+            (await Device.GetPropertyAsync(propBright, cancellationToken).ConfigureAwait(false)).GetString(),
+            CultureInfo.InvariantCulture);
     }
 
     public Task SetBrightnessAsync(uint brightness, CancellationToken cancellationToken = default)

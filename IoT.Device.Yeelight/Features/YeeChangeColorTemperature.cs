@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace IoT.Device.Yeelight.Features;
 
 public class YeeChangeColorTemperature : YeelightDeviceFeature
@@ -20,7 +22,9 @@ public class YeeChangeColorTemperature : YeelightDeviceFeature
 
     public async Task<uint> GetColorTemperatureAsync(CancellationToken cancellationToken = default)
     {
-        return (await Device.GetPropertyAsync(propCt, cancellationToken).ConfigureAwait(false)).GetUInt32();
+        return uint.Parse(
+            (await Device.GetPropertyAsync(propCt, cancellationToken).ConfigureAwait(false)).GetString(),
+            CultureInfo.InvariantCulture);
     }
 
     public Task SetColorTemperatureAsync(uint temperature, CancellationToken cancellationToken = default)

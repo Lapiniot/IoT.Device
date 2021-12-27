@@ -14,7 +14,9 @@ public class YeeSupportsAmbientLight : YeelightDeviceFeature
 
     public async Task<SwitchState> GetProactiveModeAsync(CancellationToken cancellationToken = default)
     {
-        return (SwitchState)(await Device.GetPropertyAsync("bg_proact", cancellationToken).ConfigureAwait(false)).GetInt32();
+        return (SwitchState)int.Parse(
+            (await Device.GetPropertyAsync("bg_proact", cancellationToken).ConfigureAwait(false)).GetString(),
+            CultureInfo.InvariantCulture);
     }
 
     /// <summary>

@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json;
 
 namespace IoT.Device.Yeelight.Features;
@@ -29,6 +30,8 @@ public class YeeSupportsCronScheduler : YeelightDeviceFeature
 
     public async Task<uint> GetDelayOffAsync(CancellationToken cancellationToken = default)
     {
-        return (await Device.GetPropertyAsync("delayoff", cancellationToken).ConfigureAwait(false)).GetUInt32();
+        return uint.Parse(
+            (await Device.GetPropertyAsync("delayoff", cancellationToken).ConfigureAwait(false)).GetString(),
+            CultureInfo.InvariantCulture);
     }
 }

@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace IoT.Device.Yeelight.Features;
 
 public class YeeProvideColorMode : YeelightDeviceFeature
@@ -19,6 +21,8 @@ public class YeeProvideColorMode : YeelightDeviceFeature
 
     public async Task<ColorMode> GetColorModeAsync(CancellationToken cancellationToken = default)
     {
-        return (ColorMode)(await Device.GetPropertyAsync(property, cancellationToken).ConfigureAwait(false)).GetInt32();
+        return (ColorMode)int.Parse(
+            (await Device.GetPropertyAsync(property, cancellationToken).ConfigureAwait(false)).GetString(),
+            CultureInfo.InvariantCulture);
     }
 }

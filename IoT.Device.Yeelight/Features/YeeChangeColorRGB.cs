@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace IoT.Device.Yeelight.Features;
 
 public class YeeChangeColorRGB : YeelightDeviceFeature
@@ -21,7 +23,9 @@ public class YeeChangeColorRGB : YeelightDeviceFeature
 
     public async Task<uint> GetColorRGBAsync(CancellationToken cancellationToken = default)
     {
-        return (await Device.GetPropertyAsync(propRGB, cancellationToken).ConfigureAwait(false)).GetUInt32();
+        return uint.Parse(
+            (await Device.GetPropertyAsync(propRGB, cancellationToken).ConfigureAwait(false)).GetString(),
+            CultureInfo.InvariantCulture);
     }
 
     public Task SetColorRGBAsync(uint argb, CancellationToken cancellationToken = default)

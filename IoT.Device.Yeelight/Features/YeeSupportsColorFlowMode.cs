@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Globalization;
+using System.Text;
 using System.Text.Json;
 
 namespace IoT.Device.Yeelight.Features;
@@ -31,7 +32,9 @@ public class YeeSupportsColorFlowMode : YeelightDeviceFeature
 
     public async Task<SwitchState> GetFlowingStateAsync(CancellationToken cancellationToken = default)
     {
-        return (SwitchState)(await Device.GetPropertyAsync(propFlowing, cancellationToken).ConfigureAwait(false)).GetInt32();
+        return (SwitchState)int.Parse(
+            (await Device.GetPropertyAsync(propFlowing, cancellationToken).ConfigureAwait(false)).GetString(),
+            CultureInfo.InvariantCulture);
     }
 
     public Task<JsonElement> GetFlowingParamsAsync(CancellationToken cancellationToken = default)
