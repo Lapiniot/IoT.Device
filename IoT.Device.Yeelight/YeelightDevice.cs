@@ -22,15 +22,9 @@ public abstract class YeelightDevice : IConnectedObject, IAsyncDisposable
 
     public abstract T GetFeature<T>() where T : YeelightDeviceFeature;
 
-    public async Task<JsonElement> InvokeAsync(RequestMessage message, CancellationToken cancellationToken)
+    public Task<JsonElement> InvokeAsync(RequestMessage message, CancellationToken cancellationToken)
     {
-        var json = await Endpoint.InvokeAsync(message, cancellationToken).ConfigureAwait(false);
-
-        if(json.TryGetProperty("result", out var result)) return result;
-
-        if(json.TryGetProperty("error", out var e)) throw new YeelightException(e.GetProperty("code").GetInt32(), e.GetProperty("message").GetString());
-
-        return json;
+        return Endpoint.InvokeAsync(message, cancellationToken);
     }
 
     public Task<JsonElement> InvokeAsync(string method, object args, CancellationToken cancellationToken)
