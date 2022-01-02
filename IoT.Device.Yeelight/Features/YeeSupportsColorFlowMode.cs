@@ -75,6 +75,6 @@ public class YeeSupportsColorFlowMode : YeelightDeviceFeature
 
     public Task StopColorFlowAsync(CancellationToken cancellationToken = default)
     {
-        return Device.InvokeAsync(stopSet, EmptyArgs, cancellationToken);
+        return Device.InvokeAsync(stopSet, Array.Empty<object>(), cancellationToken);
     }
 }

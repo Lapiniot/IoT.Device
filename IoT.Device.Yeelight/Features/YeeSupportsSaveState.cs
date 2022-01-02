@@ -38,6 +38,6 @@ public class YeeSupportsSaveState : YeelightDeviceFeature
 
     public Task SaveDefaultsAsync(CancellationToken cancellationToken = default)
     {
-        return Device.InvokeAsync("set_default", EmptyArgs, cancellationToken);
+        return Device.InvokeAsync("set_default", Array.Empty<object>(), cancellationToken);
     }
 }

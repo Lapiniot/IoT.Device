@@ -42,6 +42,6 @@ public class YeeChangePowerState : YeelightDeviceFeature
 
     public Task ToggleAsync(CancellationToken cancellationToken = default)
     {
-        return Device.InvokeAsync(propSetToggle, EmptyArgs, cancellationToken);
+        return Device.InvokeAsync(propSetToggle, Array.Empty<object>(), cancellationToken);
     }
 }
