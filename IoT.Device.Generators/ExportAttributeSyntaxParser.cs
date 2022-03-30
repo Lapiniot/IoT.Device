@@ -15,19 +15,17 @@ public static class ExportAttributeSyntaxParser
         return node is AttributeSyntax
         {
             Parent: AttributeListSyntax { Parent: ClassDeclarationSyntax or CompilationUnitSyntax },
-            ArgumentList: { Arguments.Count: > 0 }
+            ArgumentList.Arguments.Count: > 0
         };
     }
 
     public static ExportDescriptor? Parse(AttributeSyntax attribute, SemanticModel model, CancellationToken cancellationToken)
     {
-        if(model is null) throw new ArgumentNullException(nameof(model));
-
         return attribute switch
         {
-            { Parent: AttributeListSyntax { Parent: CompilationUnitSyntax }, ArgumentList: { Arguments: { Count: > 0 } } }
+            { Parent: AttributeListSyntax { Parent: CompilationUnitSyntax }, ArgumentList.Arguments.Count: > 0 }
                 => ParseAsAssemblyAttribute(attribute, model, cancellationToken),
-            { Parent: AttributeListSyntax { Parent: ClassDeclarationSyntax }, ArgumentList: { Arguments: { Count: > 0 } } }
+            { Parent: AttributeListSyntax { Parent: ClassDeclarationSyntax }, ArgumentList.Arguments.Count: > 0 }
                 => ParseAsClassAttribute(attribute, model, cancellationToken),
             _ => null
         };

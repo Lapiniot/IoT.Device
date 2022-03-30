@@ -37,10 +37,8 @@ public class YeeSupportsColorFlowMode : YeelightDeviceFeature
             CultureInfo.InvariantCulture);
     }
 
-    public Task<JsonElement> GetFlowingParamsAsync(CancellationToken cancellationToken = default)
-    {
-        return Device.GetPropertyAsync(propFlowParams, cancellationToken);
-    }
+    public Task<JsonElement> GetFlowingParamsAsync(CancellationToken cancellationToken = default) =>
+        Device.GetPropertyAsync(propFlowParams, cancellationToken);
 
     public Task StartColorFlowAsync(uint count, PostFlowAction mode,
         (int Duration, FlowTransition Mode, int Value, int Brightness)[] states,
@@ -50,7 +48,7 @@ public class YeeSupportsColorFlowMode : YeelightDeviceFeature
 
         var sb = new StringBuilder();
 
-        foreach(var (duration, flowTransition, value, brightness) in states)
+        foreach (var (duration, flowTransition, value, brightness) in states)
         {
             _ = sb.Append(duration);
             _ = sb.Append(',');
@@ -62,19 +60,14 @@ public class YeeSupportsColorFlowMode : YeelightDeviceFeature
             _ = sb.Append(',');
         }
 
-        if(sb[^1] == ',') sb.Length--;
+        if (sb[^1] == ',') sb.Length--;
 
         return StartColorFlowAsync(count, mode, sb.ToString(), cancellationToken);
     }
 
-    public Task StartColorFlowAsync(uint count = 0, PostFlowAction mode = PostFlowAction.RestoreState,
-        string expression = "", CancellationToken cancellationToken = default)
-    {
-        return Device.InvokeAsync(startSet, new object[] { count, (int)mode, expression }, cancellationToken);
-    }
+    public Task StartColorFlowAsync(uint count = 0, PostFlowAction mode = PostFlowAction.RestoreState, string expression = "", CancellationToken cancellationToken = default) =>
+        Device.InvokeAsync(startSet, new object[] { count, (int)mode, expression }, cancellationToken);
 
-    public Task StopColorFlowAsync(CancellationToken cancellationToken = default)
-    {
-        return Device.InvokeAsync(stopSet, Array.Empty<object>(), cancellationToken);
-    }
+    public Task StopColorFlowAsync(CancellationToken cancellationToken = default) =>
+        Device.InvokeAsync(stopSet, Array.Empty<object>(), cancellationToken);
 }

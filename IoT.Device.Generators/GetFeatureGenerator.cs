@@ -25,7 +25,7 @@ public class GetFeatureGenerator : IIncrementalGenerator
         {
             var attributes = symbol!.GetSupportsFeatureAttributes();
 
-            if(attributes.Length > 0)
+            if (attributes.Length > 0)
             {
                 context.AddSource($"{symbol!.Name}.GetFeature.g.cs",
                     SourceText.From(Generator.GenerateAugmentation(symbol, attributes).ToFullString(), encoding: Encoding.UTF8));

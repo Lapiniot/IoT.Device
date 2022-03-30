@@ -32,9 +32,9 @@ public class LibraryInitGenerator : IIncrementalGenerator
         {
             var (compilation, descriptors) = source;
 
-            string? assemblyName = compilation.AssemblyName;
+            var assemblyName = compilation.AssemblyName;
 
-            if(string.IsNullOrEmpty(assemblyName))
+            if (string.IsNullOrEmpty(assemblyName))
             {
                 ctx.ReportDiagnostic(Diagnostic.Create(NoDefNamespaceWarning, Location.None));
                 return;

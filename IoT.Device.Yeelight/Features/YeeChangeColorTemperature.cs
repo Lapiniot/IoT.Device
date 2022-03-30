@@ -27,14 +27,10 @@ public class YeeChangeColorTemperature : YeelightDeviceFeature
             CultureInfo.InvariantCulture);
     }
 
-    public Task SetColorTemperatureAsync(uint temperature, CancellationToken cancellationToken = default)
-    {
-        return SetColorTemperatureAsync(temperature, Effect.Sudden, 0, cancellationToken);
-    }
+    public Task SetColorTemperatureAsync(uint temperature, CancellationToken cancellationToken = default) =>
+        SetColorTemperatureAsync(temperature, Effect.Sudden, 0, cancellationToken);
 
     public Task SetColorTemperatureAsync(uint temperature, Effect effect = Effect.Smooth,
-        int durationMilliseconds = 500, CancellationToken cancellationToken = default)
-    {
-        return Device.InvokeAsync(propSetCt, new object[] { temperature, effect.ToString().ToLowerInvariant(), durationMilliseconds }, cancellationToken);
-    }
+        int durationMilliseconds = 500, CancellationToken cancellationToken = default) =>
+        Device.InvokeAsync(propSetCt, new object[] { temperature, effect.ToString().ToLowerInvariant(), durationMilliseconds }, cancellationToken);
 }

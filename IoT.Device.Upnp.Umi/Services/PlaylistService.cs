@@ -31,10 +31,9 @@ public sealed class PlaylistService : SoapActionInvoker
     public Task<IReadOnlyDictionary<string, string>> DeleteAsync(int[] indices, uint instanceId = 0,
         string updateId = "0", CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(indices);
-        if(indices.Length == 0) throw new ArgumentException("Must not be empty!", nameof(indices));
-
-        return InvokeAsync("ReorderPlaylists", new Dictionary<string, string>() {
+        return indices.Length == 0
+            ? throw new ArgumentException("Must not be empty!", nameof(indices))
+            : InvokeAsync("ReorderPlaylists", new Dictionary<string, string>() {
                 { "InstanceID", instanceId.ToString(InvariantCulture) },
                 { "ObjectID", "PL:" }, { "UpdateID", updateId },
                 { "Playlists", string.Join(',', indices) },
@@ -70,10 +69,9 @@ public sealed class PlaylistService : SoapActionInvoker
     public Task<IReadOnlyDictionary<string, string>> RemoveItemsAsync(int[] indices, uint instanceId = 0,
         string objectId = "", string updateId = "0", CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(indices);
-        if(indices.Length == 0) throw new ArgumentException("Must not be empty!", nameof(indices));
-
-        return InvokeAsync("Reorder", new Dictionary<string, string>() {
+        return indices.Length == 0
+            ? throw new ArgumentException("Must not be empty!", nameof(indices))
+            : InvokeAsync("Reorder", new Dictionary<string, string>() {
                 { "InstanceID", instanceId.ToString(InvariantCulture) },
                 { "ObjectID", objectId },
                 { "UpdateID", updateId },

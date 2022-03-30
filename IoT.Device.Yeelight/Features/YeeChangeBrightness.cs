@@ -28,14 +28,10 @@ public class YeeChangeBrightness : YeelightDeviceFeature
             CultureInfo.InvariantCulture);
     }
 
-    public Task SetBrightnessAsync(uint brightness, CancellationToken cancellationToken = default)
-    {
-        return SetBrightnessAsync(brightness, Effect.Sudden, 0, cancellationToken);
-    }
+    public Task SetBrightnessAsync(uint brightness, CancellationToken cancellationToken = default) =>
+        SetBrightnessAsync(brightness, Effect.Sudden, 0, cancellationToken);
 
     public Task SetBrightnessAsync(uint brightness, Effect effect = Effect.Smooth,
-        int durationMilliseconds = 500, CancellationToken cancellationToken = default)
-    {
-        return Device.InvokeAsync(propSetBright, new object[] { brightness, effect.ToString().ToLowerInvariant(), durationMilliseconds }, cancellationToken);
-    }
+        int durationMilliseconds = 500, CancellationToken cancellationToken = default) =>
+        Device.InvokeAsync(propSetBright, new object[] { brightness, effect.ToString().ToLowerInvariant(), durationMilliseconds }, cancellationToken);
 }

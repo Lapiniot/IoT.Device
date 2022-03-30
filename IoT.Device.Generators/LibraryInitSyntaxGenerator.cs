@@ -54,9 +54,9 @@ internal static class LibraryInitSyntaxGenerator
 
         var map = NameHelper.ResolveTypeNames(types, out var ns);
 
-        foreach(var (type, implType, model) in exports)
+        foreach (var (type, implType, model) in exports)
         {
-            if(map.TryGetValue(type, out var typeName) && map.TryGetValue(implType, out var implTypeName))
+            if (map.TryGetValue(type, out var typeName) && map.TryGetValue(implType, out var implTypeName))
             {
                 list.Add((typeName, implTypeName, model));
             }

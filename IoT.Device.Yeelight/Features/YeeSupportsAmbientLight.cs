@@ -25,8 +25,6 @@ public class YeeSupportsAmbientLight : YeelightDeviceFeature
     /// <param name="state">On/Off option</param>
     /// <param name="cancellationToken">Token for external cancellation</param>
     /// <returns></returns>
-    public Task SetProactiveModeAsync(SwitchState state = SwitchState.On, CancellationToken cancellationToken = default)
-    {
-        return Device.InvokeAsync("set_ps", new[] { "cfg_bg_proact", ((int)state).ToString(CultureInfo.InvariantCulture) }, cancellationToken);
-    }
+    public Task SetProactiveModeAsync(SwitchState state = SwitchState.On, CancellationToken cancellationToken = default) =>
+        Device.InvokeAsync("set_ps", new[] { "cfg_bg_proact", ((int)state).ToString(CultureInfo.InvariantCulture) }, cancellationToken);
 }

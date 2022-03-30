@@ -8,10 +8,7 @@ internal class HashTreeNode<TKey, TValue> : IEnumerable<HashTreeNode<TKey, TValu
 
     public HashTreeNode() { }
 
-    public HashTreeNode(TValue value)
-    {
-        Value = value;
-    }
+    public HashTreeNode(TValue value) => Value = value;
 
     public TValue? Value { get; set; }
 
@@ -22,14 +19,14 @@ internal class HashTreeNode<TKey, TValue> : IEnumerable<HashTreeNode<TKey, TValu
         get => store.TryGetValue(key, out var value) ? value : null;
         set
         {
-            if(value is not null)
+            if (value is not null)
             {
                 value.Parent = this;
                 store[key] = value;
             }
             else
             {
-                if(store.Remove(key, out var node))
+                if (store.Remove(key, out var node))
                 {
                     node.Parent = null;
                 }
@@ -37,36 +34,23 @@ internal class HashTreeNode<TKey, TValue> : IEnumerable<HashTreeNode<TKey, TValu
         }
     }
 
-    public HashTreeNode<TKey, TValue> GetOrAdd(TKey key, Func<TKey, HashTreeNode<TKey, TValue>> factory)
-    {
-        if(factory is null)
-        {
-            throw new ArgumentNullException(nameof(factory));
-        }
-
-        return this[key] ?? (this[key] = factory(key));
-    }
+    public HashTreeNode<TKey, TValue> GetOrAdd(TKey key, Func<TKey, HashTreeNode<TKey, TValue>> factory) => this[key] ?? (this[key] = factory(key));
 
     public int Count => store.Count;
 
     public void Clear()
     {
-        foreach(var node in store.Values)
+        foreach (var node in store.Values)
         {
             node.Parent = null;
         }
+
         store.Clear();
     }
 
-    public IEnumerator<HashTreeNode<TKey, TValue>> GetEnumerator()
-    {
-        return store.Values.GetEnumerator();
-    }
+    public IEnumerator<HashTreeNode<TKey, TValue>> GetEnumerator() => store.Values.GetEnumerator();
 
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
-    }
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     public IEnumerable<HashTreeNode<TKey, TValue>> Path
     {
@@ -74,7 +58,7 @@ internal class HashTreeNode<TKey, TValue> : IEnumerable<HashTreeNode<TKey, TValu
         {
             yield return this;
             var parent = Parent;
-            while(parent is not null)
+            while (parent is not null)
             {
                 yield return parent;
                 parent = parent.Parent;
@@ -86,10 +70,10 @@ internal class HashTreeNode<TKey, TValue> : IEnumerable<HashTreeNode<TKey, TValu
     {
         var stack = new Stack<HashTreeNode<TKey, TValue>>();
         stack.Push(this);
-        while(stack.TryPop(out var current))
+        while (stack.TryPop(out var current))
         {
             yield return current;
-            foreach(var child in current)
+            foreach (var child in current)
             {
                 stack.Push(child);
             }

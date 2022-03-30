@@ -47,11 +47,11 @@ public sealed class ContentDirectoryService : SoapActionInvoker
         {
             var data = await BrowseAsync(parent, filter, BrowseMode.BrowseDirectChildren, sortCriteria, fetched, pageSize, cancellationToken).ConfigureAwait(false);
             total = uint.Parse(data["TotalMatches"], InvariantCulture);
-            uint count = uint.Parse(data["NumberReturned"], InvariantCulture);
+            var count = uint.Parse(data["NumberReturned"], InvariantCulture);
             fetched += count;
             yield return (data["Result"], (int)count, (int)total);
         }
-        while(fetched < total);
+        while (fetched < total);
     }
 
     public Task<IReadOnlyDictionary<string, string>> SearchAsync(string container, string query, string filter = null,

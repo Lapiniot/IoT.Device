@@ -15,7 +15,7 @@ public static class DeviceFactory<T>
 
     public static void Register<TImpl>(string model) where TImpl : T
     {
-        lock(syncRoot)
+        lock (syncRoot)
         {
             cache[model] = typeof(TImpl);
             reverseCache[typeof(TImpl)] = model;
@@ -29,8 +29,5 @@ public static class DeviceFactory<T>
             : default;
     }
 
-    public static string? GetModelName<TImpl>()
-    {
-        return reverseCache.TryGetValue(typeof(TImpl), out var model) ? model : null;
-    }
+    public static string? GetModelName<TImpl>() => reverseCache.TryGetValue(typeof(TImpl), out var model) ? model : null;
 }

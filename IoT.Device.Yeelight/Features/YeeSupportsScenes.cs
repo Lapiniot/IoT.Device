@@ -43,10 +43,8 @@ public class YeeSupportsScenes : YeelightDeviceFeature
     /// {"id":1, "method":"set_scene", "params":["cf", 0, 0, "500,1,255,100,1000,1,16776960,70"]}
     /// {"id":1, "method":"set_scene", "params":["auto_delay_off", 50, 5]
     /// </example>
-    public Task SetSceneAsync(string cls, uint param1, uint param2, CancellationToken cancellationToken = default)
-    {
-        return Device.InvokeAsync(method, new object[] { cls, param1, param2 }, cancellationToken);
-    }
+    public Task SetSceneAsync(string cls, uint param1, uint param2, CancellationToken cancellationToken = default) =>
+        Device.InvokeAsync(method, new object[] { cls, param1, param2 }, cancellationToken);
 
     /// <summary>
     /// This method is used to set the smart LED directly to specified state. If the smart LED is off,
@@ -75,11 +73,8 @@ public class YeeSupportsScenes : YeelightDeviceFeature
     /// {"id":1, "method":"set_scene", "params":["cf", 0, 0, "500,1,255,100,1000,1,16776960,70"]}
     /// {"id":1, "method":"set_scene", "params":["auto_delay_off", 50, 5]
     /// </example>
-    public Task SetSceneAsync(string cls, uint param1, uint param2, uint param3,
-        CancellationToken cancellationToken = default)
-    {
-        return Device.InvokeAsync(method, new object[] { cls, param1, param2, param3 }, cancellationToken);
-    }
+    public Task SetSceneAsync(string cls, uint param1, uint param2, uint param3, CancellationToken cancellationToken = default) =>
+        Device.InvokeAsync(method, new object[] { cls, param1, param2, param3 }, cancellationToken);
 
     /// <summary>
     /// This method is used to set the smart LED directly to specified state. If the smart LED is off,
@@ -108,9 +103,6 @@ public class YeeSupportsScenes : YeelightDeviceFeature
     /// {"id":1, "method":"set_scene", "params":["cf", 0, 0, "500,1,255,100,1000,1,16776960,70"]}
     /// {"id":1, "method":"set_scene", "params":["auto_delay_off", 50, 5]
     /// </example>
-    public Task SetSceneAsync(string cls, uint param1, uint param2, string param3,
-        CancellationToken cancellationToken = default)
-    {
-        return Device.InvokeAsync(method, new object[] { cls, param1, param2, param3 }, cancellationToken);
-    }
+    public Task SetSceneAsync(string cls, uint param1, uint param2, string param3, CancellationToken cancellationToken = default) =>
+        Device.InvokeAsync(method, new object[] { cls, param1, param2, param3 }, cancellationToken);
 }

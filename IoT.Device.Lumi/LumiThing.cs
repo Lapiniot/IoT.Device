@@ -12,10 +12,7 @@ public abstract class LumiThing : INotifyPropertyChanged, IProvideOnlineInfo, IA
     private bool isOnline;
     private CancellationTokenSource resetWatchTokenSource;
 
-    protected LumiThing(string sid)
-    {
-        (Sid, isOnline) = (sid, true);
-    }
+    protected LumiThing(string sid) => (Sid, isOnline) = (sid, true);
 
     public abstract string ModelName { get; }
 
@@ -30,7 +27,7 @@ public abstract class LumiThing : INotifyPropertyChanged, IProvideOnlineInfo, IA
         GC.SuppressFinalize(this);
 
         var source = resetWatchTokenSource;
-        if(source != null)
+        if (source != null)
         {
             source.Cancel();
             source.Dispose();
@@ -77,15 +74,12 @@ public abstract class LumiThing : INotifyPropertyChanged, IProvideOnlineInfo, IA
     public event PropertyChangedEventHandler PropertyChanged;
 
     [MethodImpl(AggressiveInlining)]
-    protected void OnPropertyChanged([CallerMemberName] string name = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-    }
+    protected void OnPropertyChanged([CallerMemberName] string name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
     [MethodImpl(AggressiveInlining)]
     protected void Set<T>(ref T field, T value, [CallerMemberName] string name = null)
     {
-        if(Equals(field, value)) return;
+        if (Equals(field, value)) return;
         field = value;
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }

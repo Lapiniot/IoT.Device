@@ -19,10 +19,8 @@ public class YeeSupportsSaveState : YeelightDeviceFeature
             CultureInfo.InvariantCulture);
     }
 
-    public Task SetAutoSaveStateAsync(SwitchState state = SwitchState.On, CancellationToken cancellationToken = default)
-    {
-        return Device.InvokeAsync("set_ps", new[] { "cfg_save_state", ((int)state).ToString(CultureInfo.InvariantCulture) }, cancellationToken);
-    }
+    public Task SetAutoSaveStateAsync(SwitchState state = SwitchState.On, CancellationToken cancellationToken = default) =>
+        Device.InvokeAsync("set_ps", new[] { "cfg_save_state", ((int)state).ToString(CultureInfo.InvariantCulture) }, cancellationToken);
 
     public async Task<int> GetInitPowerStateAsync(CancellationToken cancellationToken = default)
     {
@@ -31,13 +29,9 @@ public class YeeSupportsSaveState : YeelightDeviceFeature
             CultureInfo.InvariantCulture);
     }
 
-    public Task SetInitPowerStateAsync(SwitchState state = SwitchState.On, CancellationToken cancellationToken = default)
-    {
-        return Device.InvokeAsync("set_ps", new[] { "cfg_init_power", ((int)state + 1).ToString(CultureInfo.InvariantCulture) }, cancellationToken);
-    }
+    public Task SetInitPowerStateAsync(SwitchState state = SwitchState.On, CancellationToken cancellationToken = default) =>
+        Device.InvokeAsync("set_ps", new[] { "cfg_init_power", ((int)state + 1).ToString(CultureInfo.InvariantCulture) }, cancellationToken);
 
-    public Task SaveDefaultsAsync(CancellationToken cancellationToken = default)
-    {
-        return Device.InvokeAsync("set_default", Array.Empty<object>(), cancellationToken);
-    }
+    public Task SaveDefaultsAsync(CancellationToken cancellationToken = default) =>
+        Device.InvokeAsync("set_default", Array.Empty<object>(), cancellationToken);
 }

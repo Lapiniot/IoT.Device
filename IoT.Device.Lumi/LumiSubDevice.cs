@@ -10,10 +10,7 @@ public abstract class LumiSubDevice : LumiThing, IProvideBatteryVoltage
     private readonly int id;
     private decimal voltage;
 
-    protected LumiSubDevice(string sid, int id) : base(sid)
-    {
-        this.id = id;
-    }
+    protected LumiSubDevice(string sid, int id) : base(sid) => this.id = id;
 
     // Battery powered ZigBee devices usually send heartbeats 
     // once per hour to save battery. We give extra 5 seconds
@@ -29,14 +26,11 @@ public abstract class LumiSubDevice : LumiThing, IProvideBatteryVoltage
 
     protected internal override void OnStateChanged(JsonElement state)
     {
-        if(state.TryGetProperty("voltage", out var value) && value.ValueKind == Number)
+        if (state.TryGetProperty("voltage", out var value) && value.ValueKind == Number)
         {
             Voltage = new decimal(value.GetInt32(), 0, 0, false, 3);
         }
     }
 
-    public override string ToString()
-    {
-        return $"{{\"model\": \"{ModelName}\", \"sid\": \"{Sid}\", \"short_id\": {id}, \"voltage\": {voltage}}}";
-    }
+    public override string ToString() => $"{{\"model\": \"{ModelName}\", \"sid\": \"{Sid}\", \"short_id\": {id}, \"voltage\": {voltage}}}";
 }

@@ -7,7 +7,7 @@ public abstract class ExportAttribute<T, TImpl> : Attribute
 {
     protected ExportAttribute(string model)
     {
-        if(string.IsNullOrWhiteSpace(model))
+        if (string.IsNullOrWhiteSpace(model))
         {
             throw new ArgumentException($"'{nameof(model)}' cannot be null or whitespace.", nameof(model));
         }

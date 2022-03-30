@@ -24,7 +24,7 @@ public abstract class LumiMotionSensor : LumiSubDeviceWithStatus
 
         base.OnStateChanged(state);
 
-        if(state.TryGetProperty("status", out var value) && value.ValueKind == JsonValueKind.String)
+        if (state.TryGetProperty("status", out var value) && value.ValueKind == JsonValueKind.String)
         {
             NoMotionSeconds = 0;
 
@@ -35,12 +35,12 @@ public abstract class LumiMotionSensor : LumiSubDeviceWithStatus
             // Here we handle status event in a slightly different way and trigger
             // OnPropertyChanged for every repeating "motion" status update disregard of
             // the previous state value.
-            if(value.GetString() == prevStatus)
+            if (value.GetString() == prevStatus)
             {
                 OnPropertyChanged(nameof(Status));
             }
         }
-        else if(state.TryGetProperty("no_motion", out value) && value.ValueKind == JsonValueKind.String &&
+        else if (state.TryGetProperty("no_motion", out value) && value.ValueKind == JsonValueKind.String &&
                 int.TryParse(value.GetString(), Any, InvariantCulture, out var intVal))
         {
             NoMotionSeconds = intVal;

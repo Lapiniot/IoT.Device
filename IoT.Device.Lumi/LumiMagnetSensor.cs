@@ -18,7 +18,7 @@ public abstract class LumiMagnetSensor : LumiSubDeviceWithStatus
     {
         base.OnStateChanged(state);
 
-        if(state.TryGetProperty("no_close", out var value) &&
+        if (state.TryGetProperty("no_close", out var value) &&
            value.ValueKind == JsonValueKind.String &&
            int.TryParse(value.GetString(), out var seconds))
         {

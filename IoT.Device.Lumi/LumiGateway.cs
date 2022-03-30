@@ -62,13 +62,13 @@ public sealed class LumiGateway : LumiThing, IConnectedObject, IObserver<JsonEle
 
     public async Task ConnectAsync(CancellationToken cancellationToken = default)
     {
-        if(!IsConnected)
+        if (!IsConnected)
         {
             await semaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
 
             try
             {
-                if(!IsConnected)
+                if (!IsConnected)
                 {
                     await client.ConnectAsync(cancellationToken).ConfigureAwait(false);
                     await listener.ConnectAsync(cancellationToken).ConfigureAwait(false);
@@ -84,13 +84,13 @@ public sealed class LumiGateway : LumiThing, IConnectedObject, IObserver<JsonEle
 
     public async Task DisconnectAsync()
     {
-        if(IsConnected)
+        if (IsConnected)
         {
             await semaphore.WaitAsync().ConfigureAwait(false);
 
             try
             {
-                if(IsConnected)
+                if (IsConnected)
                 {
                     await client.DisconnectAsync().ConfigureAwait(false);
                     await listener.DisconnectAsync().ConfigureAwait(false);
@@ -105,10 +105,8 @@ public sealed class LumiGateway : LumiThing, IConnectedObject, IObserver<JsonEle
         }
     }
 
-    public Task<JsonElement> InvokeAsync(string command, string sid = null, CancellationToken cancellationToken = default)
-    {
-        return client.InvokeAsync(command, sid ?? Sid, cancellationToken);
-    }
+    public Task<JsonElement> InvokeAsync(string command, string sid = null, CancellationToken cancellationToken = default) =>
+        client.InvokeAsync(command, sid ?? Sid, cancellationToken);
 
     public async IAsyncEnumerable<LumiSubDevice> GetChildrenAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
@@ -125,25 +123,25 @@ public sealed class LumiGateway : LumiThing, IConnectedObject, IObserver<JsonEle
             var adds = sids.Except(children.Keys).ToArray();
             var removes = children.Keys.Except(sids).ToArray();
 
-            foreach(var sid in removes)
+            foreach (var sid in removes)
             {
-                if(!children.TryGetValue(sid, out var device)) continue;
+                if (!children.TryGetValue(sid, out var device)) continue;
 
                 _ = children.Remove(sid);
 
                 await device.DisposeAsync().ConfigureAwait(false);
             }
 
-            foreach(var (_, value) in children)
+            foreach (var (_, value) in children)
             {
                 yield return value;
             }
 
-            foreach(var sid in adds)
+            foreach (var sid in adds)
             {
                 var info = await InvokeAsync("read", sid, cancellationToken).ConfigureAwait(false);
 
-                if(!info.TryGetProperty("data", out var d) || children.TryGetValue(sid, out var device)) continue;
+                if (!info.TryGetProperty("data", out var d) || children.TryGetValue(sid, out var device)) continue;
 
                 var id = info.GetProperty("short_id").GetInt32();
                 var deviceModel = info.GetProperty("model").GetString();
@@ -163,12 +161,12 @@ public sealed class LumiGateway : LumiThing, IConnectedObject, IObserver<JsonEle
 
     protected internal override void OnStateChanged(JsonElement state)
     {
-        if(state.TryGetProperty("rgb", out var value) && value.ValueKind == Number)
+        if (state.TryGetProperty("rgb", out var value) && value.ValueKind == Number)
         {
             RgbValue = value.GetInt32();
         }
 
-        if(state.TryGetProperty("illumination", out value) && value.ValueKind == Number)
+        if (state.TryGetProperty("illumination", out value) && value.ValueKind == Number)
         {
             Illumination = value.GetInt32();
         }
@@ -178,7 +176,7 @@ public sealed class LumiGateway : LumiThing, IConnectedObject, IObserver<JsonEle
 
     public override async ValueTask DisposeAsync()
     {
-        if(Interlocked.CompareExchange(ref disposed, 1, 0) != 0) return;
+        if (Interlocked.CompareExchange(ref disposed, 1, 0) != 0) return;
 
         await base.DisposeAsync().ConfigureAwait(false);
 
@@ -186,12 +184,12 @@ public sealed class LumiGateway : LumiThing, IConnectedObject, IObserver<JsonEle
         {
             try
             {
-                using(subscription)
-                using(semaphore) { }
+                using (subscription)
+                using (semaphore) { }
 
-                foreach(var c in children)
+                foreach (var c in children)
                 {
-                    await using(c.Value.ConfigureAwait(false)) { }
+                    await using (c.Value.ConfigureAwait(false)) { }
                 }
 
                 children.Clear();
@@ -217,7 +215,7 @@ public sealed class LumiGateway : LumiThing, IConnectedObject, IObserver<JsonEle
 
     void IObserver<JsonElement>.OnNext(JsonElement message)
     {
-        if(!message.TryGetProperty("sid", out var sid) ||
+        if (!message.TryGetProperty("sid", out var sid) ||
            !message.TryGetProperty("cmd", out var command) ||
            !message.TryGetProperty("data", out var v) ||
            !(Deserialize<JsonElement>(v.GetString() ?? string.Empty) is { } data))
@@ -227,34 +225,36 @@ public sealed class LumiGateway : LumiThing, IConnectedObject, IObserver<JsonEle
 
         var key = sid.GetString();
 
-        if(string.IsNullOrEmpty(key)) return;
+        if (string.IsNullOrEmpty(key)) return;
 
-        switch(command.GetString())
+        switch (command.GetString())
         {
             case "heartbeat":
                 {
-                    if(key == Sid)
+                    if (key == Sid)
                     {
                         OnHeartbeat(data);
                         Token = message.GetProperty("token").GetString();
                     }
-                    else if(children.TryGetValue(key, out var device))
+                    else if (children.TryGetValue(key, out var device))
                     {
                         device.OnHeartbeat(data);
                     }
                 }
+
                 break;
             case "report":
                 {
-                    if(key == Sid)
+                    if (key == Sid)
                     {
                         OnStateChanged(data);
                     }
-                    else if(children.TryGetValue(key, out var device))
+                    else if (children.TryGetValue(key, out var device))
                     {
                         device.OnStateChanged(data);
                     }
                 }
+
                 break;
         }
     }

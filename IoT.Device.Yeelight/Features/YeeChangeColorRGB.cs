@@ -28,14 +28,10 @@ public class YeeChangeColorRGB : YeelightDeviceFeature
             CultureInfo.InvariantCulture);
     }
 
-    public Task SetColorRGBAsync(uint argb, CancellationToken cancellationToken = default)
-    {
-        return SetColorRGBAsync(argb, Effect.Sudden, 0, cancellationToken);
-    }
+    public Task SetColorRGBAsync(uint argb, CancellationToken cancellationToken = default) =>
+        SetColorRGBAsync(argb, Effect.Sudden, 0, cancellationToken);
 
     public Task SetColorRGBAsync(uint rgb, Effect effect = Effect.Smooth,
-        int durationMilliseconds = 500, CancellationToken cancellationToken = default)
-    {
-        return Device.InvokeAsync(propSetRGB, new object[] { rgb, effect.ToString().ToLowerInvariant(), durationMilliseconds }, cancellationToken);
-    }
+        int durationMilliseconds = 500, CancellationToken cancellationToken = default) =>
+        Device.InvokeAsync(propSetRGB, new object[] { rgb, effect.ToString().ToLowerInvariant(), durationMilliseconds }, cancellationToken);
 }

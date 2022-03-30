@@ -54,22 +54,22 @@ public sealed partial class SmartPowerPlug : LumiSubDeviceWithStatus
     {
         base.OnStateChanged(state);
 
-        if(state.TryGetProperty("inuse", out var value) && value.ValueKind == JsonValueKind.String)
+        if (state.TryGetProperty("inuse", out var value) && value.ValueKind == JsonValueKind.String)
         {
             InUse = value.GetString() == "1";
         }
 
-        if(state.TryGetProperty("load_voltage", out value) && value.ValueKind == Number)
+        if (state.TryGetProperty("load_voltage", out value) && value.ValueKind == Number)
         {
             LoadVoltage = new decimal(value.GetInt32(), 0, 0, false, 3);
         }
 
-        if(state.TryGetProperty("load_power", out value) && value.ValueKind == Number)
+        if (state.TryGetProperty("load_power", out value) && value.ValueKind == Number)
         {
             LoadPower = value.GetDecimal();
         }
 
-        if(state.TryGetProperty("power_consumed", out value) && value.ValueKind == Number)
+        if (state.TryGetProperty("power_consumed", out value) && value.ValueKind == Number)
         {
             PowerConsumed = value.GetDecimal();
         }

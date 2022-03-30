@@ -35,8 +35,6 @@ public class YeeAdjustProperty : YeelightDeviceFeature
     /// </param>
     /// <param name="cancellationToken">Token for external cancellation.</param>
     /// <returns>Operation result ("ok" or error description)</returns>
-    public Task SetAdjustAsync(AdjustDirection action, string propName, CancellationToken cancellationToken = default)
-    {
-        return Device.InvokeAsync(method, new object[] { action.ToString().ToLowerInvariant(), propName }, cancellationToken);
-    }
+    public Task SetAdjustAsync(AdjustDirection action, string propName, CancellationToken cancellationToken = default) =>
+        Device.InvokeAsync(method, new object[] { action.ToString().ToLowerInvariant(), propName }, cancellationToken);
 }

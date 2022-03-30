@@ -10,13 +10,9 @@ public class YeeChangeDeviceName : YeelightDeviceFeature
 
     public override IEnumerable<string> SupportedProperties => new[] { "name" };
 
-    public async Task<string> GetNameAsync(CancellationToken cancellationToken = default)
-    {
-        return (await Device.GetPropertyAsync("name", cancellationToken).ConfigureAwait(false)).GetString();
-    }
+    public async Task<string> GetNameAsync(CancellationToken cancellationToken = default) =>
+        (await Device.GetPropertyAsync("name", cancellationToken).ConfigureAwait(false)).GetString();
 
-    public Task SetNameAsync(string name, CancellationToken cancellationToken = default)
-    {
-        return Device.InvokeAsync("set_name", new[] { name }, cancellationToken);
-    }
+    public Task SetNameAsync(string name, CancellationToken cancellationToken = default) =>
+        Device.InvokeAsync("set_name", new[] { name }, cancellationToken);
 }

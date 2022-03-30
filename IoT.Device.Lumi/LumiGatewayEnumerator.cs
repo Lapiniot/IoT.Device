@@ -25,15 +25,9 @@ public class LumiGatewayEnumerator : ConvertingEnumerator<LumiEndpoint, LumiGate
     {
         #region Implementation of IEqualityComparer<in (IPAddress Address, ushort Port, string Sid)>
 
-        public bool Equals(LumiEndpoint x, LumiEndpoint y)
-        {
-            return StringComparer.OrdinalIgnoreCase.Equals(x.Sid, y.Sid);
-        }
+        public bool Equals(LumiEndpoint x, LumiEndpoint y) => StringComparer.OrdinalIgnoreCase.Equals(x.Sid, y.Sid);
 
-        public int GetHashCode(LumiEndpoint obj)
-        {
-            return obj.Sid?.GetHashCode(StringComparison.InvariantCulture) ?? 0;
-        }
+        public int GetHashCode(LumiEndpoint obj) => obj.Sid?.GetHashCode(StringComparison.InvariantCulture) ?? 0;
 
         #endregion
     }

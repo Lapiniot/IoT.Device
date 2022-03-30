@@ -25,13 +25,14 @@ internal static class SemanticModelExtensions
             })
         {
             yield return symbol;
-            if(includeInterfaces)
+            if (includeInterfaces)
             {
-                foreach(var iface in symbol.Interfaces)
+                foreach (var iface in symbol.Interfaces)
                 {
                     yield return iface;
                 }
             }
+
             symbol = symbol.BaseType;
         }
     }
@@ -76,7 +77,7 @@ internal static class SemanticModelExtensions
     {
         while(symbol is { })
         {
-            if(symbol.GetMembers("GetFeature").OfType<IMethodSymbol>().Any(m => m is
+            if (symbol.GetMembers("GetFeature").OfType<IMethodSymbol>().Any(m => m is
                 {
                     IsGenericMethod: true,
                     TypeArguments.Length: 1,
@@ -86,14 +87,16 @@ internal static class SemanticModelExtensions
             {
                 return true;
             }
+
             symbol = symbol.BaseType;
         }
+
         return false;
     }
 
     public static IEnumerable<ITypeSymbol> GetBaseTypes(this ITypeSymbol? symbol)
     {
-        while((symbol = symbol?.BaseType) is { })
+        while ((symbol = symbol?.BaseType) is { })
         {
             yield return symbol;
         }

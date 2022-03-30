@@ -32,17 +32,17 @@ public static class UpnpUtils
 
         // Phase 1: get items metadata and sort out items and containers, items are copied immidiatelly to the output xml writer,
         // container ids are scheduled for future expansion by pushing to the containerIds stack structure
-        foreach(var item in itemIds)
+        foreach (var item in itemIds)
         {
             var data = await service.BrowseAsync(item, mode: BrowseMode.BrowseMetadata, cancellationToken: cancellationToken).ConfigureAwait(false);
             DIDLUtils.CopyItems(data["Result"], writer, containers, maxDepth > 0 ? 1 : null);
         }
 
         // Phase 2: iteratively pop container id from the stack and browse for its direct children sorting items and child containers again
-        while(containers.TryPop(out var result))
+        while (containers.TryPop(out var result))
         {
             var (id, depth) = result;
-            await foreach(var (content, _, _) in service.BrowseChildrenAsync(id, null, null, 100, cancellationToken).ConfigureAwait(false))
+            await foreach (var (content, _, _) in service.BrowseChildrenAsync(id, null, null, 100, cancellationToken).ConfigureAwait(false))
             {
                 DIDLUtils.CopyItems(content, writer, containers, depth < maxDepth ? depth + 1 : null);
             }

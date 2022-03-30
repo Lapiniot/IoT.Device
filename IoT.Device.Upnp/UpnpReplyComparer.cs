@@ -21,7 +21,7 @@ public class UpnpReplyComparer : IEqualityComparer<SsdpReply>
 
     public int GetHashCode(SsdpReply obj)
     {
-        if(obj is null) return 0;
+        if (obj is null) return 0;
 
         _ = obj.TryGetValue(Location, out var location);
         _ = obj.TryGetValue(Usn, out var usn);

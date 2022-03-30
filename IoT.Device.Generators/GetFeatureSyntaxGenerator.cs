@@ -39,12 +39,12 @@ internal static class GetFeatureSyntaxGenerator
 
     private static IEnumerable<ITypeSymbol> ExtractRelatedTypes(IEnumerable<ITypeSymbol> typeArguments)
     {
-        int order = 0;
-        foreach(var argType in typeArguments)
+        var order = 0;
+        foreach (var argType in typeArguments)
         {
-            if(order++ == 0)
+            if (order++ == 0)
             {
-                foreach(var type in argType.EnumerateRelatedFeatureTypes())
+                foreach (var type in argType.EnumerateRelatedFeatureTypes())
                 {
                     yield return type;
                 }
@@ -64,16 +64,14 @@ internal static class GetFeatureSyntaxGenerator
             .AddModifiers(Token(PrivateKeyword));
     }
 
-    private static string GetFeatureFieldName(string typeName)
-    {
-        return $"{char.ToLowerInvariant(typeName[0])}{typeName[1..].Replace(".", "", StringComparison.OrdinalIgnoreCase)}Feature";
-    }
+    private static string GetFeatureFieldName(string typeName) =>
+        $"{char.ToLowerInvariant(typeName[0])}{typeName[1..].Replace(".", "", StringComparison.OrdinalIgnoreCase)}Feature";
 
     private static IEnumerable<StatementSyntax> GenerateGetFeatureBody(IEnumerable<(IEnumerable<string> Types, string ImplType)> conditions, bool invokeBaseImpl)
     {
         yield return LocalDeclarationStatement(VariableDeclaration(ParseTypeName("Type"), SingletonSeparatedList(VariableDeclarator(Identifier("type"), null, EqualsValueClause(TypeOfExpression(ParseTypeName("T")))))));
 
-        foreach(var (types, implType) in conditions)
+        foreach (var (types, implType) in conditions)
         {
             yield return GenerateTypeTestConditionBlock(types, implType);
         }
@@ -105,7 +103,7 @@ internal static class GetFeatureSyntaxGenerator
     private static ExpressionSyntax GenerateTypeTestCondition(IEnumerable<string> types)
     {
         ExpressionSyntax? expression = null;
-        foreach(var type in types)
+        foreach (var type in types)
         {
             expression = expression is null
                 ? BinaryExpression(
@@ -120,6 +118,7 @@ internal static class GetFeatureSyntaxGenerator
                         TypeOfExpression(ParseTypeName(type))),
                     expression);
         }
+
         return expression ?? LiteralExpression(FalseLiteralExpression);
     }
 }

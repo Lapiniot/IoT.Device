@@ -40,17 +40,17 @@ public sealed partial class AqaraVibrationSensor : LumiSubDeviceWithStatus
     {
         base.OnStateChanged(state);
 
-        if(state.TryGetProperty("final_tilt_angle", out var value) && value.ValueKind == JsonValueKind.Number)
+        if (state.TryGetProperty("final_tilt_angle", out var value) && value.ValueKind == JsonValueKind.Number)
         {
             FinalTiltAngle = value.GetInt32();
         }
 
-        if(state.TryGetProperty("coordination", out value) && value.ValueKind == JsonValueKind.String)
+        if (state.TryGetProperty("coordination", out value) && value.ValueKind == JsonValueKind.String)
         {
             Coordinates = value.GetString();
         }
 
-        if(state.TryGetProperty("bed_activity", out value) && value.ValueKind == JsonValueKind.Number)
+        if (state.TryGetProperty("bed_activity", out value) && value.ValueKind == JsonValueKind.Number)
         {
             BedActivity = value.GetInt32();
         }

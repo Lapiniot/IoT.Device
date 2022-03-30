@@ -27,7 +27,7 @@ public sealed partial class AqaraMotionSensor : LumiMotionSensor
     {
         base.OnStateChanged(state);
 
-        if(state.TryGetProperty("lux", out var value) && value.ValueKind == Number)
+        if (state.TryGetProperty("lux", out var value) && value.ValueKind == Number)
         {
             Lux = value.GetInt32();
         }

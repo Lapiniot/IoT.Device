@@ -40,26 +40,26 @@ public class ModelNameGenerator : IIncrementalGenerator
         {
             var (_, type, model) = source!;
 
-            if(type.GetBaseTypes().Any(bt => bt.GetMembers("ModelName").Any(p => p is IPropertySymbol
+            if (type.GetBaseTypes().Any(bt => bt.GetMembers("ModelName").Any(p => p is IPropertySymbol
                 {
                     IsAbstract: true,
                     Type: { Name: "String", ContainingNamespace: { Name: "System", ContainingNamespace.IsGlobalNamespace: true } }
                 })) &&
                 !type.GetMembers("ModelName").Any(p => p is IPropertySymbol { IsOverride: true }))
             {
-                if(type is not { DeclaringSyntaxReferences: { Length: > 0 } dsr } || dsr[0].GetSyntax(context.CancellationToken) is not ClassDeclarationSyntax cds)
+                if (type is not { DeclaringSyntaxReferences: { Length: > 0 } dsr } || dsr[0].GetSyntax(context.CancellationToken) is not ClassDeclarationSyntax cds)
                 {
                     // Type has no declaration parts in the current context
                     return;
                 }
 
-                if(!cds.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword)))
+                if (!cds.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword)))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(NoPartialModifier, cds.GetLocation()));
                     return;
                 }
 
-                if(type.IsAbstract)
+                if (type.IsAbstract)
                 {
                     context.ReportDiagnostic(Diagnostic.Create(AbstractClassNotSupported, cds.GetLocation()));
                     return;

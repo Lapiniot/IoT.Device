@@ -23,7 +23,7 @@ public sealed partial class HonneywellFireSmokeSensor : LumiSubDevice
     {
         base.OnStateChanged(state);
 
-        if(state.TryGetProperty("alarm", out var value) && value.ValueKind == JsonValueKind.String)
+        if (state.TryGetProperty("alarm", out var value) && value.ValueKind == JsonValueKind.String)
         {
             Alarm = value.GetString() == "1";
         }
