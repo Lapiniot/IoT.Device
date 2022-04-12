@@ -1,4 +1,5 @@
-﻿using IoT.Protocol.Soap;
+﻿using System.Diagnostics.CodeAnalysis;
+using IoT.Protocol.Soap;
 using static System.Globalization.CultureInfo;
 
 namespace IoT.Device.Upnp.Umi.Services;
@@ -28,7 +29,7 @@ public sealed class PlaylistService : SoapActionInvoker
             cancellationToken);
     }
 
-    public Task<IReadOnlyDictionary<string, string>> DeleteAsync(int[] indices, uint instanceId = 0,
+    public Task<IReadOnlyDictionary<string, string>> DeleteAsync([NotNull] int[] indices, uint instanceId = 0,
         string updateId = "0", CancellationToken cancellationToken = default)
     {
         return indices.Length == 0
@@ -66,7 +67,7 @@ public sealed class PlaylistService : SoapActionInvoker
             cancellationToken);
     }
 
-    public Task<IReadOnlyDictionary<string, string>> RemoveItemsAsync(int[] indices, uint instanceId = 0,
+    public Task<IReadOnlyDictionary<string, string>> RemoveItemsAsync([NotNull] int[] indices, uint instanceId = 0,
         string objectId = "", string updateId = "0", CancellationToken cancellationToken = default)
     {
         return indices.Length == 0
