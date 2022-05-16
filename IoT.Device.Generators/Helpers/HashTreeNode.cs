@@ -2,7 +2,7 @@ using System.Collections;
 
 namespace IoT.Device.Generators.Helpers;
 
-internal class HashTreeNode<TKey, TValue> : IEnumerable<HashTreeNode<TKey, TValue>>
+internal sealed class HashTreeNode<TKey, TValue> : IEnumerable<HashTreeNode<TKey, TValue>>
 {
     private readonly Dictionary<TKey, HashTreeNode<TKey, TValue>> store = new();
 

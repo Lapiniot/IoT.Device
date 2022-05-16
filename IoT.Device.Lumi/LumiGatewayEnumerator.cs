@@ -21,7 +21,7 @@ public class LumiGatewayEnumerator : ConvertingEnumerator<LumiEndpoint, LumiGate
 
     #endregion
 
-    private class LumiDeviceComparer : IEqualityComparer<LumiEndpoint>
+    private sealed class LumiDeviceComparer : IEqualityComparer<LumiEndpoint>
     {
         #region Implementation of IEqualityComparer<in (IPAddress Address, ushort Port, string Sid)>
 
