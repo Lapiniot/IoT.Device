@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using IoT.Protocol.Soap;
 using static System.Globalization.CultureInfo;
 
