@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <EmitCompilerGeneratedFiles>false</EmitCompilerGeneratedFiles>
-    <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)\GeneratedFiles</CompilerGeneratedFilesOutputPath>
-  </PropertyGroup>
+    <PropertyGroup>
+        <EmitCompilerGeneratedFiles>false</EmitCompilerGeneratedFiles>
+        <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)\GeneratedFiles</CompilerGeneratedFilesOutputPath>
+    </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\IoT.Device\IoT.Device.csproj" />
