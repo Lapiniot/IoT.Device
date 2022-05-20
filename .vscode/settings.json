@@ -9,7 +9,8 @@
         "**/bin": true,
         "**/obj": true,
         "*/**/.vscode": true,
-        "**/*.sln": true        
+        "**/*.sln": true,
+        "nupkg": true
     },
     "omnisharp.enableRoslynAnalyzers": true
 }
