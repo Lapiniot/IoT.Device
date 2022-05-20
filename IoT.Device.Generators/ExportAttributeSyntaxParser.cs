@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -20,7 +19,7 @@ public static class ExportAttributeSyntaxParser
         };
     }
 
-    public static ExportDescriptor? Parse(AttributeSyntax attribute, [NotNull] SemanticModel model, CancellationToken cancellationToken)
+    public static ExportDescriptor? Parse(AttributeSyntax attribute, SemanticModel model, CancellationToken cancellationToken)
     {
         return attribute switch
         {

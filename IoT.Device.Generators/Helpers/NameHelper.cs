@@ -44,7 +44,7 @@ public static class NameHelper
     }
 
     public static IEnumerable<(ITypeSymbol Symbol, string ShortName)> ResolveAmbiguousNames(
-        [NotNull] IEnumerable<ITypeSymbol> symbols, out IEnumerable<string> resolvedNamespaces)
+        IEnumerable<ITypeSymbol> symbols, out IEnumerable<string> resolvedNamespaces)
     {
         var list = new List<(ITypeSymbol, string)>();
         var ns = new HashSet<string>();

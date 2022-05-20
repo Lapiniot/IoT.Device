@@ -26,7 +26,7 @@ internal sealed class HashTreeNode<TKey, TValue> : IEnumerable<HashTreeNode<TKey
             }
             else
             {
-                if (store.Remove(key, out var node))
+                if (store.TryGetValue(key, out var node) && store.Remove(key))
                 {
                     node.Parent = null;
                 }
@@ -70,8 +70,9 @@ internal sealed class HashTreeNode<TKey, TValue> : IEnumerable<HashTreeNode<TKey
     {
         var stack = new Stack<HashTreeNode<TKey, TValue>>();
         stack.Push(this);
-        while (stack.TryPop(out var current))
+        while (stack.Count > 0)
         {
+            var current = stack.Pop();
             yield return current;
             foreach (var child in current)
             {

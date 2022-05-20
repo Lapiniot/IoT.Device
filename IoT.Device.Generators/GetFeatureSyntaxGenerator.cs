@@ -65,7 +65,7 @@ internal static class GetFeatureSyntaxGenerator
     }
 
     private static string GetFeatureFieldName(string typeName) =>
-        $"{char.ToLowerInvariant(typeName[0])}{typeName[1..].Replace(".", "", StringComparison.OrdinalIgnoreCase)}Feature";
+        $"{char.ToLowerInvariant(typeName[0])}{typeName.Substring(1).Replace(".", "")}Feature";
 
     private static IEnumerable<StatementSyntax> GenerateGetFeatureBody(IEnumerable<(IEnumerable<string> Types, string ImplType)> conditions, bool invokeBaseImpl)
     {

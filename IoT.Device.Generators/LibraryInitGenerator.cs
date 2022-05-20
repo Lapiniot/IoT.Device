@@ -40,7 +40,7 @@ public class LibraryInitGenerator : IIncrementalGenerator
                 return;
             }
 
-            var code = Generator.GenerateLibInitClass(assemblyName, "Library", "Init", descriptors);
+            var code = Generator.GenerateLibInitClass(assemblyName!, "Library", "Init", descriptors);
 
             ctx.AddSource("LibraryInit.g.cs", SourceText.From(code.ToFullString(), Encoding.UTF8));
         });
