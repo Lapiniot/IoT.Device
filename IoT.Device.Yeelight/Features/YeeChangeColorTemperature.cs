@@ -4,7 +4,6 @@ namespace IoT.Device.Yeelight.Features;
 
 public class YeeChangeColorTemperature : YeelightDeviceFeature
 {
-    public static readonly Type Type = typeof(YeeChangeColorTemperature);
     private readonly string propCt;
     private readonly string propSetCt;
 
@@ -20,12 +19,10 @@ public class YeeChangeColorTemperature : YeelightDeviceFeature
 
     public override IEnumerable<string> SupportedProperties => new[] { propCt };
 
-    public async Task<uint> GetColorTemperatureAsync(CancellationToken cancellationToken = default)
-    {
-        return uint.Parse(
-            (await Device.GetPropertyAsync(propCt, cancellationToken).ConfigureAwait(false)).GetString(),
+    public async Task<uint> GetColorTemperatureAsync(CancellationToken cancellationToken = default) =>
+        uint.Parse(
+            (await Device.GetPropertyAsync(propCt, cancellationToken).ConfigureAwait(false)).GetString()!,
             CultureInfo.InvariantCulture);
-    }
 
     public Task SetColorTemperatureAsync(uint temperature, CancellationToken cancellationToken = default) =>
         SetColorTemperatureAsync(temperature, Effect.Sudden, 0, cancellationToken);

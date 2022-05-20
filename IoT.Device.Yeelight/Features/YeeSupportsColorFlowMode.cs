@@ -6,8 +6,6 @@ namespace IoT.Device.Yeelight.Features;
 
 public class YeeSupportsColorFlowMode : YeelightDeviceFeature
 {
-    public static readonly Type Type = typeof(YeeSupportsColorFlowMode);
-
     private readonly string propFlowing;
     private readonly string propFlowParams;
     private readonly string startSet;
@@ -30,12 +28,10 @@ public class YeeSupportsColorFlowMode : YeelightDeviceFeature
 
     public override IEnumerable<string> SupportedProperties => new[] { propFlowing, propFlowParams };
 
-    public async Task<SwitchState> GetFlowingStateAsync(CancellationToken cancellationToken = default)
-    {
-        return (SwitchState)int.Parse(
-            (await Device.GetPropertyAsync(propFlowing, cancellationToken).ConfigureAwait(false)).GetString(),
+    public async Task<SwitchState> GetFlowingStateAsync(CancellationToken cancellationToken = default) =>
+        (SwitchState)int.Parse(
+            (await Device.GetPropertyAsync(propFlowing, cancellationToken).ConfigureAwait(false)).GetString()!,
             CultureInfo.InvariantCulture);
-    }
 
     public Task<JsonElement> GetFlowingParamsAsync(CancellationToken cancellationToken = default) =>
         Device.GetPropertyAsync(propFlowParams, cancellationToken);

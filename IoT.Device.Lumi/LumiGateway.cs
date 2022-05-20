@@ -1,6 +1,7 @@
 using System.Net;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
+using IoT.Device.Lumi.SubDevices;
 using IoT.Device.Metadata;
 using IoT.Protocol.Lumi;
 using static System.Text.Json.JsonSerializer;
@@ -9,7 +10,6 @@ using static System.TimeSpan;
 using static IoT.Device.Metadata.PowerSource;
 using static IoT.Device.Metadata.ConnectivityTypes;
 using Factory = IoT.Device.DeviceFactory<IoT.Device.Lumi.LumiSubDevice>;
-using IoT.Device.Lumi.SubDevices;
 
 namespace IoT.Device.Lumi;
 
@@ -31,10 +31,10 @@ public sealed class LumiGateway : LumiThing, IConnectedObject, IObserver<JsonEle
     {
         ArgumentNullException.ThrowIfNull(endpoint);
 
-        semaphore = new SemaphoreSlim(1, 1);
-        children = new Dictionary<string, LumiSubDevice>();
-        client = new LumiControlEndpoint(endpoint);
-        listener = new LumiEventListener(new IPEndPoint(IPAddress.Parse("224.0.0.50"), endpoint.Port));
+        semaphore = new(1, 1);
+        children = new();
+        client = new(endpoint);
+        listener = new(new(IPAddress.Parse("224.0.0.50"), endpoint.Port));
         subscription = listener.Subscribe(this);
     }
 
@@ -52,58 +52,11 @@ public sealed class LumiGateway : LumiThing, IConnectedObject, IObserver<JsonEle
         private set => Set(ref illumination, value);
     }
 
-    public override string ModelName { get; } = "gateway";
+    public override string ModelName => "gateway";
 
     // Gateway sends heartbeats every 10 seconds.
     // We give extra 2 seconds to the timeout value.
     protected override TimeSpan HeartbeatTimeout { get; } = FromSeconds(10) + FromSeconds(2);
-
-    public bool IsConnected { get; private set; }
-
-    public async Task ConnectAsync(CancellationToken cancellationToken = default)
-    {
-        if (!IsConnected)
-        {
-            await semaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
-
-            try
-            {
-                if (!IsConnected)
-                {
-                    await client.ConnectAsync(cancellationToken).ConfigureAwait(false);
-                    await listener.ConnectAsync(cancellationToken).ConfigureAwait(false);
-                    IsConnected = true;
-                }
-            }
-            finally
-            {
-                _ = semaphore.Release();
-            }
-        }
-    }
-
-    public async Task DisconnectAsync()
-    {
-        if (IsConnected)
-        {
-            await semaphore.WaitAsync().ConfigureAwait(false);
-
-            try
-            {
-                if (IsConnected)
-                {
-                    await client.DisconnectAsync().ConfigureAwait(false);
-                    await listener.DisconnectAsync().ConfigureAwait(false);
-                }
-            }
-            finally
-            {
-                IsConnected = false;
-
-                _ = semaphore.Release();
-            }
-        }
-    }
 
     public Task<JsonElement> InvokeAsync(string command, string sid = null, CancellationToken cancellationToken = default) =>
         client.InvokeAsync(command, sid ?? Sid, cancellationToken);
@@ -145,9 +98,7 @@ public sealed class LumiGateway : LumiThing, IConnectedObject, IObserver<JsonEle
 
                 var id = info.GetProperty("short_id").GetInt32();
                 var deviceModel = info.GetProperty("model").GetString();
-#pragma warning disable CA1508 // CA1508: Avoid dead conditional code - probably false noise from code analyzer
-                device = Factory.Create(deviceModel, sid, id) ?? new GenericSubDevice(sid, id);
-#pragma warning restore CA1508
+                device = Factory.Create(deviceModel!, sid, id) ?? new GenericSubDevice(sid, id);
                 device.OnStateChanged(Deserialize<JsonElement>(d.GetString() ?? string.Empty));
                 children.Add(sid, device);
                 yield return device;
@@ -207,6 +158,53 @@ public sealed class LumiGateway : LumiThing, IConnectedObject, IObserver<JsonEle
 
     #endregion
 
+    public bool IsConnected { get; private set; }
+
+    public async Task ConnectAsync(CancellationToken cancellationToken = default)
+    {
+        if (!IsConnected)
+        {
+            await semaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
+
+            try
+            {
+                if (!IsConnected)
+                {
+                    await client.ConnectAsync(cancellationToken).ConfigureAwait(false);
+                    await listener.ConnectAsync(cancellationToken).ConfigureAwait(false);
+                    IsConnected = true;
+                }
+            }
+            finally
+            {
+                _ = semaphore.Release();
+            }
+        }
+    }
+
+    public async Task DisconnectAsync()
+    {
+        if (IsConnected)
+        {
+            await semaphore.WaitAsync().ConfigureAwait(false);
+
+            try
+            {
+                if (IsConnected)
+                {
+                    await client.DisconnectAsync().ConfigureAwait(false);
+                    await listener.DisconnectAsync().ConfigureAwait(false);
+                }
+            }
+            finally
+            {
+                IsConnected = false;
+
+                _ = semaphore.Release();
+            }
+        }
+    }
+
     #region Implementation of IObserver<in JsonElement>
 
     void IObserver<JsonElement>.OnCompleted() { }
@@ -216,12 +214,13 @@ public sealed class LumiGateway : LumiThing, IConnectedObject, IObserver<JsonEle
     void IObserver<JsonElement>.OnNext(JsonElement message)
     {
         if (!message.TryGetProperty("sid", out var sid) ||
-           !message.TryGetProperty("cmd", out var command) ||
-           !message.TryGetProperty("data", out var v) ||
-           !(Deserialize<JsonElement>(v.GetString() ?? string.Empty) is { } data))
+            !message.TryGetProperty("cmd", out var command) ||
+            !message.TryGetProperty("data", out var v))
         {
             return;
         }
+
+        var data = Deserialize<JsonElement>(v.GetString() ?? string.Empty);
 
         var key = sid.GetString();
 

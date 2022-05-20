@@ -19,35 +19,29 @@ public sealed class QueueService : SoapActionInvoker
 
     public Task<IReadOnlyDictionary<string, string>> AddUriAsync(uint instanceId, string objectId, uint updateId,
         string enqueuedUri, string enqueuedUriMetaData, uint desiredFirstTrackNumberEnqueued, bool enqueueAsNext,
-        CancellationToken cancellationToken)
-    {
-        return InvokeAsync("AddURI", new Dictionary<string, string> {
-                { "InstanceID", instanceId.ToString(InvariantCulture) },
-                { "ObjectID", objectId },
-                { "UpdateID", updateId.ToString(InvariantCulture) },
-                { "EnqueuedURI", enqueuedUri },
-                { "EnqueuedURIMetaData", enqueuedUriMetaData },
-                { "DesiredFirstTrackNumberEnqueued", desiredFirstTrackNumberEnqueued.ToString(InvariantCulture) },
-                { "EnqueueAsNext", enqueueAsNext?"true":"false" } }, cancellationToken);
-    }
+        CancellationToken cancellationToken) =>
+        InvokeAsync("AddURI", new Dictionary<string, string> {
+            { "InstanceID", instanceId.ToString(InvariantCulture) },
+            { "ObjectID", objectId },
+            { "UpdateID", updateId.ToString(InvariantCulture) },
+            { "EnqueuedURI", enqueuedUri },
+            { "EnqueuedURIMetaData", enqueuedUriMetaData },
+            { "DesiredFirstTrackNumberEnqueued", desiredFirstTrackNumberEnqueued.ToString(InvariantCulture) },
+            { "EnqueueAsNext", enqueueAsNext?"true":"false" } }, cancellationToken);
 
     public Task<IReadOnlyDictionary<string, string>> RemoveAllAsync(uint instanceId, string objectId, uint updateId,
-        CancellationToken cancellationToken)
-    {
-        return InvokeAsync("RemoveAll", new Dictionary<string, string> {
-                { "InstanceID", instanceId.ToString(InvariantCulture) },
-                { "ObjectID", objectId },
-                { "UpdateID", updateId.ToString(InvariantCulture) } }, cancellationToken);
-    }
+        CancellationToken cancellationToken) =>
+        InvokeAsync("RemoveAll", new Dictionary<string, string> {
+            { "InstanceID", instanceId.ToString(InvariantCulture) },
+            { "ObjectID", objectId },
+            { "UpdateID", updateId.ToString(InvariantCulture) } }, cancellationToken);
 
     public Task<IReadOnlyDictionary<string, string>> ReorderAsync(uint instanceId, string objectId, uint updateId,
-        string trackList, string newPositionList, CancellationToken cancellationToken)
-    {
-        return InvokeAsync("Reorder", new Dictionary<string, string> {
-                { "InstanceID", instanceId.ToString(InvariantCulture) },
-                { "ObjectID", objectId },
-                { "UpdateID", updateId.ToString(InvariantCulture) },
-                { "TrackList", trackList },
-                { "NewPositionList", newPositionList } }, cancellationToken);
-    }
+        string trackList, string newPositionList, CancellationToken cancellationToken) =>
+        InvokeAsync("Reorder", new Dictionary<string, string> {
+            { "InstanceID", instanceId.ToString(InvariantCulture) },
+            { "ObjectID", objectId },
+            { "UpdateID", updateId.ToString(InvariantCulture) },
+            { "TrackList", trackList },
+            { "NewPositionList", newPositionList } }, cancellationToken);
 }

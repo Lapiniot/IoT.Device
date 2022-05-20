@@ -1,4 +1,4 @@
-﻿using IoT.Protocol.Soap;
+using IoT.Protocol.Soap;
 
 namespace IoT.Device.Upnp.Umi.Services;
 
@@ -15,10 +15,9 @@ public sealed class SystemPropertiesService : SoapActionInvoker
         base(endpoint, ServiceSchema)
     { }
 
-    public async Task<string> GetStringAsync(string variableName, CancellationToken cancellationToken = default)
-    {
-        return (await InvokeAsync("GetString", new Dictionary<string, string>() {
+    public async Task<string> GetStringAsync(string variableName, CancellationToken cancellationToken = default) =>
+        (await InvokeAsync("GetString", new Dictionary<string, string>
+            {
                 { "VariableName", variableName } },
             cancellationToken).ConfigureAwait(false))["StringValue"];
-    }
 }

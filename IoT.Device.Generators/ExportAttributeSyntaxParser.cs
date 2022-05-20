@@ -10,18 +10,15 @@ public static class ExportAttributeSyntaxParser
     private const string DeviceNsName = "Device";
     private const string IoTNsName = "IoT";
 
-    public static bool IsSuitableCandidate(SyntaxNode node)
-    {
-        return node is AttributeSyntax
+    public static bool IsSuitableCandidate(SyntaxNode node) =>
+        node is AttributeSyntax
         {
             Parent: AttributeListSyntax { Parent: ClassDeclarationSyntax or CompilationUnitSyntax },
             ArgumentList.Arguments.Count: > 0
         };
-    }
 
-    public static ExportDescriptor? Parse(AttributeSyntax attribute, SemanticModel model, CancellationToken cancellationToken)
-    {
-        return attribute switch
+    public static ExportDescriptor? Parse(AttributeSyntax attribute, SemanticModel model, CancellationToken cancellationToken) =>
+        attribute switch
         {
             { Parent: AttributeListSyntax { Parent: CompilationUnitSyntax }, ArgumentList.Arguments.Count: > 0 }
                 => ParseAsAssemblyAttribute(attribute, model, cancellationToken),
@@ -29,11 +26,9 @@ public static class ExportAttributeSyntaxParser
                 => ParseAsClassAttribute(attribute, model, cancellationToken),
             _ => null
         };
-    }
 
-    private static ExportDescriptor? ParseAsClassAttribute(AttributeSyntax attribute, SemanticModel model, CancellationToken cancellationToken)
-    {
-        return model.GetTypeInfo(attribute, cancellationToken).Type is INamedTypeSymbol
+    private static ExportDescriptor? ParseAsClassAttribute(AttributeSyntax attribute, SemanticModel model, CancellationToken cancellationToken) =>
+        model.GetTypeInfo(attribute, cancellationToken).Type is INamedTypeSymbol
         {
             IsGenericType: false,
             BaseType:
@@ -46,14 +41,12 @@ public static class ExportAttributeSyntaxParser
             }
         } &&
         model.GetDeclaredSymbol(attribute.Parent!.Parent!, cancellationToken) is ITypeSymbol implType &&
-        model.GetConstantValue(attribute.ArgumentList!.Arguments[0].Expression, cancellationToken) is { HasValue: true, Value: string { } value }
+        model.GetConstantValue(attribute.ArgumentList!.Arguments[0].Expression, cancellationToken) is { HasValue: true, Value: string value }
             ? new(typeArgs[0], implType, value)
             : null;
-    }
 
-    private static ExportDescriptor? ParseAsAssemblyAttribute(AttributeSyntax attribute, SemanticModel model, CancellationToken cancellationToken)
-    {
-        return model.GetTypeInfo(attribute, cancellationToken).Type is INamedTypeSymbol
+    private static ExportDescriptor? ParseAsAssemblyAttribute(AttributeSyntax attribute, SemanticModel model, CancellationToken cancellationToken) =>
+        model.GetTypeInfo(attribute, cancellationToken).Type is INamedTypeSymbol
         {
             IsGenericType: true,
             IsUnboundGenericType: false,
@@ -66,8 +59,7 @@ public static class ExportAttributeSyntaxParser
                 TypeArguments: { Length: 2 } typeArgs
             }
         } &&
-        model.GetConstantValue(attribute.ArgumentList!.Arguments[0].Expression, cancellationToken) is { HasValue: true, Value: string { } value }
+        model.GetConstantValue(attribute.ArgumentList!.Arguments[0].Expression, cancellationToken) is { HasValue: true, Value: string value }
             ? new(typeArgs[0], typeArgs[1], value)
             : null;
-    }
 }

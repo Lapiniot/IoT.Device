@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using System.Policies;
 using IoT.Protocol;
 using IoT.Protocol.Upnp;
@@ -13,12 +13,10 @@ public class UmiSpeakerEnumerator : ConvertingEnumerator<SsdpReply, UmiSpeakerDe
 
     #region Overrides of ConvertingEnumerator<SsdpReply,UmiSpeakerDevice>
 
-    protected override UmiSpeakerDevice Convert([NotNull] SsdpReply thing)
-    {
-        return thing.StartLine.StartsWith("HTTP", StringComparison.InvariantCulture)
-            ? new UmiSpeakerDevice(new Uri(thing.Location), thing.UniqueServiceName)
+    protected override UmiSpeakerDevice Convert([NotNull] SsdpReply thing) =>
+        thing.StartLine.StartsWith("HTTP", StringComparison.InvariantCulture)
+            ? new UmiSpeakerDevice(new(thing.Location), thing.UniqueServiceName)
             : null;
-    }
 
     #endregion
 }

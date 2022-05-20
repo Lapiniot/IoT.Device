@@ -28,7 +28,7 @@ public abstract class LumiSubDevice : LumiThing, IProvideBatteryVoltage
     {
         if (state.TryGetProperty("voltage", out var value) && value.ValueKind == Number)
         {
-            Voltage = new decimal(value.GetInt32(), 0, 0, false, 3);
+            Voltage = new(value.GetInt32(), 0, 0, false, 3);
         }
     }
 

@@ -1,6 +1,4 @@
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxKind;
 
@@ -8,9 +6,8 @@ namespace IoT.Device.Generators;
 
 internal static class ModelNameSyntaxGenerator
 {
-    public static SyntaxNode GenerateAugmentationClass(ITypeSymbol implType, string model)
-    {
-        return NamespaceDeclaration(ParseName(implType.ContainingNamespace.ToDisplayString()))
+    public static SyntaxNode GenerateAugmentationClass(ITypeSymbol implType, string model) =>
+        NamespaceDeclaration(ParseName(implType.ContainingNamespace.ToDisplayString()))
             .AddMembers(
                 ClassDeclaration(implType.Name)
                     .AddModifiers(Token(PublicKeyword), Token(PartialKeyword))
@@ -20,8 +17,7 @@ internal static class ModelNameSyntaxGenerator
                             .AddAccessorListAccessors(
                                 AccessorDeclaration(GetAccessorDeclaration)
                                     .WithSemicolonToken(Token(SemicolonToken)))
-                                    .WithInitializer(EqualsValueClause(LiteralExpression(StringLiteralExpression, Literal(model))))
+                            .WithInitializer(EqualsValueClause(LiteralExpression(StringLiteralExpression, Literal(model))))
                             .WithSemicolonToken(Token(SemicolonToken))))
             .NormalizeWhitespace();
-    }
 }

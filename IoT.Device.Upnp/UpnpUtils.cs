@@ -30,7 +30,7 @@ public static class UpnpUtils
 
         var containers = new Stack<(string Id, int Depth)>();
 
-        // Phase 1: get items metadata and sort out items and containers, items are copied immidiatelly to the output xml writer,
+        // Phase 1: get items metadata and sort out items and containers, items are copied immediately to the output xml writer,
         // container ids are scheduled for future expansion by pushing to the containerIds stack structure
         foreach (var item in itemIds)
         {

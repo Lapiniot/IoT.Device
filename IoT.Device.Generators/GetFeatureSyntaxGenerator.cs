@@ -1,6 +1,5 @@
 using IoT.Device.Generators.Helpers;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
@@ -56,13 +55,11 @@ internal static class GetFeatureSyntaxGenerator
         }
     }
 
-    private static FieldDeclarationSyntax CreateFeatureInstanceField(string typeName)
-    {
-        return FieldDeclaration(VariableDeclaration(
+    private static MemberDeclarationSyntax CreateFeatureInstanceField(string typeName) =>
+        FieldDeclaration(VariableDeclaration(
                 ParseTypeName(typeName),
                 SingletonSeparatedList(VariableDeclarator(Identifier(GetFeatureFieldName(typeName))))))
             .AddModifiers(Token(PrivateKeyword));
-    }
 
     private static string GetFeatureFieldName(string typeName) =>
         $"{char.ToLowerInvariant(typeName[0])}{typeName.Substring(1).Replace(".", "")}Feature";
@@ -84,9 +81,8 @@ internal static class GetFeatureSyntaxGenerator
             : LiteralExpression(NullLiteralExpression));
     }
 
-    private static StatementSyntax GenerateTypeTestConditionBlock(IEnumerable<string> featureTypes, string implType)
-    {
-        return IfStatement(
+    private static StatementSyntax GenerateTypeTestConditionBlock(IEnumerable<string> featureTypes, string implType) =>
+        IfStatement(
             GenerateTypeTestCondition(featureTypes),
             Block(ReturnStatement(
                 BinaryExpression(
@@ -98,7 +94,6 @@ internal static class GetFeatureSyntaxGenerator
                             ParseTypeName(implType),
                             ArgumentList(SingletonSeparatedList(Argument(ThisExpression()))), null))),
                     ParseTypeName("T")))));
-    }
 
     private static ExpressionSyntax GenerateTypeTestCondition(IEnumerable<string> types)
     {

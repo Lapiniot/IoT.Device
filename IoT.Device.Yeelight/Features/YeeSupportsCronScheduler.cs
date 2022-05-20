@@ -5,8 +5,6 @@ namespace IoT.Device.Yeelight.Features;
 
 public class YeeSupportsCronScheduler : YeelightDeviceFeature
 {
-    public static readonly Type Type = typeof(YeeSupportsCronScheduler);
-
     public YeeSupportsCronScheduler(YeelightDevice device) : base(device) { }
 
     public override IEnumerable<string> SupportedMethods => new[] { "cron_get", "cron_add", "cron_del" };
@@ -23,5 +21,5 @@ public class YeeSupportsCronScheduler : YeelightDeviceFeature
         Device.InvokeAsync("cron_del", new[] { type }, cancellationToken);
 
     public async Task<uint> GetDelayOffAsync(CancellationToken cancellationToken = default) =>
-        uint.Parse((await Device.GetPropertyAsync("delayoff", cancellationToken).ConfigureAwait(false)).GetString(), CultureInfo.InvariantCulture);
+        uint.Parse((await Device.GetPropertyAsync("delayoff", cancellationToken).ConfigureAwait(false)).GetString()!, CultureInfo.InvariantCulture);
 }

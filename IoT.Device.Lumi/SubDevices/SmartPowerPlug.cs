@@ -61,7 +61,7 @@ public sealed partial class SmartPowerPlug : LumiSubDeviceWithStatus
 
         if (state.TryGetProperty("load_voltage", out value) && value.ValueKind == Number)
         {
-            LoadVoltage = new decimal(value.GetInt32(), 0, 0, false, 3);
+            LoadVoltage = new(value.GetInt32(), 0, 0, false, 3);
         }
 
         if (state.TryGetProperty("load_power", out value) && value.ValueKind == Number)

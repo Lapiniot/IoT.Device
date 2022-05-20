@@ -2,7 +2,6 @@ namespace IoT.Device.Yeelight.Features;
 
 public class YeeChangePowerState : YeelightDeviceFeature
 {
-    public static readonly Type Type = typeof(YeeChangePowerState);
     private readonly string propGetPower;
     private readonly string propSetPower;
     private readonly string propSetToggle;
@@ -30,12 +29,12 @@ public class YeeChangePowerState : YeelightDeviceFeature
     public Task SetPowerStateAsync(SwitchState state = SwitchState.On, Effect effect = Effect.Smooth, uint durationMilliseconds = 500,
         ColorMode mode = ColorMode.Normal, CancellationToken cancellationToken = default) =>
         Device.InvokeAsync(propSetPower, new object[]
-            {
-                state.ToString().ToLowerInvariant(),
-                effect.ToString().ToLowerInvariant(),
-                durationMilliseconds,
-                (int)mode
-            }, cancellationToken);
+        {
+            state.ToString().ToLowerInvariant(),
+            effect.ToString().ToLowerInvariant(),
+            durationMilliseconds,
+            (int)mode
+        }, cancellationToken);
 
     public Task ToggleAsync(CancellationToken cancellationToken = default) => Device.InvokeAsync(propSetToggle, Array.Empty<object>(), cancellationToken);
 }

@@ -34,23 +34,7 @@ internal sealed class HashTreeNode<TKey, TValue> : IEnumerable<HashTreeNode<TKey
         }
     }
 
-    public HashTreeNode<TKey, TValue> GetOrAdd(TKey key, Func<TKey, HashTreeNode<TKey, TValue>> factory) => this[key] ?? (this[key] = factory(key));
-
     public int Count => store.Count;
-
-    public void Clear()
-    {
-        foreach (var node in store.Values)
-        {
-            node.Parent = null;
-        }
-
-        store.Clear();
-    }
-
-    public IEnumerator<HashTreeNode<TKey, TValue>> GetEnumerator() => store.Values.GetEnumerator();
-
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     public IEnumerable<HashTreeNode<TKey, TValue>> Path
     {
@@ -64,6 +48,28 @@ internal sealed class HashTreeNode<TKey, TValue> : IEnumerable<HashTreeNode<TKey
                 parent = parent.Parent;
             }
         }
+    }
+
+    public HashTreeNode<TKey, TValue> GetOrAdd(TKey key, Func<TKey, HashTreeNode<TKey, TValue>> factory)
+    {
+        if (store.TryGetValue(key, out var node))
+        {
+            return node;
+        }
+
+        node = factory(key);
+        store.Add(key, node);
+        return node;
+    }
+
+    public void Clear()
+    {
+        foreach (var node in store.Values)
+        {
+            node.Parent = null;
+        }
+
+        store.Clear();
     }
 
     public IEnumerable<HashTreeNode<TKey, TValue>> TraverseTree()
@@ -80,4 +86,8 @@ internal sealed class HashTreeNode<TKey, TValue> : IEnumerable<HashTreeNode<TKey
             }
         }
     }
+
+    public IEnumerator<HashTreeNode<TKey, TValue>> GetEnumerator() => store.Values.GetEnumerator();
+
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

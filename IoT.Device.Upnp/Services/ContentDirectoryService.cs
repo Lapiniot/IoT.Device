@@ -1,4 +1,4 @@
-﻿using System.Runtime.CompilerServices;
+using System.Runtime.CompilerServices;
 using IoT.Protocol.Soap;
 using static System.Globalization.CultureInfo;
 using static IoT.Protocol.Upnp.UpnpServices;
@@ -25,9 +25,9 @@ public sealed class ContentDirectoryService : SoapActionInvoker
 
     public Task<IReadOnlyDictionary<string, string>> BrowseAsync(string parent, string filter = null,
         BrowseMode mode = default, string sortCriteria = null,
-        uint index = 0, uint count = 50, CancellationToken cancellationToken = default)
-    {
-        return InvokeAsync("Browse", new Dictionary<string, string>() {
+        uint index = 0, uint count = 50, CancellationToken cancellationToken = default) =>
+        InvokeAsync("Browse", new Dictionary<string, string>
+            {
                 { "ObjectID", parent },
                 { "BrowseFlag", mode.ToString() },
                 { "Filter", filter ?? "*" },
@@ -35,7 +35,6 @@ public sealed class ContentDirectoryService : SoapActionInvoker
                 { "RequestedCount", count.ToString(InvariantCulture) },
                 { "SortCriteria", sortCriteria ?? "" } },
             cancellationToken);
-    }
 
     public async IAsyncEnumerable<(string Content, int matches, int total)> BrowseChildrenAsync(string parent,
         string filter = null, string sortCriteria = null, uint pageSize = 50,
@@ -55,9 +54,9 @@ public sealed class ContentDirectoryService : SoapActionInvoker
     }
 
     public Task<IReadOnlyDictionary<string, string>> SearchAsync(string container, string query, string filter = null,
-        string sortCriteria = null, uint index = 0, uint count = 50, CancellationToken cancellationToken = default)
-    {
-        return InvokeAsync("Search", new Dictionary<string, string>() {
+        string sortCriteria = null, uint index = 0, uint count = 50, CancellationToken cancellationToken = default) =>
+        InvokeAsync("Search", new Dictionary<string, string>
+            {
                 { "ContainerID", container },
                 { "SearchCriteria", query },
                 { "Filter", filter ?? "*" },
@@ -65,5 +64,4 @@ public sealed class ContentDirectoryService : SoapActionInvoker
                 { "RequestedCount", count.ToString(InvariantCulture) },
                 { "SortCriteria", sortCriteria ?? "" } },
             cancellationToken);
-    }
 }

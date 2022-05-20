@@ -6,7 +6,7 @@ internal static class SemanticModelExtensions
 {
     public static IEnumerable<ITypeSymbol> EnumerateRelatedFeatureTypes(this ITypeSymbol? symbol, bool includeInterfaces = true)
     {
-        while(symbol is { } and not
+        while (symbol is { } and not
             {
                 BaseType:
                 {
@@ -38,12 +38,12 @@ internal static class SemanticModelExtensions
     }
 
     /// <summary>
-    /// Checks wether supplied symbol designates known generic SupportsFeatureAttribute
+    /// Checks whether supplied symbol designates known generic SupportsFeatureAttribute
     /// with either 1 or 2 generic parameters
     /// </summary>
     /// <param name="symbol">Type symbol to check</param>
     /// <returns><value>true</value> when matches, otherwise <value>false</value></returns>
-    public static bool IsSupportsFeatureAtribute(this ITypeSymbol? symbol)
+    public static bool IsSupportsFeatureAttribute(this ITypeSymbol? symbol)
     {
         return symbol is INamedTypeSymbol
         {
@@ -66,16 +66,14 @@ internal static class SemanticModelExtensions
         };
     }
 
-    public static INamedTypeSymbol[] GetSupportsFeatureAttributes(this ITypeSymbol symbol)
-    {
-        return symbol.GetAttributes()
-            .Where(a => a.AttributeClass.IsSupportsFeatureAtribute()).Select(a => a.AttributeClass!)
+    public static INamedTypeSymbol[] GetSupportsFeatureAttributes(this ITypeSymbol symbol) =>
+        symbol.GetAttributes()
+            .Where(a => a.AttributeClass.IsSupportsFeatureAttribute()).Select(a => a.AttributeClass!)
             .Distinct<INamedTypeSymbol>(SymbolEqualityComparer.Default).ToArray();
-    }
 
     public static bool HasOverrideForGetFeatureMethod(this ITypeSymbol? symbol)
     {
-        while(symbol is { })
+        while (symbol is { })
         {
             if (symbol.GetMembers("GetFeature").OfType<IMethodSymbol>().Any(m => m is
                 {
@@ -83,7 +81,7 @@ internal static class SemanticModelExtensions
                     TypeArguments.Length: 1,
                     Parameters.Length: 0,
                     IsOverride: true
-                }) || symbol.GetAttributes().Any(a => a.AttributeClass.IsSupportsFeatureAtribute()))
+                }) || symbol.GetAttributes().Any(a => a.AttributeClass.IsSupportsFeatureAttribute()))
             {
                 return true;
             }

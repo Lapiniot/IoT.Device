@@ -4,8 +4,6 @@ namespace IoT.Device.Yeelight.Features;
 
 public class YeeChangeColorRGB : YeelightDeviceFeature
 {
-    public static readonly Type Type = typeof(YeeChangeColorRGB);
-
     private readonly string propRGB;
     private readonly string propSetRGB;
 
@@ -21,12 +19,10 @@ public class YeeChangeColorRGB : YeelightDeviceFeature
 
     public override IEnumerable<string> SupportedProperties => new[] { propRGB };
 
-    public async Task<uint> GetColorRGBAsync(CancellationToken cancellationToken = default)
-    {
-        return uint.Parse(
-            (await Device.GetPropertyAsync(propRGB, cancellationToken).ConfigureAwait(false)).GetString(),
+    public async Task<uint> GetColorRGBAsync(CancellationToken cancellationToken = default) =>
+        uint.Parse(
+            (await Device.GetPropertyAsync(propRGB, cancellationToken).ConfigureAwait(false)).GetString()!,
             CultureInfo.InvariantCulture);
-    }
 
     public Task SetColorRGBAsync(uint argb, CancellationToken cancellationToken = default) =>
         SetColorRGBAsync(argb, Effect.Sudden, 0, cancellationToken);

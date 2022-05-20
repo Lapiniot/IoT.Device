@@ -2,8 +2,6 @@ namespace IoT.Device.Yeelight.Features;
 
 public class YeeSupportsScenes : YeelightDeviceFeature
 {
-    public static readonly Type Type = typeof(YeeSupportsScenes);
-
     private readonly string method;
 
     protected YeeSupportsScenes(YeelightDevice device, string setSceneName) : base(device)

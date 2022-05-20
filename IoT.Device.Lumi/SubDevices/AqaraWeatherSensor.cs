@@ -46,19 +46,19 @@ public sealed partial class AqaraWeatherSensor : LumiSubDevice
            int.TryParse(value.GetString(), Any, InvariantCulture, out var intVal)
         )
         {
-            Temperature = new decimal(intVal, 0, 0, false, 2);
+            Temperature = new(intVal, 0, 0, false, 2);
         }
 
         if (state.TryGetProperty("humidity", out value) && value.ValueKind == JsonValueKind.String &&
            int.TryParse(value.GetString(), Any, InvariantCulture, out intVal))
         {
-            Humidity = new decimal(intVal, 0, 0, false, 2);
+            Humidity = new(intVal, 0, 0, false, 2);
         }
 
         if (state.TryGetProperty("pressure", out value) && value.ValueKind == JsonValueKind.String &&
            int.TryParse(value.GetString(), Any, InvariantCulture, out intVal))
         {
-            Pressure = new decimal(intVal, 0, 0, false, 3);
+            Pressure = new(intVal, 0, 0, false, 3);
         }
     }
 }

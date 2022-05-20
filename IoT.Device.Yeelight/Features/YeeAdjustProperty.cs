@@ -2,8 +2,6 @@ namespace IoT.Device.Yeelight.Features;
 
 public class YeeAdjustProperty : YeelightDeviceFeature
 {
-    public static readonly Type Type = typeof(YeeAdjustProperty);
-
     private readonly string method;
 
     protected YeeAdjustProperty(YeelightDevice device, string adjustMethodName) : base(device)

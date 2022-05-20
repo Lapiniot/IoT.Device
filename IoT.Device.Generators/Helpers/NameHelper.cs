@@ -53,14 +53,13 @@ public static class NameHelper
 
         foreach (var current in root.TraverseTree())
         {
-            if (current.Value.Symbol is { Name: { } name } symbol)
-            {
-                // node is terminal, emit current type name + containing namespace
-                var prefix = string.Join(".", current.Path.TakeWhile(p => p != root && p.Count <= 1).Reverse().Select(p => p.Value.Ns));
-                var nspace = string.Join(".", current.Path.SkipWhile(p => p.Count <= 1).Reverse().Skip(1).Select(p => p.Value.Ns));
-                if (!string.IsNullOrEmpty(nspace)) _ = ns.Add(nspace);
-                list.Add((symbol, !string.IsNullOrEmpty(prefix) ? $"{prefix}.{symbol.Name}" : symbol.Name));
-            }
+            if (current.Value.Symbol is not { Name: { } } symbol) continue;
+
+            // node is terminal, emit current type name + containing namespace
+            var prefix = string.Join(".", current.Path.TakeWhile(p => p != root && p.Count <= 1).Reverse().Select(p => p.Value.Ns));
+            var nspace = string.Join(".", current.Path.SkipWhile(p => p.Count <= 1).Reverse().Skip(1).Select(p => p.Value.Ns));
+            if (!string.IsNullOrEmpty(nspace)) _ = ns.Add(nspace);
+            list.Add((symbol, !string.IsNullOrEmpty(prefix) ? $"{prefix}.{symbol.Name}" : symbol.Name));
         }
 
         resolvedNamespaces = ns;
@@ -78,7 +77,7 @@ public static class NameHelper
             {
                 if (token is { Kind: SymbolDisplayPartKind.NamespaceName, Symbol.Name: { } name })
                 {
-                    node = node.GetOrAdd(name, _ => new TreeNode((name, null)));
+                    node = node.GetOrAdd(name, _ => new((name, null)));
                 }
             }
 

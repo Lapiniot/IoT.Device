@@ -7,13 +7,11 @@ namespace IoT.Device.Generators;
 
 internal static class SupportsFeatureSyntaxParser
 {
-    public static bool IsSuitableCandidate(SyntaxNode node)
-    {
-        return node is ClassDeclarationSyntax { Modifiers: { } m } &&
-            m.Any(m => m.IsKind(PublicKeyword)) &&
-            m.Any(m => m.IsKind(PartialKeyword)) &&
-            !m.Any(m => m.IsKind(StaticKeyword));
-    }
+    public static bool IsSuitableCandidate(SyntaxNode node) =>
+        node is ClassDeclarationSyntax { Modifiers: var tokenList } &&
+        tokenList.Any(token => token.IsKind(PublicKeyword)) &&
+        tokenList.Any(token => token.IsKind(PartialKeyword)) &&
+        !tokenList.Any(token => token.IsKind(StaticKeyword));
 
     public static ITypeSymbol? Parse(ClassDeclarationSyntax node, SemanticModel model, CancellationToken cancellationToken)
     {

@@ -35,7 +35,7 @@ public abstract class LumiThing : INotifyPropertyChanged, IProvideOnlineInfo, IA
 
         resetWatchTokenSource = null;
 
-        return new ValueTask();
+        return new();
     }
 
     #endregion
@@ -74,14 +74,14 @@ public abstract class LumiThing : INotifyPropertyChanged, IProvideOnlineInfo, IA
     public event PropertyChangedEventHandler PropertyChanged;
 
     [MethodImpl(AggressiveInlining)]
-    protected void OnPropertyChanged([CallerMemberName] string name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+    protected void OnPropertyChanged([CallerMemberName] string name = null) => PropertyChanged?.Invoke(this, new(name));
 
     [MethodImpl(AggressiveInlining)]
     protected void Set<T>(ref T field, T value, [CallerMemberName] string name = null)
     {
         if (Equals(field, value)) return;
         field = value;
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        PropertyChanged?.Invoke(this, new(name));
     }
 
     #endregion

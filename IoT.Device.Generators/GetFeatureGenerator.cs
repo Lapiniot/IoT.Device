@@ -21,13 +21,13 @@ public class GetFeatureGenerator : IIncrementalGenerator
             static (context, ct) => Parser.Parse((ClassDeclarationSyntax)context.Node, context.SemanticModel, ct))
             .Where(symbol => symbol is not null);
 
-        context.RegisterSourceOutput(source, (context, symbol) =>
+        context.RegisterSourceOutput(source, (ctx, symbol) =>
         {
             var attributes = symbol!.GetSupportsFeatureAttributes();
 
             if (attributes.Length > 0)
             {
-                context.AddSource($"{symbol!.Name}.GetFeature.g.cs",
+                ctx.AddSource($"{symbol!.Name}.GetFeature.g.cs",
                     SourceText.From(Generator.GenerateAugmentation(symbol, attributes).ToFullString(), encoding: Encoding.UTF8));
             }
         });

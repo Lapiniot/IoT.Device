@@ -15,10 +15,8 @@ public class UpnpDeviceEnumerator : ConvertingEnumerator<SsdpReply, UpnpDevice>
         base(new SsdpSearchEnumerator("ssdp:all", discoveryPolicy), new UpnpReplyComparer())
     { }
 
-    protected override UpnpDevice Convert([NotNull] SsdpReply thing)
-    {
-        return thing.StartLine.StartsWith("HTTP", StringComparison.InvariantCulture)
-            ? new UpnpDevice(new Uri(thing.Location), thing.UniqueServiceName)
+    protected override UpnpDevice Convert([NotNull] SsdpReply thing) =>
+        thing.StartLine.StartsWith("HTTP", StringComparison.InvariantCulture)
+            ? new UpnpDevice(new(thing.Location), thing.UniqueServiceName)
             : null;
-    }
 }

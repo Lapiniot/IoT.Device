@@ -12,12 +12,10 @@ public class LumiGatewayEnumerator : ConvertingEnumerator<LumiEndpoint, LumiGate
 
     #region Overrides of ConvertingEnumerator<(IPAddress Address, ushort Port, string Sid),LumiGateway>
 
-    protected override LumiGateway Convert(LumiEndpoint thing)
-    {
-        return thing.EndPoint is not null && !string.IsNullOrEmpty(thing.Sid)
+    protected override LumiGateway Convert(LumiEndpoint thing) =>
+        thing.EndPoint is not null && !string.IsNullOrEmpty(thing.Sid)
             ? new LumiGateway(thing.EndPoint, thing.Sid)
             : throw new InvalidDataException("Lumi gateway device does not exist or did not respond properly.");
-    }
 
     #endregion
 

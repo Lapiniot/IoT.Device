@@ -18,7 +18,7 @@ public class ConnectionManagerService : SoapActionInvoker
         InvokeAsync("GetProtocolInfo", null, cancellationToken);
 
     public Task<IReadOnlyDictionary<string, string>> GetCurrentConnectionInfoAsync(string connectionId, CancellationToken cancellationToken = default) =>
-        InvokeAsync("GetCurrentConnectionInfo", new Dictionary<string, string>() { { "ConnectionID", connectionId } }, cancellationToken);
+        InvokeAsync("GetCurrentConnectionInfo", new Dictionary<string, string> { { "ConnectionID", connectionId } }, cancellationToken);
 
     public Task<IReadOnlyDictionary<string, string>> GetCurrentConnectionIDsAsync(CancellationToken cancellationToken = default) =>
         InvokeAsync("GetCurrentConnectionIDs", null, cancellationToken);

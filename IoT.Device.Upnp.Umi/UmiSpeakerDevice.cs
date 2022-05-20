@@ -1,4 +1,4 @@
-﻿using IoT.Protocol.Soap;
+using IoT.Protocol.Soap;
 using IoT.Device.Upnp.Services;
 using IoT.Device.Upnp.Umi.Services;
 using static System.UriKind;
@@ -27,7 +27,7 @@ public sealed class UmiSpeakerDevice : UpnpDevice, IDisposable
 
         DeviceId = usn.Split(new[] { ':' }, 3)[1];
 
-        BaseUri = new Uri(descriptionUri.GetLeftPart(Authority));
+        BaseUri = new(descriptionUri.GetLeftPart(Authority));
 
         handler = new() { AutomaticDecompression = GZip | Deflate, UseCookies = false, CheckCertificateRevocationList = true };
 
@@ -42,27 +42,27 @@ public sealed class UmiSpeakerDevice : UpnpDevice, IDisposable
 
     public ContentDirectoryService ContentDirectory =>
         contentDirectory ??= new(Endpoint,
-                new Uri($"{DeviceId}-MS/upnp.org-ContentDirectory-1/control", Relative));
+                new($"{DeviceId}-MS/upnp.org-ContentDirectory-1/control", Relative));
 
     public PlaylistService Playlist =>
         playlist ??= new(Endpoint,
-                new Uri($"{DeviceId}-MR/xiaomi.com-Playlist-1/control", Relative));
+                new($"{DeviceId}-MR/xiaomi.com-Playlist-1/control", Relative));
 
     public AVTransportService AVTransport =>
         avTransport ??= new(Endpoint,
-                new Uri($"{DeviceId}-MR/upnp.org-AVTransport-1/control", Relative));
+                new($"{DeviceId}-MR/upnp.org-AVTransport-1/control", Relative));
 
     public SystemPropertiesService SystemProperties =>
         systemProperties ??= new(Endpoint,
-                new Uri($"{DeviceId}/xiaomi.com-SystemProperties-1/control", Relative));
+                new($"{DeviceId}/xiaomi.com-SystemProperties-1/control", Relative));
 
     public ConnectionManagerService ConnectionManager =>
         connectionManager ??= new(Endpoint,
-                new Uri($"{DeviceId}-MR/upnp.org-ConnectionManager-1/control", Relative));
+                new($"{DeviceId}-MR/upnp.org-ConnectionManager-1/control", Relative));
 
     public RenderingControlService RenderingControl =>
         renderingControl ??= new(Endpoint,
-                new Uri($"{DeviceId}-MR/upnp.org-RenderingControl-1/control", Relative));
+                new($"{DeviceId}-MR/upnp.org-RenderingControl-1/control", Relative));
 
     public void Dispose()
     {

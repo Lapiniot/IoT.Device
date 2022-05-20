@@ -4,8 +4,6 @@ namespace IoT.Device.Yeelight.Features;
 
 public class YeeProvideColorMode : YeelightDeviceFeature
 {
-    public static readonly Type Type = typeof(YeeProvideColorMode);
-
     private readonly string property;
 
     protected YeeProvideColorMode(YeelightDevice device, string colorModeProp) : base(device) => property = colorModeProp;
@@ -16,10 +14,8 @@ public class YeeProvideColorMode : YeelightDeviceFeature
 
     public override IEnumerable<string> SupportedProperties => new[] { property };
 
-    public async Task<ColorMode> GetColorModeAsync(CancellationToken cancellationToken = default)
-    {
-        return (ColorMode)int.Parse(
-            (await Device.GetPropertyAsync(property, cancellationToken).ConfigureAwait(false)).GetString(),
+    public async Task<ColorMode> GetColorModeAsync(CancellationToken cancellationToken = default) =>
+        (ColorMode)int.Parse(
+            (await Device.GetPropertyAsync(property, cancellationToken).ConfigureAwait(false)).GetString()!,
             CultureInfo.InvariantCulture);
-    }
 }

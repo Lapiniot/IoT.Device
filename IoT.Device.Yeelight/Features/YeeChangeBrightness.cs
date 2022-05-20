@@ -4,8 +4,6 @@ namespace IoT.Device.Yeelight.Features;
 
 public class YeeChangeBrightness : YeelightDeviceFeature
 {
-    public static readonly Type Type = typeof(YeeChangeBrightness);
-
     private readonly string propBright;
     private readonly string propSetBright;
 
@@ -21,12 +19,10 @@ public class YeeChangeBrightness : YeelightDeviceFeature
 
     public override IEnumerable<string> SupportedProperties => new[] { propBright };
 
-    public async Task<uint> GetBrightnessAsync(CancellationToken cancellationToken = default)
-    {
-        return uint.Parse(
+    public async Task<uint> GetBrightnessAsync(CancellationToken cancellationToken = default) =>
+        uint.Parse(
             (await Device.GetPropertyAsync(propBright, cancellationToken).ConfigureAwait(false)).GetString(),
             CultureInfo.InvariantCulture);
-    }
 
     public Task SetBrightnessAsync(uint brightness, CancellationToken cancellationToken = default) =>
         SetBrightnessAsync(brightness, Effect.Sudden, 0, cancellationToken);

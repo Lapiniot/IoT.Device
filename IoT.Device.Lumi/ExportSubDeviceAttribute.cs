@@ -1,4 +1,4 @@
-﻿namespace IoT.Device.Lumi;
+namespace IoT.Device.Lumi;
 
 public sealed class ExportSubDeviceAttribute<T> : ExportAttribute<LumiSubDevice, T> where T : LumiSubDevice
 {
@@ -6,7 +6,7 @@ public sealed class ExportSubDeviceAttribute<T> : ExportAttribute<LumiSubDevice,
     { }
 }
 
-[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = false)]
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
 public sealed class ExportSubDeviceAttribute : ExportAttribute<LumiSubDevice, LumiSubDevice>
 {
     public ExportSubDeviceAttribute(string model) : base(model)
