@@ -5,13 +5,13 @@
         <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)\GeneratedFiles</CompilerGeneratedFilesOutputPath>
     </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="../IoT.Device/IoT.Device.csproj" />
-    <ProjectReference Include="../IoT.Protocol/IoT.Protocol.Lumi/IoT.Protocol.Lumi.csproj" />
-    <ProjectReference Include="../IoT.Device.Generators/IoT.Device.Generators.csproj">
-      <OutputItemType>Analyzer</OutputItemType>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="../IoT.Device/IoT.Device.csproj" />
+        <ProjectReference Include="../IoT.Protocol/IoT.Protocol.Lumi/IoT.Protocol.Lumi.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="IoT.Device.Generators" Version="1.1.0" PrivateAssets="all" />
+    </ItemGroup>
 
 </Project>
