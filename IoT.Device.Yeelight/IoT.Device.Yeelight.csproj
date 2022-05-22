@@ -10,8 +10,11 @@
     <ProjectReference Include="../IoT.Protocol/IoT.Protocol.Yeelight/IoT.Protocol.Yeelight.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="IoT.Device.Generators" Version="1.1.0" PrivateAssets="all" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="IoT.Device.Generators" Version="1.1.0">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+    </ItemGroup>
 
 </Project>
