@@ -18,5 +18,5 @@ public abstract class ExportAttribute<T, TImpl> : Attribute
 
     public string ModelId { get; }
 
-    public string ModelName { get; }
+    public string ModelName { get; set; }
 }

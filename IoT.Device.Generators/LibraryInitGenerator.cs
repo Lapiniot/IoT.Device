@@ -21,12 +21,12 @@ public class LibraryInitGenerator : IIncrementalGenerator
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        var exportDescriptors = context.SyntaxProvider.CreateSyntaxProvider(
-            static (node, _) => Parser.IsSuitableCandidate(node),
-            static (context, ct) => Parser.Parse((AttributeSyntax)context.Node, context.SemanticModel, ct))
-            .Where(s => s is not null);
+        var typeLevelDescriptors = context.SyntaxProvider.CreateSyntaxProvider(
+            static (syntaxNode, _) => Parser.IsClassWithAttributes(syntaxNode),
+            static (context, ct) => Parser.ExtractDescriptor((ClassDeclarationSyntax)context.Node, context.SemanticModel, ct))
+            .Where(descriptor => descriptor is not null);
 
-        var combined = context.CompilationProvider.Combine(exportDescriptors.Collect());
+        var combined = context.CompilationProvider.Combine(typeLevelDescriptors.Collect());
 
         context.RegisterSourceOutput(combined, static (ctx, source) =>
         {

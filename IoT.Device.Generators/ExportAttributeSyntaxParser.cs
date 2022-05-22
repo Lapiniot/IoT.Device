@@ -17,6 +17,38 @@ public static class ExportAttributeSyntaxParser
             ArgumentList.Arguments.Count: > 0
         };
 
+    internal static bool IsClassWithAttributes(SyntaxNode node) =>
+        node is ClassDeclarationSyntax { AttributeLists.Count: > 0 };
+
+    internal static ExportDescriptor? ExtractDescriptor(ClassDeclarationSyntax node, SemanticModel model, CancellationToken cancellationToken)
+    {
+        var classSymbol = (INamedTypeSymbol)model.GetDeclaredSymbol(node, cancellationToken)!;
+        var attributes = classSymbol.GetAttributes();
+
+        for (var i = 0; i < attributes.Length; i++)
+        {
+            var attr = attributes[i];
+
+            if (attr.AttributeClass is
+                {
+                    IsGenericType: false,
+                    BaseType:
+                    {
+                        IsGenericType: true,
+                        Name: ExportAttributeName,
+                        ContainingAssembly.Name: AssemblyName,
+                        ContainingNamespace: { Name: DeviceNsName, ContainingNamespace: { Name: IoTNsName, ContainingNamespace.IsGlobalNamespace: true } },
+                        TypeArguments: { Length: 2 } typeArgs
+                    }
+                })
+            {
+                return new(typeArgs[0], classSymbol, (string)attr.ConstructorArguments[0].Value!);
+            }
+        }
+
+        return null;
+    }
+
     public static ExportDescriptor? Parse(AttributeSyntax attribute, SemanticModel model, CancellationToken cancellationToken) =>
         attribute switch
         {
