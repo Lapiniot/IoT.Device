@@ -41,24 +41,28 @@ public class LibraryInitGenerator : IIncrementalGenerator
                 return;
             }
 
-            var code = Generator.GenerateLibInitClass(assemblyName!, "Library", "Init", GetExportDescriptors(targets, compilation));
+            var code = Generator.GenerateLibInitClass(assemblyName!, "Library", "Init", GetExportDescriptors(targets, compilation, ctx.CancellationToken));
 
             ctx.AddSource("LibraryInit.g.cs", SourceText.From(code.ToFullString(), Encoding.UTF8));
         });
     }
 
-    private static IEnumerable<(string, string, string)> GetExportDescriptors(ImmutableArray<ClassDeclarationSyntax?> targets, Compilation compilation)
+    private static IEnumerable<(string, string, string)> GetExportDescriptors(ImmutableArray<ClassDeclarationSyntax?> targets,
+        Compilation compilation, CancellationToken cancellationToken)
     {
         foreach (var target in targets)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             if (target is null ||
-                compilation.GetSemanticModel(target.SyntaxTree) is not { } model ||
-                model.GetDeclaredSymbol(target) is not INamedTypeSymbol implType)
+                compilation.GetSemanticModel(target.SyntaxTree) is not { } semanticModel ||
+                semanticModel.GetDeclaredSymbol(target, cancellationToken) is not INamedTypeSymbol implType)
             {
                 continue;
             }
 
-            if (Parser.TryGetExportAttribute(implType, out var attribute, out var targetType) && attribute is
+            if (Parser.TryGetExportAttribute(implType, out var attribute, out var targetType, cancellationToken) &&
+                attribute is
                 {
                     ConstructorArguments: [
                     {

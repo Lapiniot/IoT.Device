@@ -18,6 +18,8 @@ public static class ExportAttributeSyntaxParser
     {
         foreach (var attrList in syntax.AttributeLists)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             foreach (var attribute in attrList.Attributes)
             {
                 if (semanticModel.GetSymbolInfo(attribute, cancellationToken).Symbol is IMethodSymbol
@@ -45,10 +47,14 @@ public static class ExportAttributeSyntaxParser
         return null;
     }
 
-    public static bool TryGetExportAttribute(INamedTypeSymbol symbol, out AttributeData? attributeData, out ITypeSymbol? targetType)
+    public static bool TryGetExportAttribute(INamedTypeSymbol symbol,
+        out AttributeData? attributeData, out ITypeSymbol? targetType,
+        CancellationToken cancellationToken)
     {
         foreach (var attribute in symbol.GetAttributes())
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             if (attribute is
                 {
                     AttributeClass:

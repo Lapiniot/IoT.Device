@@ -42,12 +42,15 @@ public class ModelNameGenerator : IIncrementalGenerator
         context.RegisterSourceOutput(combined, static (context, source) =>
         {
             var (compilation, targets) = source;
+            var cancellationToken = context.CancellationToken;
 
             foreach (var target in targets)
             {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 if (target is null ||
                     compilation.GetSemanticModel(target.SyntaxTree) is not { } model ||
-                    model.GetDeclaredSymbol(target) is not INamedTypeSymbol implType)
+                    model.GetDeclaredSymbol(target, cancellationToken) is not INamedTypeSymbol implType)
                 {
                     continue;
                 }
@@ -73,7 +76,7 @@ public class ModelNameGenerator : IIncrementalGenerator
                     return;
                 }
 
-                if (!Parser.TryGetExportAttribute(implType, out var attribute, out var targetType))
+                if (!Parser.TryGetExportAttribute(implType, out var attribute, out var targetType, cancellationToken))
                     continue;
 
                 var modelName = attribute switch
