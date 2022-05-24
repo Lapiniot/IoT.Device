@@ -6,10 +6,10 @@ namespace IoT.Device.Generators;
 
 internal static class ModelNameSyntaxGenerator
 {
-    public static SyntaxNode GenerateAugmentationClass(ITypeSymbol implType, string model) =>
-        NamespaceDeclaration(ParseName(implType.ContainingNamespace.ToDisplayString()))
+    public static SyntaxNode GenerateAugmentationClass(string className, string namespaceName, string model) =>
+        NamespaceDeclaration(ParseName(namespaceName))
             .AddMembers(
-                ClassDeclaration(implType.Name)
+                ClassDeclaration(className)
                     .AddModifiers(Token(PublicKeyword), Token(PartialKeyword))
                     .AddMembers(
                         PropertyDeclaration(PredefinedType(Token(StringKeyword)), Identifier("ModelName"))

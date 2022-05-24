@@ -10,88 +10,69 @@ public static class ExportAttributeSyntaxParser
     private const string DeviceNsName = "Device";
     private const string IoTNsName = "IoT";
 
-    public static bool IsSuitableCandidate(SyntaxNode node) =>
-        node is AttributeSyntax
-        {
-            Parent: AttributeListSyntax { Parent: ClassDeclarationSyntax or CompilationUnitSyntax },
-            ArgumentList.Arguments.Count: > 0
-        };
+    public static bool IsSyntaxTargetForGeneration(SyntaxNode syntaxNode) =>
+       syntaxNode is ClassDeclarationSyntax { AttributeLists.Count: > 0 };
 
-    internal static bool IsClassWithAttributes(SyntaxNode node) =>
-        node is ClassDeclarationSyntax { AttributeLists.Count: > 0 };
-
-    internal static ExportDescriptor? ExtractDescriptor(ClassDeclarationSyntax node, SemanticModel model, CancellationToken cancellationToken)
+    public static ClassDeclarationSyntax? GetSemanticTargetForGeneration(ClassDeclarationSyntax syntax,
+        SemanticModel semanticModel, CancellationToken cancellationToken)
     {
-        var classSymbol = (INamedTypeSymbol)model.GetDeclaredSymbol(node, cancellationToken)!;
-        var attributes = classSymbol.GetAttributes();
-
-        for (var i = 0; i < attributes.Length; i++)
+        foreach (var attrList in syntax.AttributeLists)
         {
-            var attr = attributes[i];
-
-            if (attr.AttributeClass is
-                {
-                    IsGenericType: false,
-                    BaseType:
-                    {
-                        IsGenericType: true,
-                        Name: ExportAttributeName,
-                        ContainingAssembly.Name: AssemblyName,
-                        ContainingNamespace: { Name: DeviceNsName, ContainingNamespace: { Name: IoTNsName, ContainingNamespace.IsGlobalNamespace: true } },
-                        TypeArguments: { Length: 2 } typeArgs
-                    }
-                })
+            foreach (var attribute in attrList.Attributes)
             {
-                return new(typeArgs[0], classSymbol, (string)attr.ConstructorArguments[0].Value!);
+                if (semanticModel.GetSymbolInfo(attribute, cancellationToken).Symbol is IMethodSymbol
+                    {
+                        ContainingType:
+                        {
+                            IsGenericType: false,
+                            BaseType:
+                            {
+                                IsGenericType: true,
+                                Name: ExportAttributeName,
+                                ContainingAssembly.Name: AssemblyName,
+                                ContainingNamespace: { Name: DeviceNsName, ContainingNamespace: { Name: IoTNsName, ContainingNamespace.IsGlobalNamespace: true } },
+                                TypeArguments.Length: 2
+                            }
+                        },
+                        Parameters: [{ Type.SpecialType: SpecialType.System_String }, ..]
+                    })
+                {
+                    return syntax;
+                }
             }
         }
 
         return null;
     }
 
-    public static ExportDescriptor? Parse(AttributeSyntax attribute, SemanticModel model, CancellationToken cancellationToken) =>
-        attribute switch
+    public static bool TryGetExportAttribute(INamedTypeSymbol symbol, out AttributeData? attributeData, out ITypeSymbol? targetType)
+    {
+        foreach (var attribute in symbol.GetAttributes())
         {
-            { Parent: AttributeListSyntax { Parent: CompilationUnitSyntax }, ArgumentList.Arguments.Count: > 0 }
-                => ParseAsAssemblyAttribute(attribute, model, cancellationToken),
-            { Parent: AttributeListSyntax { Parent: ClassDeclarationSyntax }, ArgumentList.Arguments.Count: > 0 }
-                => ParseAsClassAttribute(attribute, model, cancellationToken),
-            _ => null
-        };
-
-    private static ExportDescriptor? ParseAsClassAttribute(AttributeSyntax attribute, SemanticModel model, CancellationToken cancellationToken) =>
-        model.GetTypeInfo(attribute, cancellationToken).Type is INamedTypeSymbol
-        {
-            IsGenericType: false,
-            BaseType:
+            if (attribute is
+                {
+                    AttributeClass:
+                    {
+                        IsGenericType: false,
+                        BaseType:
+                        {
+                            IsGenericType: true,
+                            Name: ExportAttributeName,
+                            ContainingAssembly.Name: AssemblyName,
+                            ContainingNamespace: { Name: DeviceNsName, ContainingNamespace: { Name: IoTNsName, ContainingNamespace.IsGlobalNamespace: true } },
+                            TypeArguments: [var typeArg, ..]
+                        }
+                    }
+                })
             {
-                IsGenericType: true,
-                Name: ExportAttributeName,
-                ContainingAssembly.Name: AssemblyName,
-                ContainingNamespace: { Name: DeviceNsName, ContainingNamespace: { Name: IoTNsName, ContainingNamespace.IsGlobalNamespace: true } },
-                TypeArguments: { Length: 2 } typeArgs
+                targetType = typeArg;
+                attributeData = attribute;
+                return true;
             }
-        } &&
-        model.GetDeclaredSymbol(attribute.Parent!.Parent!, cancellationToken) is ITypeSymbol implType &&
-        model.GetConstantValue(attribute.ArgumentList!.Arguments[0].Expression, cancellationToken) is { HasValue: true, Value: string value }
-            ? new(typeArgs[0], implType, value)
-            : null;
+        }
 
-    private static ExportDescriptor? ParseAsAssemblyAttribute(AttributeSyntax attribute, SemanticModel model, CancellationToken cancellationToken) =>
-        model.GetTypeInfo(attribute, cancellationToken).Type is INamedTypeSymbol
-        {
-            IsGenericType: true,
-            IsUnboundGenericType: false,
-            BaseType:
-            {
-                IsGenericType: true,
-                Name: ExportAttributeName,
-                ContainingAssembly.Name: AssemblyName,
-                ContainingNamespace: { Name: DeviceNsName, ContainingNamespace: { Name: IoTNsName, ContainingNamespace.IsGlobalNamespace: true } },
-                TypeArguments: { Length: 2 } typeArgs
-            }
-        } &&
-        model.GetConstantValue(attribute.ArgumentList!.Arguments[0].Expression, cancellationToken) is { HasValue: true, Value: string value }
-            ? new(typeArgs[0], typeArgs[1], value)
-            : null;
+        attributeData = null;
+        targetType = null;
+        return false;
+    }
 }

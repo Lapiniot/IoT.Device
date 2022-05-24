@@ -8,7 +8,8 @@ namespace IoT.Device.Generators;
 
 internal static class LibraryInitSyntaxGenerator
 {
-    public static SyntaxNode GenerateLibInitClass(string namespaceName, string className, string initMethodName, IEnumerable<ExportDescriptor> exports)
+    public static SyntaxNode GenerateLibInitClass(string namespaceName, string className, string initMethodName,
+        IEnumerable<(string TargetType, string ImplType, string Model)> exports)
     {
         return NamespaceDeclaration(ParseName(namespaceName))
             .AddUsings(UsingDirective(ParseName("IoT.Device")))
@@ -25,11 +26,13 @@ internal static class LibraryInitSyntaxGenerator
             .NormalizeWhitespace();
     }
 
-    private static IEnumerable<StatementSyntax> GenerateExportStatements(IEnumerable<ExportDescriptor> exports) =>
+    private static IEnumerable<StatementSyntax> GenerateExportStatements(
+        IEnumerable<(string TargetType, string ImplType, string Model)> exports) =>
         exports.Select(d => ExpressionStatement(
             InvocationExpression(
                 MemberAccessExpression(SimpleMemberAccessExpression,
-                    GenericName(Identifier("DeviceFactory"), TypeArgumentList(SingletonSeparatedList(ParseTypeName(d.Type.ToDisplayString())))),
-                    GenericName(Identifier("Register"), TypeArgumentList(SingletonSeparatedList(ParseTypeName(d.ImplType.ToDisplayString()))))),
-                ArgumentList(SingletonSeparatedList(Argument(LiteralExpression(StringLiteralExpression, Literal(d.ModelId))))))));
+                    GenericName(Identifier("DeviceFactory"), TypeArgumentList(SingletonSeparatedList(ParseTypeName(d.TargetType)))),
+                    GenericName(Identifier("Register"), TypeArgumentList(SingletonSeparatedList(ParseTypeName(d.ImplType))))),
+                ArgumentList(SingletonSeparatedList(Argument(LiteralExpression(StringLiteralExpression,
+                    Literal(d.Model))))))));
 }
