@@ -1,5 +1,4 @@
 using System.Text;
-using IoT.Device.Generators.Helpers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -55,28 +54,86 @@ public class ModelNameGenerator : IIncrementalGenerator
                     continue;
                 }
 
-                if (!implType.GetBaseTypes().Any(bt => bt.GetMembers("ModelName").Any(p => p is IPropertySymbol
-                    {
-                        IsAbstract: true,
-                        Type.SpecialType: System_String
-                    })) || implType.GetMembers("ModelName").Any(p => p is IPropertySymbol { IsOverride: true }))
+                var shouldSkip = false;
+
+                foreach (var member in implType.GetMembers("ModelName"))
                 {
-                    continue;
+                    if (member is IPropertySymbol)
+                    {
+                        shouldSkip = true;
+                        break;
+                    }
                 }
 
-                if (!target.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword)))
+                // Class already contains ModelName property defined, skip generation
+                if (shouldSkip) continue;
+
+                shouldSkip = true;
+                var type = implType;
+                while ((type = type!.BaseType) is { })
                 {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    var shouldBreak = false;
+
+                    foreach (var member in type.GetMembers("ModelName"))
+                    {
+                        cancellationToken.ThrowIfCancellationRequested();
+
+                        if (member is IPropertySymbol
+                            {
+                                IsAbstract: var isAbstract, IsSealed: var isSealed, IsReadOnly: true,
+                                Type.SpecialType: System_String,
+                                GetMethod.DeclaredAccessibility: Accessibility.Public
+                            })
+                        {
+                            if (isAbstract)
+                            {
+                                shouldSkip = false;
+                                shouldBreak = true;
+                                break;
+                            }
+
+                            if (isSealed)
+                            {
+                                shouldBreak = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (shouldBreak) break;
+                }
+
+                // None of class base types has readonly abstract property ModelName, which we can override
+                if (shouldSkip) continue;
+
+                shouldSkip = true;
+
+                foreach (var item in target.Modifiers)
+                {
+                    if (item.IsKind(SyntaxKind.PartialKeyword))
+                    {
+                        shouldSkip = false;
+                        break;
+                    }
+                }
+
+                if (shouldSkip)
+                {
+                    // Class is not partial, thus no chance to extend via code generation
                     context.ReportDiagnostic(Diagnostic.Create(NoPartialModifier, target.GetLocation()));
                     return;
                 }
 
                 if (implType.IsAbstract)
                 {
+                    // Abstract classes are not supported too
                     context.ReportDiagnostic(Diagnostic.Create(AbstractClassNotSupported, target.GetLocation()));
                     return;
                 }
 
                 if (!Parser.TryGetExportAttribute(implType, out var attribute, out var targetType, cancellationToken))
+                    // weird situation, should be impossible to get here, but just skip so far
                     continue;
 
                 var modelName = attribute switch
