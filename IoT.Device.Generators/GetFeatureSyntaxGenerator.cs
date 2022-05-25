@@ -1,7 +1,6 @@
 using IoT.Device.Generators.Helpers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxKind;
 
@@ -9,26 +8,25 @@ namespace IoT.Device.Generators;
 
 internal static class GetFeatureSyntaxGenerator
 {
-    public static SyntaxNode GenerateAugmentation(ITypeSymbol @class, INamedTypeSymbol[] attributes)
+    public static SyntaxNode GenerateAugmentation(string className, string namespaceName, IReadOnlyCollection<INamedTypeSymbol> attributes, bool invokeBaseImpl)
     {
-        var implementationTypes = attributes.Select(a => a.TypeArguments.Length > 1 ? a.TypeArguments[1] : a.TypeArguments[0]).
-            Distinct<ITypeSymbol>(SymbolEqualityComparer.Default);
+        var implementationTypes = attributes.Select(a => a.TypeArguments.Length > 1 ? a.TypeArguments[1] : a.TypeArguments[0]).Distinct<ITypeSymbol>(SymbolEqualityComparer.Default);
 
         var conditions = attributes.Select(a => a switch
-            {
-                { TypeArguments: { Length: 1 } args } => (Types: args[0].EnumerateRelatedFeatureTypes(), ImplType: args[0]),
-                { TypeArguments: { Length: 2 } dargs } => (Types: dargs[0].EnumerateRelatedFeatureTypes(), ImplType: dargs[1]),
-                _ => default
-            });
+        {
+            { TypeArguments: { Length: 1 } args } => (Types: args[0].EnumerateRelatedFeatureTypes(), ImplType: args[0]),
+            { TypeArguments: { Length: 2 } dargs } => (Types: dargs[0].EnumerateRelatedFeatureTypes(), ImplType: dargs[1]),
+            _ => default
+        });
 
-        return NamespaceDeclaration(ParseName(@class.ContainingNamespace.ToDisplayString()))
-            .AddMembers(ClassDeclaration(@class.Name).AddModifiers(Token(PublicKeyword), Token(PartialKeyword))
+        return NamespaceDeclaration(ParseName(namespaceName))
+            .AddMembers(ClassDeclaration(className).AddModifiers(Token(PublicKeyword), Token(PartialKeyword))
                 .AddMembers(implementationTypes.Select(a => CreateFeatureInstanceField(
                     GetFeatureFieldName(a.Name), a.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat))).ToArray())
                 .AddMembers(MethodDeclaration(IdentifierName("T"), Identifier("GetFeature"))
                     .AddTypeParameterListParameters(TypeParameter(Identifier("T")))
                     .AddModifiers(Token(PublicKeyword), Token(OverrideKeyword))
-                    .WithBody(Block(GenerateGetFeatureBody(conditions, invokeBaseImpl: @class.BaseType.HasOverrideForGetFeatureMethod())))))
+                    .WithBody(Block(GenerateGetFeatureBody(conditions, invokeBaseImpl)))))
             .NormalizeWhitespace();
     }
 
@@ -43,7 +41,8 @@ internal static class GetFeatureSyntaxGenerator
 
     private static IEnumerable<StatementSyntax> GenerateGetFeatureBody(IEnumerable<(IEnumerable<ITypeSymbol> Types, ITypeSymbol ImplType)> conditions, bool invokeBaseImpl)
     {
-        yield return LocalDeclarationStatement(VariableDeclaration(ParseTypeName("Type"), SingletonSeparatedList(VariableDeclarator(Identifier("type"), null, EqualsValueClause(TypeOfExpression(ParseTypeName("T")))))));
+        yield return LocalDeclarationStatement(VariableDeclaration(ParseTypeName("Type"),
+            SingletonSeparatedList(VariableDeclarator(Identifier("type"), null, EqualsValueClause(TypeOfExpression(ParseTypeName("T")))))));
 
         foreach (var (types, implType) in conditions)
         {

@@ -15,12 +15,13 @@ namespace IoT.Device.Generators;
 [Generator]
 public class ModelNameGenerator : IIncrementalGenerator
 {
-    private static readonly DiagnosticDescriptor NoPartialModifier = new("MNGEN001",
+    private static readonly DiagnosticDescriptor NoPartialWarning = new("MNGEN001",
         "Generation warning.",
-        "Class is marked for export and has abstract property 'ModelName' that can be generated from the relevant ExportAttribute.ModelName, but class declaration has no 'partial' modifier keyword, so it cannot be augmented by the generator.",
+        "Class is marked for export and has abstract property 'ModelName' that can be generated from the relevant ExportAttribute.ModelName, " +
+        "but class declaration has no 'partial' modifier keyword, so it cannot be augmented by the generator.",
         nameof(ModelNameGenerator), DiagnosticSeverity.Warning, true);
 
-    private static readonly DiagnosticDescriptor AbstractClassNotSupported = new("MNGEN002",
+    private static readonly DiagnosticDescriptor AbstractClassNotSupportedWarning = new("MNGEN002",
         "Generation warning.",
         "Using ExportAttribute with abstract classes is meaningless, consider using it with purpose for concrete final classes.",
         nameof(ModelNameGenerator), DiagnosticSeverity.Warning, true);
@@ -45,7 +46,7 @@ public class ModelNameGenerator : IIncrementalGenerator
 
                 if (target is null ||
                     compilation.GetSemanticModel(target.SyntaxTree) is not { } model ||
-                    model.GetDeclaredSymbol(target, cancellationToken) is not INamedTypeSymbol implType)
+                    model.GetDeclaredSymbol(target, cancellationToken) is not { } implType)
                 {
                     continue;
                 }
@@ -117,14 +118,14 @@ public class ModelNameGenerator : IIncrementalGenerator
                 if (shouldSkip)
                 {
                     // Class is not partial, thus no chance to extend via code generation
-                    context.ReportDiagnostic(Diagnostic.Create(NoPartialModifier, target.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(NoPartialWarning, target.GetLocation()));
                     continue;
                 }
 
                 if (implType.IsAbstract)
                 {
                     // Abstract classes are not supported too
-                    context.ReportDiagnostic(Diagnostic.Create(AbstractClassNotSupported, target.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(AbstractClassNotSupportedWarning, target.GetLocation()));
                     continue;
                 }
 
@@ -134,7 +135,7 @@ public class ModelNameGenerator : IIncrementalGenerator
 
                 var modelName = attribute switch
                 {
-                    // ModelName named argument specified explicitely, take it
+                    // ModelName named argument specified explicitly, take it
                     {
                         NamedArguments: [{ Key: "ModelName", Value: { Kind: Primitive, Type.SpecialType: System_String, Value: string value } }]
                     } => value,
