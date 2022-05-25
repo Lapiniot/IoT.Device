@@ -68,7 +68,7 @@ internal static class SemanticModelExtensions
 
     public static INamedTypeSymbol[] GetSupportsFeatureAttributes(this ITypeSymbol symbol) =>
         symbol.GetAttributes()
-            .Where(a => a.AttributeClass.IsSupportsFeatureAttribute()).Select(a => a.AttributeClass!)
+            .Where(a => IsSupportsFeatureAttribute(a.AttributeClass)).Select(a => a.AttributeClass!)
             .Distinct<INamedTypeSymbol>(SymbolEqualityComparer.Default).ToArray();
 
     public static bool HasOverrideForGetFeatureMethod(this ITypeSymbol? symbol)
@@ -81,7 +81,7 @@ internal static class SemanticModelExtensions
                     TypeArguments.Length: 1,
                     Parameters.Length: 0,
                     IsOverride: true
-                }) || symbol.GetAttributes().Any(a => a.AttributeClass.IsSupportsFeatureAttribute()))
+                }) || symbol.GetAttributes().Any(a => IsSupportsFeatureAttribute(a.AttributeClass)))
             {
                 return true;
             }
@@ -90,13 +90,5 @@ internal static class SemanticModelExtensions
         }
 
         return false;
-    }
-
-    public static IEnumerable<ITypeSymbol> GetBaseTypes(this ITypeSymbol? symbol)
-    {
-        while ((symbol = symbol?.BaseType) is { })
-        {
-            yield return symbol;
-        }
     }
 }

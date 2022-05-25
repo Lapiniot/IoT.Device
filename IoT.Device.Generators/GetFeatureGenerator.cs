@@ -6,6 +6,7 @@ using IoT.Device.Generators.Helpers;
 
 using Parser = IoT.Device.Generators.SupportsFeatureSyntaxParser;
 using Generator = IoT.Device.Generators.GetFeatureSyntaxGenerator;
+using Microsoft.CodeAnalysis.CSharp;
 
 namespace IoT.Device.Generators;
 
@@ -14,21 +15,58 @@ namespace IoT.Device.Generators;
 [Generator]
 public class GetFeatureGenerator : IIncrementalGenerator
 {
+    private static readonly DiagnosticDescriptor NoPartialModifier = new("GFGEN001",
+        "Generation warning.",
+        "Class is marked with 'SupportsFeatureAttribute', but declaration has no 'partial' modifier keyword, so it cannot be augmented by the generator.",
+        nameof(GetFeatureGenerator), DiagnosticSeverity.Warning, true);
+
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        var source = context.SyntaxProvider.CreateSyntaxProvider(
-            static (node, _) => Parser.IsSuitableCandidate(node),
-            static (context, ct) => Parser.Parse((ClassDeclarationSyntax)context.Node, context.SemanticModel, ct))
+        var targets = context.SyntaxProvider.CreateSyntaxProvider(
+            static (syntaxNode, _) => Parser.IsSyntaxTargetForGeneration(syntaxNode),
+            static (context, ct) => Parser.GetSemanticTargetForGeneration((ClassDeclarationSyntax)context.Node, context.SemanticModel, ct))
             .Where(symbol => symbol is not null);
 
-        context.RegisterSourceOutput(source, (ctx, symbol) =>
-        {
-            var attributes = symbol!.GetSupportsFeatureAttributes();
+        var combined = context.CompilationProvider.Combine(targets.Collect());
 
-            if (attributes.Length > 0)
+        context.RegisterSourceOutput(combined, (ctx, source) =>
+        {
+            var (compilation, targets) = source;
+
+            foreach (var target in targets)
             {
-                ctx.AddSource($"{symbol!.Name}.GetFeature.g.cs",
-                    SourceText.From(Generator.GenerateAugmentation(symbol, attributes).ToFullString(), encoding: Encoding.UTF8));
+                if (target is null ||
+                    compilation.GetSemanticModel(target.SyntaxTree) is not { } model ||
+                    model.GetDeclaredSymbol(target, ctx.CancellationToken) is not INamedTypeSymbol symbol)
+                {
+                    continue;
+                }
+
+                var shouldSkip = true;
+
+                foreach (var item in target.Modifiers)
+                {
+                    if (item.IsKind(SyntaxKind.PartialKeyword))
+                    {
+                        shouldSkip = false;
+                        break;
+                    }
+                }
+
+                if (shouldSkip)
+                {
+                    // Class is not partial, thus no chance to extend via code generation
+                    ctx.ReportDiagnostic(Diagnostic.Create(NoPartialModifier, target.GetLocation()));
+                    continue;
+                }
+
+                var attributes = symbol.GetSupportsFeatureAttributes();
+
+                if (attributes.Length > 0)
+                {
+                    ctx.AddSource($"{symbol!.Name}.GetFeature.g.cs",
+                        SourceText.From(Generator.GenerateAugmentation(symbol, attributes).ToFullString(), encoding: Encoding.UTF8));
+                }
             }
         });
     }

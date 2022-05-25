@@ -14,11 +14,9 @@ public class LibraryInitGenerator : IIncrementalGenerator
 {
 #pragma warning disable RS2008
     private static readonly DiagnosticDescriptor NoDefNamespaceWarning = new("LIGEN001",
-        title: "Generation warning",
-        messageFormat: "Cannot get library's default namespace",
-        category: "LibraryInitGenerator",
-        DiagnosticSeverity.Warning,
-        isEnabledByDefault: true);
+        title: "Generation warning.",
+        messageFormat: "Cannot get library's default namespace.",
+        category: "LibraryInitGenerator", DiagnosticSeverity.Warning, isEnabledByDefault: true);
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
