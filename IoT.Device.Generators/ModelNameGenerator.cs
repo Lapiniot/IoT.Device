@@ -16,18 +16,14 @@ namespace IoT.Device.Generators;
 public class ModelNameGenerator : IIncrementalGenerator
 {
     private static readonly DiagnosticDescriptor NoPartialModifier = new("MNGEN001",
-        "Generation warning",
-        "Class is marked for export and has abstract property 'ModelName' that can be generated from the relevant ExportAttribute.ModelName, but class declaration has no 'partial' modifier keyword, so it cannot be augmented by the generator",
-        nameof(ModelNameGenerator),
-        DiagnosticSeverity.Warning,
-        true);
+        "Generation warning.",
+        "Class is marked for export and has abstract property 'ModelName' that can be generated from the relevant ExportAttribute.ModelName, but class declaration has no 'partial' modifier keyword, so it cannot be augmented by the generator.",
+        nameof(ModelNameGenerator), DiagnosticSeverity.Warning, true);
 
     private static readonly DiagnosticDescriptor AbstractClassNotSupported = new("MNGEN002",
-        "Generation warning",
-        "Using ExportAttribute with abstract classes is meaningless, consider using it with purpose for concrete final classes",
-        nameof(ModelNameGenerator),
-        DiagnosticSeverity.Warning,
-        true);
+        "Generation warning.",
+        "Using ExportAttribute with abstract classes is meaningless, consider using it with purpose for concrete final classes.",
+        nameof(ModelNameGenerator), DiagnosticSeverity.Warning, true);
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
@@ -122,14 +118,14 @@ public class ModelNameGenerator : IIncrementalGenerator
                 {
                     // Class is not partial, thus no chance to extend via code generation
                     context.ReportDiagnostic(Diagnostic.Create(NoPartialModifier, target.GetLocation()));
-                    return;
+                    continue;
                 }
 
                 if (implType.IsAbstract)
                 {
                     // Abstract classes are not supported too
                     context.ReportDiagnostic(Diagnostic.Create(AbstractClassNotSupported, target.GetLocation()));
-                    return;
+                    continue;
                 }
 
                 if (!Parser.TryGetExportAttribute(implType, out var attribute, out var targetType, cancellationToken))
