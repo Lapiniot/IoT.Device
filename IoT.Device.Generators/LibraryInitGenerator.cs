@@ -25,11 +25,13 @@ public class LibraryInitGenerator : IIncrementalGenerator
             static (context, ct) => Parser.GetSemanticTargetForGeneration((ClassDeclarationSyntax)context.Node, context.SemanticModel, ct))
             .Where(static target => target is not null);
 
-        var combined = context.CompilationProvider.Combine(targets.Collect());
+        var combined = context.CompilationProvider
+            .Combine(context.AnalyzerConfigOptionsProvider)
+            .Combine(targets.Collect());
 
         context.RegisterSourceOutput(combined, static (ctx, source) =>
         {
-            var (compilation, targets) = source;
+            var ((compilation, options), targets) = source;
 
             var assemblyName = compilation.AssemblyName;
 
@@ -39,7 +41,13 @@ public class LibraryInitGenerator : IIncrementalGenerator
                 return;
             }
 
-            var code = Generator.GenerateLibInitClass(assemblyName!, "Library", "Init", GetExportDescriptors(targets, compilation, ctx.CancellationToken));
+            var config = options.GlobalOptions;
+            const string prefix = "build_property.library_init_generator_";
+
+            var code = Generator.GenerateLibInitClass(assemblyName!,
+                config.TryGetValue($"{prefix}class_name", out var value) && value is not "" ? value : "Library",
+                config.TryGetValue($"{prefix}init_method_name", out value) && value is not "" ? value : "Init",
+                GetExportDescriptors(targets, compilation, ctx.CancellationToken));
 
             ctx.AddSource("LibraryInit.g.cs", SourceText.From(code, Encoding.UTF8));
         });
