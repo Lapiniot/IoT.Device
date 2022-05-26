@@ -7,7 +7,8 @@ internal record struct ConditionData(string FieldName, IReadOnlyCollection<strin
 internal static class GetFeatureSyntaxGenerator
 {
     public static string GenerateAugmentation(string className, string namespaceName,
-        Dictionary<string, ConditionData> model, bool invokeBaseImpl)
+        Dictionary<string, ConditionData> model, bool invokeBaseImpl,
+        CancellationToken cancellationToken)
     {
         var sb = new StringBuilder();
         sb.Append("""
@@ -31,6 +32,9 @@ internal static class GetFeatureSyntaxGenerator
 
         namespace 
         """);
+
+        cancellationToken.ThrowIfCancellationRequested();
+
         sb.AppendLine(namespaceName);
         sb.Append("""
         {
@@ -52,6 +56,8 @@ internal static class GetFeatureSyntaxGenerator
             sb.AppendLine(";");
         }
 
+        cancellationToken.ThrowIfCancellationRequested();
+
         sb.Append("""
 
                 public override T GetFeature<T>()
@@ -63,6 +69,8 @@ internal static class GetFeatureSyntaxGenerator
 
         foreach (var pair in model)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             var data = pair.Value;
 
             sb.Append("""
@@ -72,6 +80,8 @@ internal static class GetFeatureSyntaxGenerator
 
             foreach (var featureType in data.FeatureTypes)
             {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 if (!first)
                 {
                     sb.Append("""
@@ -94,7 +104,7 @@ internal static class GetFeatureSyntaxGenerator
             """);
             sb.Append(data.FieldName);
             sb.Append("""
-            ??= new(this)) as T;
+             ??= new(this)) as T;
                         }
 
 

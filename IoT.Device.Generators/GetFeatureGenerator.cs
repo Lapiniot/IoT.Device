@@ -9,7 +9,6 @@ using Generator = IoT.Device.Generators.GetFeatureSyntaxGenerator;
 
 namespace IoT.Device.Generators;
 
-// TODO: Filter off inaccessible feature types (abstract classes, missing suitable constructor etc.)
 [Generator]
 public class GetFeatureGenerator : IIncrementalGenerator
 {
@@ -40,7 +39,7 @@ public class GetFeatureGenerator : IIncrementalGenerator
         context.RegisterSourceOutput(combined, (ctx, source) =>
         {
             var (compilation, targets) = source;
-
+            var cancellationToken = ctx.CancellationToken;
             var comparer = SymbolEqualityComparer.Default;
 
             var featureBaseType = compilation.GetTypeByMetadataName("IoT.Device.DeviceFeature`1");
@@ -50,8 +49,8 @@ public class GetFeatureGenerator : IIncrementalGenerator
             foreach (var target in targets)
             {
                 if (target is null ||
-                    compilation.GetSemanticModel(target.SyntaxTree) is not { } model ||
-                    model.GetDeclaredSymbol(target, ctx.CancellationToken) is not { } symbol)
+                    compilation.GetSemanticModel(target.SyntaxTree) is not { } semanticModel ||
+                    semanticModel.GetDeclaredSymbol(target, cancellationToken) is not { } targetType)
                 {
                     continue;
                 }
@@ -76,10 +75,12 @@ public class GetFeatureGenerator : IIncrementalGenerator
 
                 #endregion
 
+                cancellationToken.ThrowIfCancellationRequested();
+
                 #region Check target has no implicetely defined GetFeature<T>() method
 
                 skipHere = false;
-                foreach (var member in symbol.GetMembers("GetFeature"))
+                foreach (var member in targetType.GetMembers("GetFeature"))
                 {
                     if (member is not IMethodSymbol { IsGenericMethod: true, TypeArguments.Length: 1, Parameters.Length: 0 })
                         continue;
@@ -97,9 +98,11 @@ public class GetFeatureGenerator : IIncrementalGenerator
 
                 #endregion
 
+                cancellationToken.ThrowIfCancellationRequested();
+
                 #region Check GetFeature<T>() is available for override
 
-                var type = symbol;
+                var type = targetType;
                 skipHere = false;
                 while (!(type = type.BaseType)!.Equals(objectType, comparer))
                 {
@@ -125,21 +128,22 @@ public class GetFeatureGenerator : IIncrementalGenerator
 
                 #endregion
 
+                cancellationToken.ThrowIfCancellationRequested();
+
                 #region Extract all SupportsFeatureAttribute<TFeature>/SupportsFeatureAttribute<TFeature,TImpl>
 
-                var attributes = symbol.GetAttributes();
-                var list = new List<INamedTypeSymbol>(attributes.Length);
-                var features = new Dictionary<string, ConditionData>(attributes.Length);
-
-                // System.Diagnostics.Debugger.Launch();
+                var attributes = targetType.GetAttributes();
+                var features = new Dictionary<string, ConditionData>(attributes.Length, StringComparer.Ordinal);
+                var fields = new HashSet<string>(StringComparer.Ordinal);
 
                 foreach (var attribute in attributes)
                 {
+                    cancellationToken.ThrowIfCancellationRequested();
+
                     var attributeClass = attribute.AttributeClass;
                     var constructedFrom = attributeClass!.ConstructedFrom;
                     if (constructedFrom.BaseType?.Equals(supportsFeatureAttributeBaseType, comparer) == true)
                     {
-                        list.Add(attributeClass);
                         var implType = attributeClass.TypeArguments switch
                         {
                         [var value] => value,
@@ -152,7 +156,13 @@ public class GetFeatureGenerator : IIncrementalGenerator
                         if (!features.TryGetValue(fullTypeName, out var data))
                         {
                             var name = implType.Name;
-                            data = new($"{char.ToLowerInvariant(name[0])}{name.Substring(1)}Feature", new HashSet<string>());
+                            name = $"{char.ToLowerInvariant(name[0])}{name.Substring(1)}Feature";
+
+                            var fieldName = name;
+                            var index = 1;
+                            while (!fields.Add(fieldName)) fieldName = $"{name}{index++}";
+
+                            data = new(fieldName, new HashSet<string>(StringComparer.Ordinal));
                             features.Add(fullTypeName, data);
                         }
 
@@ -161,6 +171,8 @@ public class GetFeatureGenerator : IIncrementalGenerator
 
                         while (featureType is INamedTypeSymbol { BaseType.ConstructedFrom: { } cf } && cf.Equals(featureBaseType, comparer) == false)
                         {
+                            cancellationToken.ThrowIfCancellationRequested();
+
                             featureTypes.Add(featureType.ToDisplayString(FullyQualifiedFormat));
 
                             foreach (var @interface in featureType.AllInterfaces)
@@ -173,7 +185,7 @@ public class GetFeatureGenerator : IIncrementalGenerator
                     }
                 }
 
-                if (list.Count == 0)
+                if (features.Count == 0)
                     // No relevant SupportsFeatureAttribute has been found. Strange, but skip this code-gen target
                     continue;
 
@@ -182,10 +194,11 @@ public class GetFeatureGenerator : IIncrementalGenerator
                 #region Detect whether we need to call base.GetDerived<T>() from our generated override
 
                 var invokeBaseImpl = false;
-                type = symbol;
-
+                type = targetType;
                 while (!(type = type.BaseType)!.Equals(objectType, comparer))
                 {
+                    cancellationToken.ThrowIfCancellationRequested();
+
                     foreach (var member in type.GetMembers("GetFeature"))
                     {
                         if (member is not IMethodSymbol { IsGenericMethod: true, TypeArguments.Length: 1, Parameters.Length: 0, IsOverride: true })
@@ -197,8 +210,12 @@ public class GetFeatureGenerator : IIncrementalGenerator
 
                     if (invokeBaseImpl) break;
 
+                    cancellationToken.ThrowIfCancellationRequested();
+
                     foreach (var attribute in type.GetAttributes())
                     {
+                        cancellationToken.ThrowIfCancellationRequested();
+
                         var constructedFrom = attribute.AttributeClass!.ConstructedFrom;
 
                         if (constructedFrom.BaseType?.Equals(supportsFeatureAttributeBaseType, comparer) == false)
@@ -215,8 +232,10 @@ public class GetFeatureGenerator : IIncrementalGenerator
 
                 #endregion
 
-                var code = Generator.GenerateAugmentation(symbol.Name, symbol.ContainingNamespace.ToDisplayString(), features, invokeBaseImpl);
-                ctx.AddSource($"{symbol.Name}.GetFeature.g.cs", SourceText.From(code, Encoding.UTF8));
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var code = Generator.GenerateAugmentation(targetType.Name, targetType.ContainingNamespace.ToDisplayString(), features, invokeBaseImpl, cancellationToken);
+                ctx.AddSource($"{targetType.ToDisplayString(MinimallyQualifiedFormat)}.g.cs", SourceText.From(code, Encoding.UTF8));
             }
         });
     }
