@@ -1,4 +1,3 @@
-using IoT.Device.Generators.Helpers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
@@ -6,29 +5,20 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxKind;
 
 namespace IoT.Device.Generators;
 
+internal record struct ConditionData(string ImplType, string FieldName, IReadOnlyCollection<string> FeatureTypes);
+
 internal static class GetFeatureSyntaxGenerator
 {
-    public static SyntaxNode GenerateAugmentation(string className, string namespaceName, IReadOnlyCollection<INamedTypeSymbol> attributes, bool invokeBaseImpl)
-    {
-        var implementationTypes = attributes.Select(a => a.TypeArguments.Length > 1 ? a.TypeArguments[1] : a.TypeArguments[0]).Distinct<ITypeSymbol>(SymbolEqualityComparer.Default);
-
-        var conditions = attributes.Select(a => a switch
-        {
-            { TypeArguments: { Length: 1 } args } => (Types: args[0].EnumerateRelatedFeatureTypes(), ImplType: args[0]),
-            { TypeArguments: { Length: 2 } dargs } => (Types: dargs[0].EnumerateRelatedFeatureTypes(), ImplType: dargs[1]),
-            _ => default
-        });
-
-        return NamespaceDeclaration(ParseName(namespaceName))
+    public static string GenerateAugmentation(string className, string namespaceName, bool invokeBaseImpl,
+        IReadOnlyDictionary<string, string> fields, IReadOnlyCollection<ConditionData> conditions) =>
+        NamespaceDeclaration(ParseName(namespaceName))
             .AddMembers(ClassDeclaration(className).AddModifiers(Token(PublicKeyword), Token(PartialKeyword))
-                .AddMembers(implementationTypes.Select(a => CreateFeatureInstanceField(
-                    GetFeatureFieldName(a.Name), a.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat))).ToArray())
+                .AddMembers(fields.Select(pair => CreateFeatureInstanceField(pair.Value, pair.Key)).ToArray())
                 .AddMembers(MethodDeclaration(IdentifierName("T"), Identifier("GetFeature"))
                     .AddTypeParameterListParameters(TypeParameter(Identifier("T")))
                     .AddModifiers(Token(PublicKeyword), Token(OverrideKeyword))
                     .WithBody(Block(GenerateGetFeatureBody(conditions, invokeBaseImpl)))))
-            .NormalizeWhitespace();
-    }
+            .NormalizeWhitespace().ToFullString();
 
     private static MemberDeclarationSyntax CreateFeatureInstanceField(string fieldName, string typeName) =>
         FieldDeclaration(VariableDeclaration(
@@ -36,17 +26,14 @@ internal static class GetFeatureSyntaxGenerator
                 SingletonSeparatedList(VariableDeclarator(Identifier(fieldName)))))
             .AddModifiers(Token(PrivateKeyword));
 
-    private static string GetFeatureFieldName(string typeName) =>
-        $"{char.ToLowerInvariant(typeName[0])}{typeName.Substring(1).Replace(".", "")}Feature";
-
-    private static IEnumerable<StatementSyntax> GenerateGetFeatureBody(IEnumerable<(IEnumerable<ITypeSymbol> Types, ITypeSymbol ImplType)> conditions, bool invokeBaseImpl)
+    private static IEnumerable<StatementSyntax> GenerateGetFeatureBody(IEnumerable<ConditionData> conditions, bool invokeBaseImpl)
     {
         yield return LocalDeclarationStatement(VariableDeclaration(ParseTypeName("Type"),
             SingletonSeparatedList(VariableDeclarator(Identifier("type"), null, EqualsValueClause(TypeOfExpression(ParseTypeName("T")))))));
 
-        foreach (var (types, implType) in conditions)
+        foreach (var (implType, fieldName, featureTypes) in conditions)
         {
-            yield return GenerateTypeTestConditionBlock(types, implType);
+            yield return GenerateTypeTestConditionBlock(featureTypes, implType, fieldName);
         }
 
         yield return ReturnStatement(invokeBaseImpl
@@ -57,7 +44,7 @@ internal static class GetFeatureSyntaxGenerator
             : LiteralExpression(NullLiteralExpression));
     }
 
-    private static StatementSyntax GenerateTypeTestConditionBlock(IEnumerable<ITypeSymbol> featureTypes, ITypeSymbol implType) =>
+    private static StatementSyntax GenerateTypeTestConditionBlock(IEnumerable<string> featureTypes, string implType, string fieldName) =>
         IfStatement(
             GenerateTypeTestCondition(featureTypes),
             Block(ReturnStatement(
@@ -65,13 +52,13 @@ internal static class GetFeatureSyntaxGenerator
                     AsExpression,
                     ParenthesizedExpression(AssignmentExpression(
                         CoalesceAssignmentExpression,
-                        IdentifierName(GetFeatureFieldName(implType.Name)),
+                        IdentifierName(fieldName),
                         ObjectCreationExpression(
-                            ParseTypeName(implType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)),
+                            ParseTypeName(implType),
                             ArgumentList(SingletonSeparatedList(Argument(ThisExpression()))), null))),
                     ParseTypeName("T")))));
 
-    private static ExpressionSyntax GenerateTypeTestCondition(IEnumerable<ITypeSymbol> types)
+    private static ExpressionSyntax GenerateTypeTestCondition(IEnumerable<string> types)
     {
         ExpressionSyntax? expression = null;
         foreach (var type in types)
@@ -80,13 +67,13 @@ internal static class GetFeatureSyntaxGenerator
                 ? BinaryExpression(
                     EqualsExpression,
                     IdentifierName("type"),
-                    TypeOfExpression(ParseTypeName(type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat))))
+                    TypeOfExpression(ParseTypeName(type)))
                 : BinaryExpression(
                     LogicalOrExpression,
                     BinaryExpression(
                         EqualsExpression,
                         IdentifierName("type"),
-                        TypeOfExpression(ParseTypeName(type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)))),
+                        TypeOfExpression(ParseTypeName(type))),
                     expression);
         }
 

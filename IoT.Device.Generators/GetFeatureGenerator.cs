@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
+using static Microsoft.CodeAnalysis.SymbolDisplayFormat;
 using Parser = IoT.Device.Generators.SupportsFeatureSyntaxParser;
 using Generator = IoT.Device.Generators.GetFeatureSyntaxGenerator;
 
@@ -42,6 +43,7 @@ public class GetFeatureGenerator : IIncrementalGenerator
 
             var comparer = SymbolEqualityComparer.Default;
 
+            var featureBaseType = compilation.GetTypeByMetadataName("IoT.Device.DeviceFeature`1");
             var supportsFeatureAttributeBaseType = compilation.GetTypeByMetadataName("IoT.Device.SupportsFeatureAttribute");
             var objectType = compilation.ObjectType;
 
@@ -127,6 +129,10 @@ public class GetFeatureGenerator : IIncrementalGenerator
 
                 var attributes = symbol.GetAttributes();
                 var list = new List<INamedTypeSymbol>(attributes.Length);
+                var fields = new Dictionary<string, string>(attributes.Length);
+                var conditions = new List<ConditionData>(attributes.Length);
+
+                // System.Diagnostics.Debugger.Launch();
 
                 foreach (var attribute in attributes)
                 {
@@ -135,10 +141,42 @@ public class GetFeatureGenerator : IIncrementalGenerator
                     if (constructedFrom.BaseType?.Equals(supportsFeatureAttributeBaseType, comparer) == true)
                     {
                         list.Add(attributeClass);
+                        var implType = attributeClass.TypeArguments switch
+                        {
+                        [var value] => value,
+                        [_, var value] => value,
+                            _ => throw new NotImplementedException()
+                        };
+
+                        var fullTypeName = implType.ToDisplayString(FullyQualifiedFormat);
+
+                        if (!fields.TryGetValue(fullTypeName, out var fieldName))
+                        {
+                            var name = implType.Name;
+                            fieldName = $"{char.ToLowerInvariant(name[0])}{name.Substring(1)}Feature";
+                            fields.Add(fullTypeName, fieldName);
+                        }
+
+                        var featureType = attributeClass.TypeArguments[0];
+                        var featureTypes = new HashSet<string>();
+
+                        while (featureType is INamedTypeSymbol { BaseType.ConstructedFrom: { } cf } && cf.Equals(featureBaseType, comparer) == false)
+                        {
+                            featureTypes.Add(featureType.ToDisplayString(FullyQualifiedFormat));
+
+                            foreach (var @interface in featureType.AllInterfaces)
+                            {
+                                featureTypes.Add(@interface.ToDisplayString(FullyQualifiedFormat));
+                            }
+
+                            featureType = featureType.BaseType;
+                        }
+
+                        conditions.Add(new(fullTypeName, fieldName, featureTypes));
                     }
                 }
 
-                if (list.Count <= 0)
+                if (list.Count == 0)
                     // No relevant SupportsFeatureAttribute has been found. Strange, but skip this code-gen target
                     continue;
 
@@ -148,6 +186,7 @@ public class GetFeatureGenerator : IIncrementalGenerator
 
                 var invokeBaseImpl = false;
                 type = symbol;
+
                 while (!(type = type.BaseType)!.Equals(objectType, comparer))
                 {
                     foreach (var member in type.GetMembers("GetFeature"))
@@ -179,7 +218,7 @@ public class GetFeatureGenerator : IIncrementalGenerator
 
                 #endregion
 
-                var code = Generator.GenerateAugmentation(symbol.Name, symbol.ContainingNamespace.ToDisplayString(), list, invokeBaseImpl).ToFullString();
+                var code = Generator.GenerateAugmentation(symbol.Name, symbol.ContainingNamespace.ToDisplayString(), invokeBaseImpl, fields, conditions);
                 ctx.AddSource($"{symbol.Name}.GetFeature.g.cs", SourceText.From(code, Encoding.UTF8));
             }
         });
