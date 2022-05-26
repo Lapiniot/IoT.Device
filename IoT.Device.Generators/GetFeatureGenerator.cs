@@ -129,8 +129,7 @@ public class GetFeatureGenerator : IIncrementalGenerator
 
                 var attributes = symbol.GetAttributes();
                 var list = new List<INamedTypeSymbol>(attributes.Length);
-                var fields = new Dictionary<string, string>(attributes.Length);
-                var conditions = new List<ConditionData>(attributes.Length);
+                var features = new Dictionary<string, ConditionData>(attributes.Length);
 
                 // System.Diagnostics.Debugger.Launch();
 
@@ -150,15 +149,15 @@ public class GetFeatureGenerator : IIncrementalGenerator
 
                         var fullTypeName = implType.ToDisplayString(FullyQualifiedFormat);
 
-                        if (!fields.TryGetValue(fullTypeName, out var fieldName))
+                        if (!features.TryGetValue(fullTypeName, out var data))
                         {
                             var name = implType.Name;
-                            fieldName = $"{char.ToLowerInvariant(name[0])}{name.Substring(1)}Feature";
-                            fields.Add(fullTypeName, fieldName);
+                            data = new($"{char.ToLowerInvariant(name[0])}{name.Substring(1)}Feature", new HashSet<string>());
+                            features.Add(fullTypeName, data);
                         }
 
                         var featureType = attributeClass.TypeArguments[0];
-                        var featureTypes = new HashSet<string>();
+                        var featureTypes = (HashSet<string>)data.FeatureTypes;
 
                         while (featureType is INamedTypeSymbol { BaseType.ConstructedFrom: { } cf } && cf.Equals(featureBaseType, comparer) == false)
                         {
@@ -171,8 +170,6 @@ public class GetFeatureGenerator : IIncrementalGenerator
 
                             featureType = featureType.BaseType;
                         }
-
-                        conditions.Add(new(fullTypeName, fieldName, featureTypes));
                     }
                 }
 
@@ -218,7 +215,7 @@ public class GetFeatureGenerator : IIncrementalGenerator
 
                 #endregion
 
-                var code = Generator.GenerateAugmentation(symbol.Name, symbol.ContainingNamespace.ToDisplayString(), invokeBaseImpl, fields, conditions);
+                var code = Generator.GenerateAugmentation(symbol.Name, symbol.ContainingNamespace.ToDisplayString(), features, invokeBaseImpl);
                 ctx.AddSource($"{symbol.Name}.GetFeature.g.cs", SourceText.From(code, Encoding.UTF8));
             }
         });

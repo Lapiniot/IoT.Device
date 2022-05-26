@@ -152,7 +152,7 @@ public class ModelNameGenerator : IIncrementalGenerator
                 };
 
                 var code = Generator.GenerateAugmentationClass(implType.Name, implType.ContainingNamespace.ToDisplayString(), modelName);
-                context.AddSource($"{implType.ToDisplayString()}.g.cs", SourceText.From(code.ToFullString(), Encoding.UTF8));
+                context.AddSource($"{implType.ToDisplayString()}.g.cs", SourceText.From(code, Encoding.UTF8));
             }
         });
     }

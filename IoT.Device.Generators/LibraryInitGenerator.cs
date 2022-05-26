@@ -1,9 +1,9 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
-
+using static Microsoft.CodeAnalysis.SymbolDisplayFormat;
 using Generator = IoT.Device.Generators.LibraryInitSyntaxGenerator;
 using Parser = IoT.Device.Generators.ExportAttributeSyntaxParser;
 
@@ -41,7 +41,7 @@ public class LibraryInitGenerator : IIncrementalGenerator
 
             var code = Generator.GenerateLibInitClass(assemblyName!, "Library", "Init", GetExportDescriptors(targets, compilation, ctx.CancellationToken));
 
-            ctx.AddSource("LibraryInit.g.cs", SourceText.From(code.ToFullString(), Encoding.UTF8));
+            ctx.AddSource("LibraryInit.g.cs", SourceText.From(code, Encoding.UTF8));
         });
     }
 
@@ -70,7 +70,7 @@ public class LibraryInitGenerator : IIncrementalGenerator
                     }, ..]
                 })
             {
-                yield return new(targetType!.ToDisplayString(), implType.ToDisplayString(), modelId);
+                yield return new(targetType!.ToDisplayString(FullyQualifiedFormat), implType.ToDisplayString(FullyQualifiedFormat), modelId);
             }
         }
     }
