@@ -235,7 +235,7 @@ public class GetFeatureGenerator : IIncrementalGenerator
                 cancellationToken.ThrowIfCancellationRequested();
 
                 var code = Generator.GenerateAugmentation(targetType.Name, targetType.ContainingNamespace.ToDisplayString(), features, invokeBaseImpl, cancellationToken);
-                ctx.AddSource($"{targetType.ToDisplayString(MinimallyQualifiedFormat)}.g.cs", SourceText.From(code, Encoding.UTF8));
+                ctx.AddSource($"{targetType.ToDisplayString()}.g.cs", SourceText.From(code, Encoding.UTF8));
             }
         });
     }

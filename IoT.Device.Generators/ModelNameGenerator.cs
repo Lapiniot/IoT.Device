@@ -5,7 +5,6 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using static Microsoft.CodeAnalysis.TypedConstantKind;
 using static Microsoft.CodeAnalysis.SpecialType;
-using static Microsoft.CodeAnalysis.SymbolDisplayFormat;
 using Parser = IoT.Device.Generators.ExportAttributeSyntaxParser;
 using Generator = IoT.Device.Generators.ModelNameSyntaxGenerator;
 
@@ -153,7 +152,7 @@ public class ModelNameGenerator : IIncrementalGenerator
                 };
 
                 var code = Generator.GenerateAugmentationClass(implType.Name, implType.ContainingNamespace.ToDisplayString(), modelName);
-                context.AddSource($"{implType.ToDisplayString(MinimallyQualifiedFormat)}.g.cs", SourceText.From(code, Encoding.UTF8));
+                context.AddSource($"{implType.ToDisplayString()}.g.cs", SourceText.From(code, Encoding.UTF8));
             }
         });
     }
