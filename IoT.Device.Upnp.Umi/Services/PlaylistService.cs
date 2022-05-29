@@ -1,20 +1,18 @@
-using System.Diagnostics.CodeAnalysis;
-using IoT.Protocol.Soap;
-using static System.Globalization.CultureInfo;
-
 namespace IoT.Device.Upnp.Umi.Services;
 
-[ExportService(ServiceSchema)]
-public sealed class PlaylistService : SoapActionInvoker
+[ExportService(Playlist)]
+public sealed class PlaylistService : SoapActionInvoker, IUpnpService
 {
-    public const string ServiceSchema = "urn:xiaomi-com:service:Playlist:1";
+    private const string Playlist = "urn:xiaomi-com:service:Playlist:1";
+
+    public static string ServiceSchema => Playlist;
 
     public PlaylistService(SoapControlEndpoint endpoint, Uri controlUri) :
-        base(endpoint, controlUri, ServiceSchema)
+        base(endpoint, controlUri, Playlist)
     { }
 
     public PlaylistService(SoapControlEndpoint endpoint) :
-        base(endpoint, ServiceSchema)
+        base(endpoint, Playlist)
     { }
 
     public Task<IReadOnlyDictionary<string, string>> CreateAsync(uint instanceId = 0,

@@ -1,13 +1,11 @@
-using IoT.Protocol.Soap;
-using static System.Globalization.CultureInfo;
-using static IoT.Protocol.Upnp.UpnpServices;
-
 namespace IoT.Device.Upnp.Services;
 
 [CLSCompliant(false)]
 [ExportService(AVTransport)]
-public sealed class AVTransportService : SoapActionInvoker
+public sealed class AVTransportService : SoapActionInvoker, IUpnpService
 {
+    public static string ServiceSchema => AVTransport;
+
     public AVTransportService(SoapControlEndpoint endpoint, Uri controlUri) :
         base(endpoint, controlUri, AVTransport)
     { }

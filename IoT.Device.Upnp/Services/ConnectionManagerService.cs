@@ -1,11 +1,10 @@
-using IoT.Protocol.Soap;
-using static IoT.Protocol.Upnp.UpnpServices;
-
 namespace IoT.Device.Upnp.Services;
 
 [ExportService(ConnectionManager)]
-public class ConnectionManagerService : SoapActionInvoker
+public class ConnectionManagerService : SoapActionInvoker, IUpnpService
 {
+    public static string ServiceSchema => ConnectionManager;
+
     public ConnectionManagerService(SoapControlEndpoint endpoint, Uri controlUri) :
         base(endpoint, controlUri, ConnectionManager)
     { }

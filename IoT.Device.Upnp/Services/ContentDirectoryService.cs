@@ -1,7 +1,4 @@
 using System.Runtime.CompilerServices;
-using IoT.Protocol.Soap;
-using static System.Globalization.CultureInfo;
-using static IoT.Protocol.Upnp.UpnpServices;
 
 namespace IoT.Device.Upnp.Services;
 
@@ -13,8 +10,10 @@ public enum BrowseMode
 
 [CLSCompliant(false)]
 [ExportService(ContentDirectory)]
-public sealed class ContentDirectoryService : SoapActionInvoker
+public sealed class ContentDirectoryService : SoapActionInvoker, IUpnpService
 {
+    public static string ServiceSchema => ContentDirectory;
+
     public ContentDirectoryService(SoapControlEndpoint endpoint, Uri controlUri) :
         base(endpoint, controlUri, ContentDirectory)
     { }

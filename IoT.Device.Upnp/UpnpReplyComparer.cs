@@ -1,5 +1,3 @@
-using IoT.Protocol.Upnp;
-
 namespace IoT.Device.Upnp;
 
 public class UpnpReplyComparer : IEqualityComparer<SsdpReply>

@@ -1,4 +1,3 @@
-using IoT.Protocol.Soap;
 using IoT.Device.Upnp.Services;
 using IoT.Device.Upnp.Umi.Services;
 using static System.UriKind;

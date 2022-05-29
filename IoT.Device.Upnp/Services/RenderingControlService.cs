@@ -1,13 +1,11 @@
-using IoT.Protocol.Soap;
-using static System.Globalization.CultureInfo;
-using static IoT.Protocol.Upnp.UpnpServices;
-
 namespace IoT.Device.Upnp.Services;
 
 [CLSCompliant(false)]
 [ExportService(RenderingControl)]
-public sealed class RenderingControlService : SoapActionInvoker
+public sealed class RenderingControlService : SoapActionInvoker, IUpnpService
 {
+    public static string ServiceSchema => RenderingControl;
+
     public RenderingControlService(SoapControlEndpoint endpoint, Uri controlUri) :
         base(endpoint, controlUri, RenderingControl)
     { }

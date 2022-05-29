@@ -1,19 +1,18 @@
-using IoT.Protocol.Soap;
-using static System.Globalization.CultureInfo;
-
 namespace IoT.Device.Upnp.Umi.Services;
 
-[ExportService(ServiceSchema)]
-public sealed class QueueService : SoapActionInvoker
+[ExportService(Queue)]
+public sealed class QueueService : SoapActionInvoker, IUpnpService
 {
-    public const string ServiceSchema = "urn:xiaomi-com:service:Queue:1";
+    private const string Queue = "urn:xiaomi-com:service:Queue:1";
 
-    public QueueService(SoapControlEndpoint endpoint) : base(endpoint, ServiceSchema)
+    public static string ServiceSchema => Queue;
+
+    public QueueService(SoapControlEndpoint endpoint) : base(endpoint, Queue)
     {
     }
 
     public QueueService(SoapControlEndpoint endpoint, Uri controlUri) :
-        base(endpoint, controlUri, ServiceSchema)
+        base(endpoint, controlUri, Queue)
     {
     }
 

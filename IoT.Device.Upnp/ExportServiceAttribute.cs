@@ -1,5 +1,3 @@
-using IoT.Protocol.Soap;
-
 namespace IoT.Device.Upnp;
 
 [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true)]

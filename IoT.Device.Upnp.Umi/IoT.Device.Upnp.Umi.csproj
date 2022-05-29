@@ -16,4 +16,11 @@
         </PackageReference>
     </ItemGroup>
 
+    <ItemGroup>
+        <Using Include="IoT.Protocol.Soap" />
+        <Using Include="IoT.Protocol.Upnp" />
+        <Using Include="System.Diagnostics.CodeAnalysis" />
+        <Using Include="System.Globalization.CultureInfo" Static="true" />
+    </ItemGroup>
+
 </Project>

@@ -1,7 +1,5 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Policies;
 using IoT.Protocol;
-using IoT.Protocol.Upnp;
 
 namespace IoT.Device.Upnp;
 
