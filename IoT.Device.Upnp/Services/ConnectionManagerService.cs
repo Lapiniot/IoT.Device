@@ -1,16 +1,12 @@
 namespace IoT.Device.Upnp.Services;
 
 [ExportService(ConnectionManager)]
-public class ConnectionManagerService : SoapActionInvoker, IUpnpService
+public class ConnectionManagerService : SoapActionInvoker, IUpnpService, IUpnpServiceFactory<ConnectionManagerService>
 {
     public static string ServiceSchema => ConnectionManager;
 
     public ConnectionManagerService(SoapControlEndpoint endpoint, Uri controlUri) :
         base(endpoint, controlUri, ConnectionManager)
-    { }
-
-    public ConnectionManagerService(SoapControlEndpoint endpoint) :
-        base(endpoint, ConnectionManager)
     { }
 
     public Task<IReadOnlyDictionary<string, string>> GetProtocolInfoAsync(CancellationToken cancellationToken = default) =>
@@ -21,4 +17,6 @@ public class ConnectionManagerService : SoapActionInvoker, IUpnpService
 
     public Task<IReadOnlyDictionary<string, string>> GetCurrentConnectionIDsAsync(CancellationToken cancellationToken = default) =>
         InvokeAsync("GetCurrentConnectionIDs", null, cancellationToken);
+
+    public static ConnectionManagerService Create(SoapControlEndpoint endpoint, Uri controlUri) => new(endpoint, controlUri);
 }

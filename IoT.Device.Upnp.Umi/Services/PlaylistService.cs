@@ -1,7 +1,7 @@
 namespace IoT.Device.Upnp.Umi.Services;
 
 [ExportService(Playlist)]
-public sealed class PlaylistService : SoapActionInvoker, IUpnpService
+public sealed class PlaylistService : SoapActionInvoker, IUpnpService, IUpnpServiceFactory<PlaylistService>
 {
     private const string Playlist = "urn:xiaomi-com:service:Playlist:1";
 
@@ -9,10 +9,6 @@ public sealed class PlaylistService : SoapActionInvoker, IUpnpService
 
     public PlaylistService(SoapControlEndpoint endpoint, Uri controlUri) :
         base(endpoint, controlUri, Playlist)
-    { }
-
-    public PlaylistService(SoapControlEndpoint endpoint) :
-        base(endpoint, Playlist)
     { }
 
     public Task<IReadOnlyDictionary<string, string>> CreateAsync(uint instanceId = 0,
@@ -78,4 +74,6 @@ public sealed class PlaylistService : SoapActionInvoker, IUpnpService
                     { "NewPositionList", "".PadRight(indices.Length - 1, ',') }
                 },
                 cancellationToken);
+
+    public static PlaylistService Create(SoapControlEndpoint endpoint, Uri controlUri) => new(endpoint, controlUri);
 }

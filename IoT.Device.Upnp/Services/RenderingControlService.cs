@@ -2,16 +2,12 @@ namespace IoT.Device.Upnp.Services;
 
 [CLSCompliant(false)]
 [ExportService(RenderingControl)]
-public sealed class RenderingControlService : SoapActionInvoker, IUpnpService
+public sealed class RenderingControlService : SoapActionInvoker, IUpnpService, IUpnpServiceFactory<RenderingControlService>
 {
     public static string ServiceSchema => RenderingControl;
 
     public RenderingControlService(SoapControlEndpoint endpoint, Uri controlUri) :
         base(endpoint, controlUri, RenderingControl)
-    { }
-
-    public RenderingControlService(SoapControlEndpoint endpoint) :
-        base(endpoint, RenderingControl)
     { }
 
     public Task<IReadOnlyDictionary<string, string>> GetVolumeAsync(uint instanceId, CancellationToken cancellationToken = default) =>
@@ -48,4 +44,6 @@ public sealed class RenderingControlService : SoapActionInvoker, IUpnpService
             {
                 { "InstanceID", instanceId.ToString(InvariantCulture) } },
             cancellationToken);
+
+    public static RenderingControlService Create(SoapControlEndpoint endpoint, Uri controlUri) => new(endpoint, controlUri);
 }
