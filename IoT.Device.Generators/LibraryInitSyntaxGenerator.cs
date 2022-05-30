@@ -63,7 +63,7 @@ internal static class LibraryInitSyntaxGenerator
                 ");
 
                 """);
-        };
+        }
 
         sb.Append("""
 

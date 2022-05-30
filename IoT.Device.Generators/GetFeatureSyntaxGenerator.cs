@@ -62,7 +62,7 @@ internal static class GetFeatureSyntaxGenerator
 
                 public override T GetFeature<T>()
                 {
-                    Type type = typeof(T);
+                    var type = typeof(T);
 
 
         """);

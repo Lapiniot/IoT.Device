@@ -129,7 +129,7 @@ public class ModelNameGenerator : IIncrementalGenerator
                     continue;
                 }
 
-                if (!Parser.TryGetExportAttribute(implType, out var attribute, out var targetType, cancellationToken))
+                if (!Parser.TryGetExportAttribute(implType, out var attribute, out _, cancellationToken))
                     // weird situation, should be impossible to get here, but just skip so far
                     continue;
 
@@ -143,7 +143,7 @@ public class ModelNameGenerator : IIncrementalGenerator
                     {
                         ConstructorArguments: [_, { Kind: Primitive, Type.SpecialType: System_String, Value: string value }, ..]
                     } => value,
-                    // Attribute constructor has only first argument of type string which is also modelId by convension, use it
+                    // Attribute constructor has only first argument of type string which is also modelId by convention, use it
                     {
                         ConstructorArguments: [{ Kind: Primitive, Type.SpecialType: System_String, Value: string value }, ..]
                     } => value,

@@ -56,7 +56,7 @@ public readonly struct Index : IEquatable<Index>
             ThrowValueArgumentOutOfRange_NeedNonNegNumException();
         }
 
-        return new Index(value);
+        return new(value);
     }
 
     /// <summary>Create an Index from the end at the position indicated by the value.</summary>
@@ -69,7 +69,7 @@ public readonly struct Index : IEquatable<Index>
             ThrowValueArgumentOutOfRange_NeedNonNegNumException();
         }
 
-        return new Index(~value);
+        return new(~value);
     }
 
     /// <summary>Returns the index value.</summary>
@@ -117,13 +117,7 @@ public readonly struct Index : IEquatable<Index>
     public static implicit operator Index(int value) => FromStart(value);
 
     /// <summary>Converts the value of the current Index object to its equivalent string representation.</summary>
-    public override string ToString()
-    {
-        if (IsFromEnd)
-            return ToStringFromEnd();
-
-        return ((uint)Value).ToString();
-    }
+    public override string ToString() => IsFromEnd ? ToStringFromEnd() : ((uint)Value).ToString();
 
 #pragma warning disable IDE0022
     private string ToStringFromEnd()
