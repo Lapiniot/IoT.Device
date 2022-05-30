@@ -1,5 +1,5 @@
+using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
-
 using static System.Reflection.BindingFlags;
 
 namespace IoT.Device;
@@ -7,17 +7,11 @@ namespace IoT.Device;
 [SuppressMessage("Design", "CA1000: Do not declare static members on generic types")]
 public static class DeviceFactory<T>
 {
-    private static readonly Dictionary<string, Type> Cache = new();
-
+    private static readonly ConcurrentDictionary<string, Type> Cache = new(StringComparer.Ordinal);
 #nullable enable
 
-    public static void Register<TImpl>(string model) where TImpl : T
-    {
-        lock (Cache)
-        {
-            Cache[model] = typeof(TImpl);
-        }
-    }
+    public static void Register<TImpl>(string model) where TImpl : T =>
+        Cache.AddOrUpdate(model, static (_, type) => type, static (_, _, type) => type, typeof(TImpl));
 
     public static T? Create(string model, params object[] args) =>
         Cache.TryGetValue(model, out var type)
