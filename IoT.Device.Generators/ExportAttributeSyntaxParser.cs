@@ -3,6 +3,8 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace IoT.Device.Generators;
 
+#nullable enable
+
 public static class ExportAttributeSyntaxParser
 {
     private const string ExportAttributeName = "ExportAttribute";

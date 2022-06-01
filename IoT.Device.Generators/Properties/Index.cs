@@ -1,7 +1,7 @@
-
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System.Globalization;
 using System.Runtime.CompilerServices;
 
 #pragma warning disable IDE0130, CA2231
@@ -103,8 +103,8 @@ public readonly struct Index : IEquatable<Index>
     }
 
     /// <summary>Indicates whether the current Index object is equal to another object of the same type.</summary>
-    /// <param name="value">An object to compare with this object</param>
-    public override bool Equals(object? value) => value is Index index && this.value == index.value;
+    /// <param name="obj">An object to compare with this object</param>
+    public override bool Equals(object? obj) => obj is Index index && value == index.value;
 
     /// <summary>Indicates whether the current Index object is equal to another Index object.</summary>
     /// <param name="other">An object to compare with this object</param>
@@ -117,7 +117,7 @@ public readonly struct Index : IEquatable<Index>
     public static implicit operator Index(int value) => FromStart(value);
 
     /// <summary>Converts the value of the current Index object to its equivalent string representation.</summary>
-    public override string ToString() => IsFromEnd ? ToStringFromEnd() : ((uint)Value).ToString();
+    public override string ToString() => IsFromEnd ? ToStringFromEnd() : ((uint)Value).ToString(CultureInfo.InvariantCulture);
 
 #pragma warning disable IDE0022
     private string ToStringFromEnd()
@@ -134,5 +134,11 @@ public readonly struct Index : IEquatable<Index>
     }
 #pragma warning restore IDE0022
     internal static void ThrowValueArgumentOutOfRange_NeedNonNegNumException() =>
-            throw new ArgumentOutOfRangeException("value", "Non-negative number required.");
+        throw new ArgumentOutOfRangeException("value", "Non-negative number required.");
+
+    public static bool operator ==(Index left, Index right) => left.Equals(right);
+
+    public static bool operator !=(Index left, Index right) => !(left == right);
+
+    public static Index ToIndex(int value) => new(value);
 }
