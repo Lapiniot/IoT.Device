@@ -12,5 +12,10 @@
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <ImplicitUsings>true</ImplicitUsings>
     <EnablePreviewFeatures>true</EnablePreviewFeatures>
+    <!-- Nuget related -->
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+    <PackageOutputPath>$(MSBuildThisFileDirectory)nupkg</PackageOutputPath>
+    <RestoreAdditionalProjectSources>$(PackageOutputPath)</RestoreAdditionalProjectSources>
   </PropertyGroup>
 </Project>

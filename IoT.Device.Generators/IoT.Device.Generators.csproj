@@ -6,11 +6,8 @@
         <Version>1.1.4</Version>
         <Title>IoT.Device Code Generators</Title>
         <Description>Provides boilerplate code auto-generation support for IoT things extensibility framework based on IoT.Device.DeviceFactory&lt;T&gt;.</Description>
-        <PackageOutputPath>..\nupkg</PackageOutputPath>
         <IncludeBuildOutput>false</IncludeBuildOutput>
-        <NoPackageAnalysis>true</NoPackageAnalysis>
         <DevelopmentDependency>true</DevelopmentDependency>
-        <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     </PropertyGroup>
 
     <ItemGroup>

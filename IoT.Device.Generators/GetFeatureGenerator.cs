@@ -27,7 +27,7 @@ public class GetFeatureGenerator : IIncrementalGenerator
         "Class is marked with 'SupportsFeatureAttribute', but abstract GetFeature<T>() method is sealed and cannot be overriden by code-gen.",
         nameof(GetFeatureGenerator), DiagnosticSeverity.Warning, true);
 
-    private static readonly SyntaxTargetOnlyComparer<ClassDeclarationSyntax> SyntaxTargetOnlyComparer = new SyntaxTargetOnlyComparer<ClassDeclarationSyntax>();
+    private static readonly SyntaxTargetOnlyComparer<ClassDeclarationSyntax> SyntaxTargetOnlyComparer = new();
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
