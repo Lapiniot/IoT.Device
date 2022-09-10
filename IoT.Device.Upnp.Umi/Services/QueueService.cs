@@ -9,8 +9,7 @@ public sealed class QueueService : SoapActionInvoker, IUpnpService, IUpnpService
 
     public QueueService(SoapControlEndpoint endpoint, Uri controlUri) :
         base(endpoint, controlUri, Queue)
-    {
-    }
+    { }
 
     public Task<IReadOnlyDictionary<string, string>> AddUriAsync(uint instanceId, string objectId, uint updateId,
         string enqueuedUri, string enqueuedUriMetaData, uint desiredFirstTrackNumberEnqueued, bool enqueueAsNext,

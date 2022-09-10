@@ -12,10 +12,8 @@ public sealed class SystemPropertiesService : SoapActionInvoker, IUpnpService, I
     { }
 
     public async Task<string> GetStringAsync(string variableName, CancellationToken cancellationToken = default) =>
-        (await InvokeAsync("GetString", new Dictionary<string, string>
-            {
-                { "VariableName", variableName } },
-            cancellationToken).ConfigureAwait(false))["StringValue"];
+        (await InvokeAsync("GetString", new Dictionary<string, string> { { "VariableName", variableName } }, cancellationToken)
+        .ConfigureAwait(false))["StringValue"];
 
     public static SystemPropertiesService Create(SoapControlEndpoint endpoint, Uri controlUri) => new(endpoint, controlUri);
 }
