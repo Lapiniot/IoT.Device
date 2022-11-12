@@ -4,7 +4,6 @@ using System.Text.Json;
 using IoT.Device.Lumi.SubDevices;
 using IoT.Device.Metadata;
 using IoT.Protocol.Lumi;
-using static System.Text.Json.JsonSerializer;
 using static System.Text.Json.JsonValueKind;
 using static System.TimeSpan;
 using static IoT.Device.Metadata.PowerSource;
@@ -65,7 +64,7 @@ public sealed class LumiGateway : LumiThing, IConnectedObject, IObserver<JsonEle
     {
         var json = await InvokeAsync("get_id_list", Sid, cancellationToken).ConfigureAwait(false);
 
-        var data = Deserialize<JsonElement>(json.GetProperty("data").GetString() ?? string.Empty);
+        var data = JsonSerializer.Deserialize(json.GetProperty("data").GetString() ?? string.Empty, JsonContext.Default.JsonElement);
 
         var sids = data.EnumerateArray().Select(a => a.GetString()).ToArray();
 
@@ -99,7 +98,7 @@ public sealed class LumiGateway : LumiThing, IConnectedObject, IObserver<JsonEle
                 var id = info.GetProperty("short_id").GetInt32();
                 var deviceModel = info.GetProperty("model").GetString();
                 device = Factory.Create(deviceModel!, sid, id) ?? new GenericSubDevice(sid, id);
-                device.OnStateChanged(Deserialize<JsonElement>(d.GetString() ?? string.Empty));
+                device.OnStateChanged(JsonSerializer.Deserialize(d.GetString() ?? string.Empty, JsonContext.Default.JsonElement));
                 children.Add(sid, device);
                 yield return device;
             }
@@ -220,7 +219,7 @@ public sealed class LumiGateway : LumiThing, IConnectedObject, IObserver<JsonEle
             return;
         }
 
-        var data = Deserialize<JsonElement>(v.GetString() ?? string.Empty);
+        var data = JsonSerializer.Deserialize(v.GetString() ?? string.Empty, JsonContext.Default.JsonElement);
 
         var key = sid.GetString();
 
