@@ -16,14 +16,14 @@ namespace IoT.Device.Generators;
 public class ModelNameGenerator : IIncrementalGenerator
 {
     private static readonly DiagnosticDescriptor NoPartialWarning = new("MNGEN001",
-        "Generation warning.",
+        "Generation warning",
         "Class is marked for export and has abstract property 'ModelName' that can be generated from the relevant ExportAttribute.ModelName, " +
-        "but class declaration has no 'partial' modifier keyword, so it cannot be augmented by the generator.",
+        "but class declaration has no 'partial' modifier keyword, so it cannot be augmented by the generator",
         nameof(ModelNameGenerator), DiagnosticSeverity.Warning, true);
 
     private static readonly DiagnosticDescriptor AbstractClassNotSupportedWarning = new("MNGEN002",
-        "Generation warning.",
-        "Using ExportAttribute with abstract classes is meaningless, consider using it with purpose for concrete final classes.",
+        "Generation warning",
+        "Using ExportAttribute with abstract classes is meaningless, consider using it with purpose for concrete final classes",
         nameof(ModelNameGenerator), DiagnosticSeverity.Warning, true);
 
     private static readonly SyntaxTargetOnlyComparer<ClassDeclarationSyntax> SyntaxTargetOnlyComparer = new();

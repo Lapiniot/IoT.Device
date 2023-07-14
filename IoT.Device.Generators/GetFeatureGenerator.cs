@@ -7,24 +7,26 @@ using static Microsoft.CodeAnalysis.SymbolDisplayFormat;
 using Parser = IoT.Device.Generators.SupportsFeatureSyntaxParser;
 using Generator = IoT.Device.Generators.GetFeatureSyntaxGenerator;
 
+#pragma warning disable RS2008
+
 namespace IoT.Device.Generators;
 
 [Generator]
 public class GetFeatureGenerator : IIncrementalGenerator
 {
     private static readonly DiagnosticDescriptor NoPartialWarning = new("GFGEN001",
-        "Generation warning.",
-        "Class is marked with 'SupportsFeatureAttribute', but declaration has no 'partial' modifier keyword, so it cannot be augmented by the generator.",
+        "Generation warning",
+        "Class is marked with 'SupportsFeatureAttribute', but declaration has no 'partial' modifier keyword, so it cannot be augmented by the generator",
         nameof(GetFeatureGenerator), DiagnosticSeverity.Warning, true);
 
     private static readonly DiagnosticDescriptor GetFeatureDefinedWarning = new("GFGEN003",
-        "Generation warning.",
-        "Class is marked with 'SupportsFeatureAttribute', but declaration already has GetFeature<T>() method defined.",
+        "Generation warning",
+        "Class is marked with 'SupportsFeatureAttribute', but declaration already has GetFeature<T>() method defined",
         nameof(GetFeatureGenerator), DiagnosticSeverity.Warning, true);
 
     private static readonly DiagnosticDescriptor CannotOverrideWarning = new("GFGEN004",
-        "Generation warning.",
-        "Class is marked with 'SupportsFeatureAttribute', but abstract GetFeature<T>() method is sealed and cannot be overriden by code-gen.",
+        "Generation warning",
+        "Class is marked with 'SupportsFeatureAttribute', but abstract GetFeature<T>() method is sealed and cannot be overriden by code-gen",
         nameof(GetFeatureGenerator), DiagnosticSeverity.Warning, true);
 
     private static readonly SyntaxTargetOnlyComparer<ClassDeclarationSyntax> SyntaxTargetOnlyComparer = new();
