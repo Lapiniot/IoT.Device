@@ -24,7 +24,7 @@ public sealed class UmiSpeakerDevice : UpnpDevice, IDisposable
 
         if (string.IsNullOrEmpty(usn)) throw new ArgumentException("message", nameof(usn));
 
-        DeviceId = usn.Split(new[] { ':' }, 3)[1];
+        DeviceId = usn.Split(':', 3)[1];
 
         BaseUri = new(descriptionUri.GetLeftPart(Authority));
 
