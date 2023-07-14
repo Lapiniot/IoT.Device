@@ -13,6 +13,7 @@
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <ImplicitUsings>true</ImplicitUsings>
     <EnablePreviewFeatures>true</EnablePreviewFeatures>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <!-- Nuget related -->
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <NoPackageAnalysis>true</NoPackageAnalysis>

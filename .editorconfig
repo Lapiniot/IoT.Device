@@ -9,7 +9,7 @@ insert_final_newline = false
 trim_trailing_whitespace = true
 charset = utf-8
 
-[*.csproj]
+[*.{csproj,props}]
 indent_size = 2
 
 # JSON files
@@ -24,6 +24,8 @@ indent_size = 2
 # Default severity for analyzer diagnostics with category 'Style' (escalated to build warnings)
 dotnet_analyzer_diagnostic.category-style.severity = warning
 
+# CS1591: Missing XML comment for publicly visible type or member
+dotnet_diagnostic.CS1591.severity = none
 # IDE0160: Convert to block scoped namespace
 dotnet_diagnostic.IDE0160.severity = suggestion
 # IDE0022: Use block body for methods
@@ -72,6 +74,9 @@ dotnet_diagnostic.CA1001.severity = error
 dotnet_diagnostic.CA1200.severity = warning
 # CA1062: Validate arguments of public methods
 dotnet_diagnostic.CA1062.severity = none
+
+# IDE0290: Use primary constructor
+dotnet_diagnostic.IDE0290.severity = suggestion
 
 #### Naming styles ####
 
