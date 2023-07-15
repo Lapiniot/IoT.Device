@@ -9,7 +9,7 @@
     <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4" />
     <PackageVersion Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
-    <PackageVersion Include="IoT.Device.Generators" Version="1.1.6" />
+    <PackageVersion Include="IoT.Device.Generators" Version="1.1.6.1" />
   </ItemGroup>
 
 </Project>

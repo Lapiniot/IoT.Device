@@ -29,6 +29,8 @@ internal static class LibraryInitSyntaxGenerator
 
         using IoT.Device;
 
+        #pragma warning disable CS1591
+
         namespace 
         """);
 

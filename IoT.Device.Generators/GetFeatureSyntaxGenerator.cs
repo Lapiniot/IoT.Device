@@ -30,6 +30,8 @@ internal static class GetFeatureSyntaxGenerator
         // </auto-generated>
         //------------------------------------------------------------------------------
 
+        #pragma warning disable CS1591
+
         namespace 
         """);
 

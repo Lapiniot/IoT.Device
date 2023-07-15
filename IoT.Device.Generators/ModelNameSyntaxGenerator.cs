@@ -26,6 +26,8 @@ internal static class ModelNameSyntaxGenerator
         // </auto-generated>
         //------------------------------------------------------------------------------
 
+        #pragma warning disable CS1591
+
         namespace 
         """);
         sb.AppendLine(namespaceName);
