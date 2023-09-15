@@ -1,15 +1,11 @@
 namespace IoT.Device.Upnp.Umi.Services;
 
 [ExportService(Queue)]
-public sealed class QueueService : SoapActionInvoker, IUpnpService, IUpnpServiceFactory<QueueService>
+public sealed class QueueService(SoapControlEndpoint endpoint, Uri controlUri) : SoapActionInvoker(endpoint, controlUri, Queue), IUpnpService, IUpnpServiceFactory<QueueService>
 {
     private const string Queue = "urn:xiaomi-com:service:Queue:1";
 
     public static string ServiceSchema => Queue;
-
-    public QueueService(SoapControlEndpoint endpoint, Uri controlUri) :
-        base(endpoint, controlUri, Queue)
-    { }
 
     public Task<IReadOnlyDictionary<string, string>> AddUriAsync(uint instanceId, string objectId, uint updateId,
         string enqueuedUri, string enqueuedUriMetaData, uint desiredFirstTrackNumberEnqueued, bool enqueueAsNext,

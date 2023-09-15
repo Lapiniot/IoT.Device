@@ -2,13 +2,9 @@ namespace IoT.Device.Upnp.Services;
 
 [CLSCompliant(false)]
 [ExportService(AVTransport)]
-public sealed class AVTransportService : SoapActionInvoker, IUpnpService, IUpnpServiceFactory<AVTransportService>
+public sealed class AVTransportService(SoapControlEndpoint endpoint, Uri controlUri) : SoapActionInvoker(endpoint, controlUri, AVTransport), IUpnpService, IUpnpServiceFactory<AVTransportService>
 {
     public static string ServiceSchema => AVTransport;
-
-    public AVTransportService(SoapControlEndpoint endpoint, Uri controlUri) :
-        base(endpoint, controlUri, AVTransport)
-    { }
 
     public Task<IReadOnlyDictionary<string, string>> GetMediaInfoAsync(uint instanceId = 0, CancellationToken cancellationToken = default) =>
         InvokeAsync("GetMediaInfo", new Dictionary<string, string> {

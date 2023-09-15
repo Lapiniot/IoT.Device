@@ -1,15 +1,11 @@
 namespace IoT.Device.Upnp.Umi.Services;
 
 [ExportService(Playlist)]
-public sealed class PlaylistService : SoapActionInvoker, IUpnpService, IUpnpServiceFactory<PlaylistService>
+public sealed class PlaylistService(SoapControlEndpoint endpoint, Uri controlUri) : SoapActionInvoker(endpoint, controlUri, Playlist), IUpnpService, IUpnpServiceFactory<PlaylistService>
 {
     private const string Playlist = "urn:xiaomi-com:service:Playlist:1";
 
     public static string ServiceSchema => Playlist;
-
-    public PlaylistService(SoapControlEndpoint endpoint, Uri controlUri) :
-        base(endpoint, controlUri, Playlist)
-    { }
 
     public Task<IReadOnlyDictionary<string, string>> CreateAsync(uint instanceId = 0,
         string title = "", string enqueuedUri = null, string enqueuedUriMetaData = null,

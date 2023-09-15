@@ -4,13 +4,9 @@ using static System.Globalization.NumberStyles;
 
 namespace IoT.Device.Lumi;
 
-public abstract class LumiMotionSensor : LumiSubDeviceWithStatus
+public abstract class LumiMotionSensor(string sid, int id) : LumiSubDeviceWithStatus(sid, id, "nomotion")
 {
     private int noMotionSeconds;
-
-    protected LumiMotionSensor(string sid, int id) :
-        base(sid, id, "nomotion")
-    { }
 
     public int NoMotionSeconds
     {

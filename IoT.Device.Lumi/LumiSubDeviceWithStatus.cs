@@ -3,17 +3,12 @@ using IoT.Device.Lumi.Interfaces;
 
 namespace IoT.Device.Lumi;
 
-public abstract class LumiSubDeviceWithStatus : LumiSubDevice, IProvideStatus
+public abstract class LumiSubDeviceWithStatus(string sid, int id, string defaultStatus = "") : LumiSubDevice(sid, id), IProvideStatus
 {
-    private string status;
-
-    protected LumiSubDeviceWithStatus(string sid, int id, string defaultStatus = "") :
-        base(sid, id) => status = defaultStatus;
-
     public string Status
     {
-        get => status;
-        protected set => Set(ref status, value);
+        get => defaultStatus;
+        protected set => Set(ref defaultStatus, value);
     }
 
     protected internal override void OnStateChanged(JsonElement state)

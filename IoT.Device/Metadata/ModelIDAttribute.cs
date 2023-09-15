@@ -1,9 +1,7 @@
 namespace IoT.Device.Metadata;
 
 [AttributeUsage(AttributeTargets.Class)]
-public sealed class ModelIDAttribute : Attribute
+public sealed class ModelIDAttribute(string id) : Attribute
 {
-    public ModelIDAttribute(string id) => ID = id;
-
-    public string ID { get; }
+    public string ID { get; } = id;
 }

@@ -31,7 +31,7 @@ public sealed class LumiGateway : LumiThing, IConnectedObject, IObserver<JsonEle
         ArgumentNullException.ThrowIfNull(endpoint);
 
         semaphore = new(1, 1);
-        children = new();
+        children = [];
         client = new(endpoint);
         listener = new(new(IPAddress.Parse("224.0.0.50"), endpoint.Port));
         subscription = listener.Subscribe(this);

@@ -10,13 +10,9 @@ public enum BrowseMode
 
 [CLSCompliant(false)]
 [ExportService(ContentDirectory)]
-public sealed class ContentDirectoryService : SoapActionInvoker, IUpnpService, IUpnpServiceFactory<ContentDirectoryService>
+public sealed class ContentDirectoryService(SoapControlEndpoint endpoint, Uri controlUri) : SoapActionInvoker(endpoint, controlUri, ContentDirectory), IUpnpService, IUpnpServiceFactory<ContentDirectoryService>
 {
     public static string ServiceSchema => ContentDirectory;
-
-    public ContentDirectoryService(SoapControlEndpoint endpoint, Uri controlUri) :
-        base(endpoint, controlUri, ContentDirectory)
-    { }
 
     public Task<IReadOnlyDictionary<string, string>> BrowseAsync(string parent, string filter = null,
         BrowseMode mode = default, string sortCriteria = null,

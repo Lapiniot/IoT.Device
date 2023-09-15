@@ -1,13 +1,7 @@
 namespace IoT.Device.Upnp;
 
 [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true)]
-public sealed class ExportServiceAttribute<T> : ExportAttribute<SoapActionInvoker, T> where T : SoapActionInvoker
-{
-    public ExportServiceAttribute(string modelId) : base(modelId, null) { }
-}
+public sealed class ExportServiceAttribute<T>(string modelId) : ExportAttribute<SoapActionInvoker, T>(modelId, null) where T : SoapActionInvoker { }
 
 [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
-public sealed class ExportServiceAttribute : ExportAttribute<SoapActionInvoker, SoapActionInvoker>
-{
-    public ExportServiceAttribute(string modelId) : base(modelId, null) { }
-}
+public sealed class ExportServiceAttribute(string modelId) : ExportAttribute<SoapActionInvoker, SoapActionInvoker>(modelId, null) { }

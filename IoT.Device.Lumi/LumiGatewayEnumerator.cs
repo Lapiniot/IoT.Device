@@ -4,12 +4,8 @@ using IoT.Protocol.Lumi;
 
 namespace IoT.Device.Lumi;
 
-public class LumiGatewayEnumerator : ConvertingEnumerator<LumiEndpoint, LumiGateway>
+public class LumiGatewayEnumerator(IRepeatPolicy discoveryPolicy) : ConvertingEnumerator<LumiEndpoint, LumiGateway>(new LumiEnumerator(discoveryPolicy), new LumiDeviceComparer())
 {
-    public LumiGatewayEnumerator(IRepeatPolicy discoveryPolicy) :
-        base(new LumiEnumerator(discoveryPolicy), new LumiDeviceComparer())
-    { }
-
     #region Overrides of ConvertingEnumerator<(IPAddress Address, ushort Port, string Sid),LumiGateway>
 
     protected override LumiGateway Convert(LumiEndpoint thing) =>

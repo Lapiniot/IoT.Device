@@ -1,9 +1,7 @@
 namespace IoT.Device.Metadata;
 
 [AttributeUsage(AttributeTargets.Class)]
-public sealed class PowerSourceAttribute : Attribute
+public sealed class PowerSourceAttribute(PowerSource source) : Attribute
 {
-    public PowerSourceAttribute(PowerSource source) => Source = source;
-
-    public PowerSource Source { get; }
+    public PowerSource Source { get; } = source;
 }

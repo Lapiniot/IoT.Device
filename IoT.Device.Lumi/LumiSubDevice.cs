@@ -5,12 +5,9 @@ using static System.TimeSpan;
 
 namespace IoT.Device.Lumi;
 
-public abstract class LumiSubDevice : LumiThing, IProvideBatteryVoltage
+public abstract class LumiSubDevice(string sid, int id) : LumiThing(sid), IProvideBatteryVoltage
 {
-    private readonly int id;
     private decimal voltage;
-
-    protected LumiSubDevice(string sid, int id) : base(sid) => this.id = id;
 
     // Battery powered ZigBee devices usually send heartbeats 
     // once per hour to save battery. We give extra 5 seconds

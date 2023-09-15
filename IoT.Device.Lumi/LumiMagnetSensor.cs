@@ -2,11 +2,9 @@ using System.Text.Json;
 
 namespace IoT.Device.Lumi;
 
-public abstract class LumiMagnetSensor : LumiSubDeviceWithStatus
+public abstract class LumiMagnetSensor(string sid, int id) : LumiSubDeviceWithStatus(sid, id)
 {
     private int noCloseSeconds;
-
-    protected LumiMagnetSensor(string sid, int id) : base(sid, id) { }
 
     public int NoCloseSeconds
     {
