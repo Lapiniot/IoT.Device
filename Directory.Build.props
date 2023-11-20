@@ -1,17 +1,17 @@
 <Project>
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <IsTrimmable>true</IsTrimmable>
     <LangVersion>preview</LangVersion>
     <Authors>aossss@gmail.com</Authors>
     <Company>aossss@gmail.com</Company>
     <Copyright>© aossss@gmail.com, 2018</Copyright>
-    <Version>1.2.0</Version>
+    <Version>1.8.0</Version>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <AnalysisMode>AllEnabledByDefault</AnalysisMode>
     <AnalysisLevel>latest</AnalysisLevel>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-    <ImplicitUsings>true</ImplicitUsings>
+    <ImplicitUsings>enable</ImplicitUsings>
     <EnablePreviewFeatures>true</EnablePreviewFeatures>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <!-- Nuget related -->

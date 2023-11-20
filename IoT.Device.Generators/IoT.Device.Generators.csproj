@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <IsTrimmable>false</IsTrimmable>
     <Nullable>enable</Nullable>
-    <Version>1.1.6.1</Version>
+    <Version>1.8.0</Version>
     <Title>IoT.Device Code Generators</Title>
     <Description>Provides boilerplate code auto-generation support for IoT things extensibility framework based on IoT.Device.DeviceFactory&lt;T&gt;.</Description>
     <IncludeBuildOutput>false</IncludeBuildOutput>
