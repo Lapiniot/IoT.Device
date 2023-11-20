@@ -1,17 +1,18 @@
 {
-    "files.exclude": {
-        "**/.git": true,
-        "**/.DS_Store": true,
-        "**/.gitignore": true,
-        "**/.gitmodules": true,
-        "**/*.user": true,
-        "**/.vs": true,
-        "**/bin": true,
-        "**/obj": true,
-        "*/**/.vscode": true,
-        "**/*.sln": true,
-        "nupkg": true
-    },
-    "omnisharp.enableRoslynAnalyzers": true,
-    "dotnet.defaultSolution": "IoT.Device.sln"
+  "files.exclude": {
+    "**/.git": true,
+    "**/.DS_Store": true,
+    "**/.gitignore": true,
+    "**/.gitmodules": true,
+    "**/*.user": true,
+    "**/.vs": true,
+    "**/bin": true,
+    "**/obj": true,
+    "*/**/.vscode": true,
+    "**/*.sln": true,
+    "nupkg": true,
+    "artifacts": true
+  },
+  "omnisharp.enableRoslynAnalyzers": true,
+  "dotnet.defaultSolution": "IoT.Device.sln"
 }
