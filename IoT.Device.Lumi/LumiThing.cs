@@ -22,20 +22,18 @@ public abstract class LumiThing : INotifyPropertyChanged, IProvideOnlineInfo, IA
 
     #region Implementation of IAsyncDisposable
 
-    public virtual ValueTask DisposeAsync()
+    public virtual async ValueTask DisposeAsync()
     {
         GC.SuppressFinalize(this);
 
         var source = resetWatchTokenSource;
-        if (source != null)
+        if (source is not null)
         {
-            source.Cancel();
+            await source.CancelAsync().ConfigureAwait(false);
             source.Dispose();
         }
 
         resetWatchTokenSource = null;
-
-        return new();
     }
 
     #endregion
