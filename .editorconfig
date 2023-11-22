@@ -58,8 +58,6 @@ dotnet_diagnostic.CA1056.severity = none
 dotnet_diagnostic.CA1308.severity = none
 # CA1054: URI parameters should not be strings
 dotnet_diagnostic.CA1054.severity = none
-# IDE0079: Remove unnecessary suppression
-dotnet_diagnostic.IDE0079.severity = silent
 # CA1852: Seal internal types
 dotnet_diagnostic.CA1852.severity = warning
 # CA2215: Dispose methods should call base class dispose

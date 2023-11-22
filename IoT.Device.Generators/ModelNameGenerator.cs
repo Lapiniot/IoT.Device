@@ -8,9 +8,9 @@ using static Microsoft.CodeAnalysis.SpecialType;
 using Parser = IoT.Device.Generators.ExportAttributeSyntaxParser;
 using Generator = IoT.Device.Generators.ModelNameSyntaxGenerator;
 
-namespace IoT.Device.Generators;
+#pragma warning disable RS2008 // Enable analyzer release tracking
 
-#pragma warning disable RS2008
+namespace IoT.Device.Generators;
 
 [Generator]
 public class ModelNameGenerator : IIncrementalGenerator

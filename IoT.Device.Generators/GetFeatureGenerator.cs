@@ -7,7 +7,7 @@ using static Microsoft.CodeAnalysis.SymbolDisplayFormat;
 using Parser = IoT.Device.Generators.SupportsFeatureSyntaxParser;
 using Generator = IoT.Device.Generators.GetFeatureSyntaxGenerator;
 
-#pragma warning disable RS2008
+#pragma warning disable RS2008 // Enable analyzer release tracking
 
 namespace IoT.Device.Generators;
 

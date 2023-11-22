@@ -7,12 +7,13 @@ using static Microsoft.CodeAnalysis.SymbolDisplayFormat;
 using Generator = IoT.Device.Generators.LibraryInitSyntaxGenerator;
 using Parser = IoT.Device.Generators.ExportAttributeSyntaxParser;
 
+#pragma warning disable RS2008 // Enable analyzer release tracking
+
 namespace IoT.Device.Generators;
 
 [Generator]
 public class LibraryInitGenerator : IIncrementalGenerator
 {
-#pragma warning disable RS2008
     private static readonly DiagnosticDescriptor NoDefNamespaceWarning = new("LIGEN001",
         title: "Generation warning",
         messageFormat: "Cannot get library's default namespace",
