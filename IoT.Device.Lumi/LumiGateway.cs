@@ -4,6 +4,7 @@ using System.Text.Json;
 using IoT.Device.Lumi.SubDevices;
 using IoT.Device.Metadata;
 using IoT.Protocol.Lumi;
+using OOs;
 using static System.Text.Json.JsonValueKind;
 using static System.TimeSpan;
 using static IoT.Device.Metadata.PowerSource;

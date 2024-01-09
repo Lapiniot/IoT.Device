@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using IoT.Protocol.Yeelight;
+using OOs;
 
 namespace IoT.Device.Yeelight;
 
