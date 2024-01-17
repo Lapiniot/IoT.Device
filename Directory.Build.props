@@ -17,7 +17,7 @@
     <!-- Nuget related -->
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <NoPackageAnalysis>true</NoPackageAnalysis>
-    <PackageOutputPath>$(MSBuildThisFileDirectory)artifacts/package</PackageOutputPath>
+    <PackageOutputPath>$(MSBuildThisFileDirectory)artifacts</PackageOutputPath>
     <RestoreAdditionalProjectSources>$(PackageOutputPath)</RestoreAdditionalProjectSources>
   </PropertyGroup>
 </Project>
