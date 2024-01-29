@@ -2,13 +2,11 @@ using System.Globalization;
 
 namespace IoT.Device.Yeelight.Features;
 
-public class YeeSupportsSaveState : YeelightDeviceFeature
+public class YeeSupportsSaveState(YeelightDevice device) : YeelightDeviceFeature(device)
 {
-    public YeeSupportsSaveState(YeelightDevice device) : base(device) { }
+    public override IEnumerable<string> SupportedMethods => ["set_ps", "set_default"];
 
-    public override IEnumerable<string> SupportedMethods => new[] { "set_ps", "set_default" };
-
-    public override IEnumerable<string> SupportedProperties => new[] { "save_state" };
+    public override IEnumerable<string> SupportedProperties => ["save_state"];
 
     public async Task<SwitchState> GetAutoSaveStateAsync(CancellationToken cancellationToken = default) =>
         (SwitchState)int.Parse(

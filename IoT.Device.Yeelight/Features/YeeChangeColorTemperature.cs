@@ -15,9 +15,9 @@ public class YeeChangeColorTemperature : YeelightDeviceFeature
         propSetCt = propSet;
     }
 
-    public override IEnumerable<string> SupportedMethods => new[] { propSetCt };
+    public override IEnumerable<string> SupportedMethods => [propSetCt];
 
-    public override IEnumerable<string> SupportedProperties => new[] { propCt };
+    public override IEnumerable<string> SupportedProperties => [propCt];
 
     public async Task<uint> GetColorTemperatureAsync(CancellationToken cancellationToken = default) =>
         uint.Parse(

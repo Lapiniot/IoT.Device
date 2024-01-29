@@ -1,28 +1,24 @@
 using IoT.Protocol.Yeelight;
 
-namespace IoT.Device.Yeelight
+namespace IoT.Device.Yeelight;
+
+public class YeelightGenericDevice(YeelightControlEndpoint endpoint) : YeelightDevice(endpoint)
 {
-    public class YeelightGenericDevice : YeelightDevice
+    private readonly string[] supportedCapabilities;
+
+    public YeelightGenericDevice(YeelightControlEndpoint endpoint, string[] capabilities) : this(endpoint)
     {
-        private readonly string[] supportedCapabilities;
+        supportedCapabilities = capabilities;
+    }
 
-        public YeelightGenericDevice(YeelightControlEndpoint endpoint) : base(endpoint)
-        { }
+    public override string ModelName { get; } = "yeelight.generic";
 
-        public YeelightGenericDevice(YeelightControlEndpoint endpoint, string[] capabilities) : this(endpoint)
-        {
-            supportedCapabilities = capabilities;
-        }
+    public override IEnumerable<string> SupportedMethods => supportedCapabilities ?? [];
 
-        public override string ModelName { get; } = "yeelight.generic";
+    public override IEnumerable<string> SupportedProperties { get; } = [];
 
-        public override IEnumerable<string> SupportedMethods => supportedCapabilities ?? Array.Empty<string>();
-
-        public override IEnumerable<string> SupportedProperties { get; } = Array.Empty<string>();
-
-        public override T GetFeature<T>()
-        {
-            return null;
-        }
+    public override T GetFeature<T>()
+    {
+        return null;
     }
 }

@@ -1,8 +1,5 @@
 namespace IoT.Device.Yeelight.Features;
 
-public class YeeSupportsAmbientScenes : YeeSupportsScenes
+public class YeeSupportsAmbientScenes(YeelightDevice device) : YeeSupportsScenes(device, "bg_set_scene")
 {
-    public YeeSupportsAmbientScenes(YeelightDevice device) :
-        base(device, "bg_set_scene")
-    { }
 }

@@ -11,9 +11,9 @@ public class YeeAdjustProperty : YeelightDeviceFeature
 
     public YeeAdjustProperty(YeelightDevice device) : this(device, "set_adjust") { }
 
-    public override IEnumerable<string> SupportedMethods => new[] { method };
+    public override IEnumerable<string> SupportedMethods => [method];
 
-    public override IEnumerable<string> SupportedProperties => Array.Empty<string>();
+    public override IEnumerable<string> SupportedProperties => [];
 
     /// <summary>
     /// This method is used to change brightness, CT or color of a smart LED without knowing the current value,

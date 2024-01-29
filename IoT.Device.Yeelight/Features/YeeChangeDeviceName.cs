@@ -1,12 +1,10 @@
 namespace IoT.Device.Yeelight.Features;
 
-public class YeeChangeDeviceName : YeelightDeviceFeature
+public class YeeChangeDeviceName(YeelightDevice device) : YeelightDeviceFeature(device)
 {
-    public YeeChangeDeviceName(YeelightDevice device) : base(device) { }
+    public override IEnumerable<string> SupportedMethods => ["set_name"];
 
-    public override IEnumerable<string> SupportedMethods => new[] { "set_name" };
-
-    public override IEnumerable<string> SupportedProperties => new[] { "name" };
+    public override IEnumerable<string> SupportedProperties => ["name"];
 
     public async Task<string> GetNameAsync(CancellationToken cancellationToken = default) =>
         (await Device.GetPropertyAsync("name", cancellationToken).ConfigureAwait(false)).GetString();

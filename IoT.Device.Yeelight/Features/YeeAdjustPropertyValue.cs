@@ -1,16 +1,11 @@
 namespace IoT.Device.Yeelight.Features;
 
-public abstract class YeeAdjustPropertyValue : YeelightDeviceFeature
+public abstract class YeeAdjustPropertyValue(YeelightDevice device, string adjustMethodName) : YeelightDeviceFeature(device)
 {
-    private readonly string method;
+    private readonly string method = adjustMethodName;
 
-    protected YeeAdjustPropertyValue(YeelightDevice device, string adjustMethodName) : base(device)
-    {
-        method = adjustMethodName;
-    }
-
-    public override IEnumerable<string> SupportedMethods => new[] { method };
-    public override IEnumerable<string> SupportedProperties => Array.Empty<string>();
+    public override IEnumerable<string> SupportedMethods => [method];
+    public override IEnumerable<string> SupportedProperties => [];
 
     /// <summary>
     /// This method is used to adjust the property value by specified percentage within specified duration.

@@ -15,9 +15,9 @@ public class YeeChangeColorRGB : YeelightDeviceFeature
         propSetRGB = propSet;
     }
 
-    public override IEnumerable<string> SupportedMethods => new[] { propSetRGB };
+    public override IEnumerable<string> SupportedMethods => [propSetRGB];
 
-    public override IEnumerable<string> SupportedProperties => new[] { propRGB };
+    public override IEnumerable<string> SupportedProperties => [propRGB];
 
     public async Task<uint> GetColorRGBAsync(CancellationToken cancellationToken = default) =>
         uint.Parse(

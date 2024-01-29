@@ -26,6 +26,7 @@ public enum ColorMode
 
 public enum FlowTransition
 {
+    None,
     Color = 1,
     Temperature = 2,
     Sleep = 7

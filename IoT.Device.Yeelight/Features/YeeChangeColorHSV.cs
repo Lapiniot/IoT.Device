@@ -17,9 +17,9 @@ public class YeeChangeColorHSV : YeelightDeviceFeature
         propSetHSV = propHSVSet;
     }
 
-    public override IEnumerable<string> SupportedMethods => new[] { propSetHSV };
+    public override IEnumerable<string> SupportedMethods => [propSetHSV];
 
-    public override IEnumerable<string> SupportedProperties => new[] { propHue, propSaturation };
+    public override IEnumerable<string> SupportedProperties => [propHue, propSaturation];
 
     public async Task<uint> GetHueAsync(CancellationToken cancellationToken = default) =>
         uint.Parse(

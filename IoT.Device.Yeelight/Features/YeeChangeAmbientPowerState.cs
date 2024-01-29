@@ -1,8 +1,5 @@
 namespace IoT.Device.Yeelight.Features;
 
-public class YeeChangeAmbientPowerState : YeeChangePowerState
+public class YeeChangeAmbientPowerState(YeelightDevice device) : YeeChangePowerState(device, "bg_power", "bg_set_power", "bg_toggle")
 {
-    public YeeChangeAmbientPowerState(YeelightDevice device) :
-        base(device, "bg_power", "bg_set_power", "bg_toggle")
-    { }
 }

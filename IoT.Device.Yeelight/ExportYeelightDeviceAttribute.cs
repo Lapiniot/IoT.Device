@@ -1,12 +1,10 @@
 namespace IoT.Device.Yeelight;
 
-public sealed class ExportYeelightDeviceAttribute<T> : ExportAttribute<YeelightDevice, T> where T : YeelightDevice
+public sealed class ExportYeelightDeviceAttribute<T>(string modelId) : ExportAttribute<YeelightDevice, T>(modelId, null) where T : YeelightDevice
 {
-    public ExportYeelightDeviceAttribute(string modelId) : base(modelId, null) { }
 }
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = false)]
-public sealed class ExportYeelightDeviceAttribute : ExportAttribute<YeelightDevice, YeelightDevice>
+public sealed class ExportYeelightDeviceAttribute(string modelId) : ExportAttribute<YeelightDevice, YeelightDevice>(modelId, null)
 {
-    public ExportYeelightDeviceAttribute(string modelId) : base(modelId, null) { }
 }

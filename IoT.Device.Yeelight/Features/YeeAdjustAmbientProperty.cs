@@ -1,6 +1,5 @@
 namespace IoT.Device.Yeelight.Features;
 
-public class YeeAdjustAmbientProperty : YeeAdjustProperty
+public class YeeAdjustAmbientProperty(YeelightDevice device) : YeeAdjustProperty(device, "bg_set_adjust")
 {
-    public YeeAdjustAmbientProperty(YeelightDevice device) : base(device, "bg_set_adjust") { }
 }

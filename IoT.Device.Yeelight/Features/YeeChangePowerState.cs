@@ -16,9 +16,9 @@ public class YeeChangePowerState : YeelightDeviceFeature
         this.propSetToggle = propSetToggle;
     }
 
-    public override IEnumerable<string> SupportedMethods => new[] { propSetPower };
+    public override IEnumerable<string> SupportedMethods => [propSetPower];
 
-    public override IEnumerable<string> SupportedProperties => new[] { propGetPower };
+    public override IEnumerable<string> SupportedProperties => [propGetPower];
 
     public Task<SwitchState> GetPowerStateAsync(CancellationToken cancellationToken = default) =>
         Device.GetPropertyAsync<SwitchState>(propGetPower, cancellationToken);

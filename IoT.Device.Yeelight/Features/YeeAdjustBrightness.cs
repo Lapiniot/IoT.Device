@@ -1,6 +1,5 @@
 namespace IoT.Device.Yeelight.Features;
 
-public class YeeAdjustBrightness : YeeAdjustPropertyValue
+public class YeeAdjustBrightness(YeelightDevice device) : YeeAdjustPropertyValue(device, "adjust_bright")
 {
-    public YeeAdjustBrightness(YeelightDevice device) : base(device, "adjust_bright") { }
 }

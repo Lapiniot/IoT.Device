@@ -1,6 +1,5 @@
 namespace IoT.Device.Yeelight.Features;
 
-public class YeeChangeAmbientColorRGB : YeeChangeColorRGB
+public class YeeChangeAmbientColorRGB(YeelightDevice device) : YeeChangeColorRGB(device, "bg_rgb", "bg_set_rgb")
 {
-    public YeeChangeAmbientColorRGB(YeelightDevice device) : base(device, "bg_rgb", "bg_set_rgb") { }
 }

@@ -15,9 +15,9 @@ public class YeeChangeBrightness : YeelightDeviceFeature
         propSetBright = propSet;
     }
 
-    public override IEnumerable<string> SupportedMethods => new[] { propSetBright };
+    public override IEnumerable<string> SupportedMethods => [propSetBright];
 
-    public override IEnumerable<string> SupportedProperties => new[] { propBright };
+    public override IEnumerable<string> SupportedProperties => [propBright];
 
     public async Task<uint> GetBrightnessAsync(CancellationToken cancellationToken = default) =>
         uint.Parse(

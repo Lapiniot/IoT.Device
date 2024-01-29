@@ -2,7 +2,6 @@
 
 namespace IoT.Device.Yeelight;
 
-public abstract class YeelightWhiteLamp : YeelightLamp
+public abstract class YeelightWhiteLamp(YeelightControlEndpoint endpoint) : YeelightLamp(endpoint)
 {
-    protected YeelightWhiteLamp(YeelightControlEndpoint endpoint) : base(endpoint) { }
 }

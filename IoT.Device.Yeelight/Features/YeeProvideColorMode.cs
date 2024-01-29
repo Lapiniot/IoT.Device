@@ -10,9 +10,9 @@ public class YeeProvideColorMode : YeelightDeviceFeature
 
     public YeeProvideColorMode(YeelightDevice device) : this(device, "color_mode") { }
 
-    public override IEnumerable<string> SupportedMethods => Array.Empty<string>();
+    public override IEnumerable<string> SupportedMethods => [];
 
-    public override IEnumerable<string> SupportedProperties => new[] { property };
+    public override IEnumerable<string> SupportedProperties => [property];
 
     public async Task<ColorMode> GetColorModeAsync(CancellationToken cancellationToken = default) =>
         (ColorMode)int.Parse(

@@ -11,9 +11,9 @@ public class YeeSupportsScenes : YeelightDeviceFeature
 
     public YeeSupportsScenes(YeelightDevice device) : this(device, "set_scene") { }
 
-    public override IEnumerable<string> SupportedMethods => new[] { method };
+    public override IEnumerable<string> SupportedMethods => [method];
 
-    public override IEnumerable<string> SupportedProperties => Array.Empty<string>();
+    public override IEnumerable<string> SupportedProperties => [];
 
     /// <summary>
     /// This method is used to set the smart LED directly to specified state. If the smart LED is off,

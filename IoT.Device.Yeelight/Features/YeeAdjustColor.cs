@@ -1,6 +1,5 @@
 namespace IoT.Device.Yeelight.Features;
 
-public class YeeAdjustColor : YeeAdjustPropertyValue
+public class YeeAdjustColor(YeelightDevice device) : YeeAdjustPropertyValue(device, "adjust_color")
 {
-    public YeeAdjustColor(YeelightDevice device) : base(device, "adjust_color") { }
 }

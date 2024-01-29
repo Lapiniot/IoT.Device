@@ -2,13 +2,12 @@ using System.Globalization;
 
 namespace IoT.Device.Yeelight.Features;
 
-public class YeeSupportsAmbientLight : YeelightDeviceFeature
+public class YeeSupportsAmbientLight(YeelightDevice device) : YeelightDeviceFeature(device)
 {
-    public YeeSupportsAmbientLight(YeelightDevice device) : base(device) { }
 
-    public override IEnumerable<string> SupportedMethods => new[] { "set_ps" };
+    public override IEnumerable<string> SupportedMethods => ["set_ps"];
 
-    public override IEnumerable<string> SupportedProperties => new[] { "bg_proact" };
+    public override IEnumerable<string> SupportedProperties => ["bg_proact"];
 
     public async Task<SwitchState> GetProactiveModeAsync(CancellationToken cancellationToken = default) =>
         (SwitchState)int.Parse(

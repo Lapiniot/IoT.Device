@@ -1,13 +1,9 @@
 ﻿namespace IoT.Device;
 
-public abstract class DeviceFeature<T>
+public abstract class DeviceFeature<T>(T device)
 {
-    protected DeviceFeature(T device)
-    {
-        Device = device;
-    }
 
-    protected T Device { get; }
+    protected T Device { get; } = device;
 
     public abstract IEnumerable<string> SupportedMethods { get; }
 

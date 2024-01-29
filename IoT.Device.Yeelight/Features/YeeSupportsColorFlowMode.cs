@@ -24,9 +24,9 @@ public class YeeSupportsColorFlowMode : YeelightDeviceFeature
         this(device, "start_cf", "stop_cf", "flowing", "flow_params")
     { }
 
-    public override IEnumerable<string> SupportedMethods => new[] { startSet, stopSet };
+    public override IEnumerable<string> SupportedMethods => [startSet, stopSet];
 
-    public override IEnumerable<string> SupportedProperties => new[] { propFlowing, propFlowParams };
+    public override IEnumerable<string> SupportedProperties => [propFlowing, propFlowParams];
 
     public async Task<SwitchState> GetFlowingStateAsync(CancellationToken cancellationToken = default) =>
         (SwitchState)int.Parse(

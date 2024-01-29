@@ -1,6 +1,5 @@
 namespace IoT.Device.Yeelight.Features;
 
-public class YeeChangeAmbientBrightness : YeeChangeBrightness
+public class YeeChangeAmbientBrightness(YeelightDevice device) : YeeChangeBrightness(device, "bg_bright", "bg_set_bright")
 {
-    public YeeChangeAmbientBrightness(YeelightDevice device) : base(device, "bg_bright", "bg_set_bright") { }
 }

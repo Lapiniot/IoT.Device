@@ -4,16 +4,11 @@ using OOs;
 
 namespace IoT.Device.Yeelight;
 
-public abstract class YeelightDevice : IConnectedObject, IAsyncDisposable
+public abstract class YeelightDevice(YeelightControlEndpoint endpoint) : IConnectedObject, IAsyncDisposable
 {
     public IReadOnlyDictionary<string, object> EmptyArgs { get; } = new Dictionary<string, object>();
 
-    protected YeelightDevice(YeelightControlEndpoint endpoint)
-    {
-        Endpoint = endpoint;
-    }
-
-    public YeelightControlEndpoint Endpoint { get; }
+    public YeelightControlEndpoint Endpoint { get; } = endpoint;
 
     public abstract string ModelName { get; }
 

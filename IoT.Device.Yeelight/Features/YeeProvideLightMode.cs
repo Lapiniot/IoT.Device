@@ -2,13 +2,11 @@ using System.Globalization;
 
 namespace IoT.Device.Yeelight.Features;
 
-public class YeeProvideLightMode : YeelightDeviceFeature
+public class YeeProvideLightMode(YeelightDevice device) : YeelightDeviceFeature(device)
 {
-    public YeeProvideLightMode(YeelightDevice device) : base(device) { }
+    public override IEnumerable<string> SupportedMethods => [];
 
-    public override IEnumerable<string> SupportedMethods => Array.Empty<string>();
-
-    public override IEnumerable<string> SupportedProperties => new[] { "active_mode" };
+    public override IEnumerable<string> SupportedProperties => ["active_mode"];
 
     public async Task<LightMode> GetModeAsync(CancellationToken cancellationToken = default) =>
         (LightMode)int.Parse(

@@ -3,16 +3,15 @@ using System.Text.Json;
 
 namespace IoT.Device.Yeelight.Features;
 
-public class YeeSupportsCronScheduler : YeelightDeviceFeature
+public class YeeSupportsCronScheduler(YeelightDevice device) : YeelightDeviceFeature(device)
 {
-    public YeeSupportsCronScheduler(YeelightDevice device) : base(device) { }
 
-    public override IEnumerable<string> SupportedMethods => new[] { "cron_get", "cron_add", "cron_del" };
+    public override IEnumerable<string> SupportedMethods => ["cron_get", "cron_add", "cron_del"];
 
-    public override IEnumerable<string> SupportedProperties => Array.Empty<string>();
+    public override IEnumerable<string> SupportedProperties => [];
 
     public async Task<JsonElement[]> CronGetAsync(uint type, CancellationToken cancellationToken = default) =>
-        (await Device.InvokeAsync("cron_get", new[] { type }, cancellationToken).ConfigureAwait(false)).EnumerateArray().ToArray();
+        [.. (await Device.InvokeAsync("cron_get", new[] { type }, cancellationToken).ConfigureAwait(false)).EnumerateArray()];
 
     public Task CronAddAsync(uint type, uint delay, CancellationToken cancellationToken = default) =>
         Device.InvokeAsync("cron_add", new[] { type, delay }, cancellationToken);
