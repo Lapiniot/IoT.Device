@@ -41,7 +41,7 @@ internal static class ModelNameSyntaxGenerator
 
         """);
         sb.Append("""
-                public override string ModelName { get; } = "
+                public override string ModelName => "
         """);
         sb.Append(model);
         sb.Append("""
