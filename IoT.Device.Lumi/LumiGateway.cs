@@ -56,7 +56,7 @@ public sealed class LumiGateway : LumiThing, IConnectedObject, IObserver<JsonEle
 
     // Gateway sends heartbeats every 10 seconds.
     // We give extra 2 seconds to the timeout value.
-    protected override TimeSpan HeartbeatTimeout { get; } = FromSeconds(10) + FromSeconds(2);
+    protected override TimeSpan HeartbeatTimeout { get; } = FromSeconds(12);
 
     public Task<JsonElement> InvokeAsync(string command, string sid = null, CancellationToken cancellationToken = default) =>
         client.InvokeAsync(command, sid ?? Sid, cancellationToken);

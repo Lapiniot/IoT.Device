@@ -4,7 +4,6 @@ namespace IoT.Device.Yeelight.Features;
 
 public class YeeSupportsAmbientLight(YeelightDevice device) : YeelightDeviceFeature(device)
 {
-
     public override IEnumerable<string> SupportedMethods => ["set_ps"];
 
     public override IEnumerable<string> SupportedProperties => ["bg_proact"];

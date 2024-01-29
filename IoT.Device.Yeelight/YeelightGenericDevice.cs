@@ -6,19 +6,13 @@ public class YeelightGenericDevice(YeelightControlEndpoint endpoint) : YeelightD
 {
     private readonly string[] supportedCapabilities;
 
-    public YeelightGenericDevice(YeelightControlEndpoint endpoint, string[] capabilities) : this(endpoint)
-    {
-        supportedCapabilities = capabilities;
-    }
+    public YeelightGenericDevice(YeelightControlEndpoint endpoint, string[] capabilities) : this(endpoint) => supportedCapabilities = capabilities;
 
     public override string ModelName { get; } = "yeelight.generic";
 
     public override IEnumerable<string> SupportedMethods => supportedCapabilities ?? [];
 
-    public override IEnumerable<string> SupportedProperties { get; } = [];
+    public override IEnumerable<string> SupportedProperties => [];
 
-    public override T GetFeature<T>()
-    {
-        return null;
-    }
+    public override T GetFeature<T>() => null;
 }

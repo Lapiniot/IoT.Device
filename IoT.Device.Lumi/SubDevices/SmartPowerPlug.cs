@@ -23,8 +23,7 @@ public sealed partial class SmartPowerPlug : LumiSubDeviceWithStatus
 
     // Plugged devices usually send heartbeat every ~10 minutes.
     // We give extra 10 seconds before transition to offline state.
-    protected override TimeSpan HeartbeatTimeout { get; } =
-        FromMinutes(10) + FromSeconds(10);
+    protected override TimeSpan HeartbeatTimeout { get; } = FromMinutes(10) + FromSeconds(10);
 
     public bool InUse
     {

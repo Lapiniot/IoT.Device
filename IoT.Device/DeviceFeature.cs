@@ -2,8 +2,7 @@
 
 public abstract class DeviceFeature<T>(T device)
 {
-
-    protected T Device { get; } = device;
+    protected T Device => device;
 
     public abstract IEnumerable<string> SupportedMethods { get; }
 

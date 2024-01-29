@@ -5,7 +5,6 @@ namespace IoT.Device.Yeelight.Features;
 
 public class YeeSupportsCronScheduler(YeelightDevice device) : YeelightDeviceFeature(device)
 {
-
     public override IEnumerable<string> SupportedMethods => ["cron_get", "cron_add", "cron_del"];
 
     public override IEnumerable<string> SupportedProperties => [];
