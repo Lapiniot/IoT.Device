@@ -19,5 +19,6 @@
     <NoPackageAnalysis>true</NoPackageAnalysis>
     <PackageOutputPath>$(MSBuildThisFileDirectory)artifacts</PackageOutputPath>
     <RestoreAdditionalProjectSources>$(PackageOutputPath)</RestoreAdditionalProjectSources>
+    <EmitCompilerGeneratedFiles>false</EmitCompilerGeneratedFiles>
   </PropertyGroup>
 </Project>
