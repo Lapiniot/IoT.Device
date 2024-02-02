@@ -10,7 +10,9 @@ public enum BrowseMode
 
 [CLSCompliant(false)]
 [ExportService(ContentDirectory)]
-public sealed class ContentDirectoryService(SoapControlEndpoint endpoint, Uri controlUri) : SoapActionInvoker(endpoint, controlUri, ContentDirectory), IUpnpService, IUpnpServiceFactory<ContentDirectoryService>
+public sealed class ContentDirectoryService(SoapControlEndpoint endpoint, Uri controlUri) :
+    SoapActionInvoker(endpoint, controlUri, ContentDirectory),
+    IUpnpService, IUpnpServiceFactory<ContentDirectoryService>
 {
     public static string ServiceSchema => ContentDirectory;
 
@@ -19,7 +21,7 @@ public sealed class ContentDirectoryService(SoapControlEndpoint endpoint, Uri co
         uint index = 0, uint count = 50, CancellationToken cancellationToken = default) =>
         InvokeAsync("Browse", new Dictionary<string, string> {
             { "ObjectID", parent },
-            { "BrowseFlag", mode.ToString() },
+            { "BrowseFlag", mode is BrowseMode.BrowseMetadata ? "BrowseMetadata" : "BrowseDirectChildren" },
             { "Filter", filter ?? "*" },
             { "StartingIndex", index.ToString(InvariantCulture) },
             { "RequestedCount", count.ToString(InvariantCulture) },
