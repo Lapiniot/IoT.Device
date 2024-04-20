@@ -56,5 +56,13 @@ public sealed class ContentDirectoryService(SoapControlEndpoint endpoint, Uri co
             { "SortCriteria", sortCriteria ?? "" }
         }, cancellationToken);
 
+    public async Task<string[]> GetSearchCapabilitiesAsync(CancellationToken cancellationToken)
+    {
+        var result = await InvokeAsync("GetSearchCapabilities", EmptyArgs, cancellationToken).ConfigureAwait(false);
+        return result.TryGetValue("SearchCaps", out var value) ?
+            value.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            : [];
+    }
+
     public static ContentDirectoryService Create(SoapControlEndpoint endpoint, Uri controlUri) => new(endpoint, controlUri);
 }
