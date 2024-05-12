@@ -15,19 +15,19 @@ namespace IoT.Device.Generators;
 public class GetFeatureGenerator : IIncrementalGenerator
 {
     private static readonly DiagnosticDescriptor NoPartialWarning = new("GFGEN001",
-        "Generation warning",
+        "Generation error",
         "Class is marked with 'SupportsFeatureAttribute', but declaration has no 'partial' modifier keyword, so it cannot be augmented by the generator",
-        nameof(GetFeatureGenerator), DiagnosticSeverity.Warning, true);
+        nameof(GetFeatureGenerator), DiagnosticSeverity.Error, true);
 
     private static readonly DiagnosticDescriptor GetFeatureDefinedWarning = new("GFGEN003",
-        "Generation warning",
+        "Generation error",
         "Class is marked with 'SupportsFeatureAttribute', but declaration already has GetFeature<T>() method defined",
-        nameof(GetFeatureGenerator), DiagnosticSeverity.Warning, true);
+        nameof(GetFeatureGenerator), DiagnosticSeverity.Error, true);
 
     private static readonly DiagnosticDescriptor CannotOverrideWarning = new("GFGEN004",
-        "Generation warning",
+        "Generation error",
         "Class is marked with 'SupportsFeatureAttribute', but abstract GetFeature<T>() method is sealed and cannot be overriden by code-gen",
-        nameof(GetFeatureGenerator), DiagnosticSeverity.Warning, true);
+        nameof(GetFeatureGenerator), DiagnosticSeverity.Error, true);
 
     private static readonly SyntaxTargetOnlyComparer<ClassDeclarationSyntax> SyntaxTargetOnlyComparer = new();
 
@@ -150,12 +150,14 @@ public class GetFeatureGenerator : IIncrementalGenerator
                     continue;
                 }
 
+                #pragma warning disable IDE0055
                 var implType = attributeClass.TypeArguments switch
                 {
-                [var value] => value,
-                [_, var value] => value,
-                    _ => throw new NotImplementedException()
+                    [var value] => value,
+                    [_, var value] => value,
+                    _ => throw new NotSupportedException()
                 };
+                #pragma warning restore IDE0055
 
                 var fullTypeName = implType.ToDisplayString(FullyQualifiedFormat);
 
@@ -175,9 +177,9 @@ public class GetFeatureGenerator : IIncrementalGenerator
                 var featureType = attributeClass.TypeArguments[0];
                 var featureTypes = (HashSet<string>)data.FeatureTypes;
 
-                        while (featureType is INamedTypeSymbol { BaseType.ConstructedFrom: { } cf } && cf.Equals(featureBaseType, comparer) == false)
-                        {
-                            cancellationToken.ThrowIfCancellationRequested();
+                while (featureType is INamedTypeSymbol { BaseType.ConstructedFrom: { } cf } && cf.Equals(featureBaseType, comparer) == false)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
 
                     featureTypes.Add(featureType.ToDisplayString(FullyQualifiedFormat));
 
