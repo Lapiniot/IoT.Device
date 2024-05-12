@@ -12,4 +12,9 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Using Include="IoT.Device.Yeelight.Features" />
+    <Using Include="IoT.Protocol.Yeelight" />
+  </ItemGroup>
+
 </Project>

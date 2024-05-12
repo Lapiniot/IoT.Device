@@ -1,6 +1,3 @@
-using IoT.Device.Yeelight.Features;
-using IoT.Protocol.Yeelight;
-
 namespace IoT.Device.Yeelight;
 
 [ExportYeelightDevice("mono5")]

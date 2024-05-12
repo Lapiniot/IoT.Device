@@ -1,5 +1,3 @@
-using IoT.Protocol.Yeelight;
-
 namespace IoT.Device.Yeelight;
 
 public class YeelightGenericDevice(YeelightControlEndpoint endpoint) : YeelightDevice(endpoint)
