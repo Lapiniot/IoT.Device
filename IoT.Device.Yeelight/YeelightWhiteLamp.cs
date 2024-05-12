@@ -1,3 +1,5 @@
 ﻿namespace IoT.Device.Yeelight;
 
-public abstract class YeelightWhiteLamp(YeelightControlEndpoint endpoint) : YeelightLamp(endpoint) { }
+[SupportsFeature<ChangeBrightness>, SupportsFeature<AdjustBrightness>,
+SupportsFeature<SupportsColorFlowMode>, SupportsFeature<ProvideColorMode>]
+public abstract partial class YeelightWhiteLamp(YeelightControlEndpoint endpoint) : YeelightLamp(endpoint) { }
