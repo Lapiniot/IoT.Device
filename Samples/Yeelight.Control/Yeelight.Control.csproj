@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <Nullable>enable</Nullable>
+    <AssemblyName>yee-control</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\IoT.Device.Yeelight\IoT.Device.Yeelight.csproj" />
+    <ProjectReference Include="..\..\IoT.Protocol\IoT.Protocol.Yeelight\IoT.Protocol.Yeelight.csproj" />
+    <ProjectReference Include="..\..\IoT.Protocol\OOs.Common\OOs.Common.CommandLine\OOs.Common.CommandLine.csproj" />
+  </ItemGroup>
+
+</Project>
