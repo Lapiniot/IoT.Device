@@ -4,10 +4,7 @@ public class SupportsScenes : YeelightDeviceFeature
 {
     private readonly string method;
 
-    protected SupportsScenes(YeelightDevice device, string setSceneName) : base(device)
-    {
-        method = setSceneName;
-    }
+    protected SupportsScenes(YeelightDevice device, string setSceneName) : base(device) => method = setSceneName;
 
     public SupportsScenes(YeelightDevice device) : this(device, "set_scene") { }
 

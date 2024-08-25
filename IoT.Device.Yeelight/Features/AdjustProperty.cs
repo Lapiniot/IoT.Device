@@ -4,10 +4,7 @@ public class AdjustProperty : YeelightDeviceFeature
 {
     private readonly string method;
 
-    protected AdjustProperty(YeelightDevice device, string adjustMethodName) : base(device)
-    {
-        method = adjustMethodName;
-    }
+    protected AdjustProperty(YeelightDevice device, string adjustMethodName) : base(device) => method = adjustMethodName;
 
     public AdjustProperty(YeelightDevice device) : this(device, "set_adjust") { }
 
