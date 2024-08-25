@@ -1,7 +1,7 @@
 ﻿using OOs.CommandLine;
 using Yeelight.Control;
 [assembly: Command("discover", IsDefault = true), Command("exec"), Command("monitor")]
-[assembly: Argument("address", typeof(string), "a"), Argument("method", typeof(string), "m"), Argument("params", typeof(string), "p")]
+[assembly: Option<string>("address", "address", 'a'), Option<string>("method", "method", 'm'), Option<string>("params", "params", 'p')]
 
 var arguments = Arguments.Parse(args, true);
 
@@ -65,7 +65,7 @@ static async Task CancelOnUserInputAsync(CancellationTokenSource cts)
 
 static string GetArgument(Arguments arguments, string name, string promptText)
 {
-    var argument = arguments.ProvidedValues.TryGetValue(name, out var value) ? value as string : null;
+    var argument = arguments.Options.TryGetValue(name, out var value) ? value as string : null;
     while (string.IsNullOrEmpty(argument))
     {
         Console.Write(promptText);
