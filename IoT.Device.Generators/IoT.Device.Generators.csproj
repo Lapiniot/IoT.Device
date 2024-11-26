@@ -1,10 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk" TreatAsLocalProperty="PublishTrimmed;TargetFrameworks;TargetFramework">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <AnalyzerLanguage>cs</AnalyzerLanguage>
     <IsTrimmable>false</IsTrimmable>
+    <PublishTrimmed>false</PublishTrimmed>
     <Nullable>enable</Nullable>
-    <Version>1.8.1</Version>
+    <Version>1.9.0</Version>
     <Title>IoT.Device Code Generators</Title>
     <Description>Provides boilerplate code auto-generation support for IoT things extensibility framework based on IoT.Device.DeviceFactory&lt;T&gt;.</Description>
     <IncludeBuildOutput>false</IncludeBuildOutput>
