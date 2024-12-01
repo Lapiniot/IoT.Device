@@ -9,7 +9,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/artifacts/bin/Yeelight.Control/debug/yee-control",
+            "program": "${workspaceFolder}/artifacts/bin/Yeelight.Control/debug_net9.0/yee-control",
             "args": [
                 "discover"
             ],
@@ -22,7 +22,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/artifacts/bin/Yeelight.Control/debug/yee-control",
+            "program": "${workspaceFolder}/artifacts/bin/Yeelight.Control/debug_net9.0/yee-control",
             "args": [
                 "exec"
             ],
@@ -35,7 +35,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/artifacts/bin/Yeelight.Control/debug/yee-control",
+            "program": "${workspaceFolder}/artifacts/bin/Yeelight.Control/debug_net9.0/yee-control",
             "args": [
                 "monitor"
             ],
