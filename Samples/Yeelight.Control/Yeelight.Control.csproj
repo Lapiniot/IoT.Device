@@ -7,9 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\IoT.Device.Yeelight\IoT.Device.Yeelight.csproj" />
-    <ProjectReference Include="..\..\IoT.Protocol\IoT.Protocol.Yeelight\IoT.Protocol.Yeelight.csproj" />
-    <ProjectReference Include="..\..\IoT.Protocol\OOs.Common\OOs.Common.CommandLine\OOs.Common.CommandLine.csproj" />
+    <ProjectReference Include="../../IoT.Device.Yeelight/IoT.Device.Yeelight.csproj" />
+    <ProjectReference Include="../../IoT.Protocol/IoT.Protocol.Yeelight/IoT.Protocol.Yeelight.csproj" />
+    <ProjectReference Include="../../IoT.Protocol/OOs.Common/OOs.Common.CommandLine/OOs.Common.CommandLine.csproj" />
+    <ProjectReference
+      Include="../../IoT.Protocol/OOs.Common/OOs.Common.CommandLine.Generators/OOs.Common.CommandLine.Generators.csproj">
+      <PrivateAssets>all</PrivateAssets>
+      <OutputItemType>Analyzer</OutputItemType>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
   </ItemGroup>
 
 </Project>

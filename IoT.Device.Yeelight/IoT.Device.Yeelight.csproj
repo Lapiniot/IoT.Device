@@ -7,8 +7,9 @@
 
   <ItemGroup>
     <PackageReference Include="IoT.Device.Generators">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
+      <OutputItemType>Analyzer</OutputItemType>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </PackageReference>
   </ItemGroup>
 

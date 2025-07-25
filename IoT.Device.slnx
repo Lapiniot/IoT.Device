@@ -1,9 +1,4 @@
 <Solution>
-  <Configurations>
-    <Platform Name="Any CPU" />
-    <Platform Name="x64" />
-    <Platform Name="x86" />
-  </Configurations>
   <Folder Name="/IoT.Protocol/">
     <Project Path="IoT.Protocol/IoT.Protocol.Lumi/IoT.Protocol.Lumi.csproj" />
     <Project Path="IoT.Protocol/IoT.Protocol.Soap/IoT.Protocol.Soap.csproj" />
@@ -12,46 +7,17 @@
     <Project Path="IoT.Protocol/IoT.Protocol/IoT.Protocol.csproj" />
   </Folder>
   <Folder Name="/OOs.Common/">
-    <Project Path="IoT.Protocol/OOs.Common/OOs.Common.CommandLine/OOs.Common.CommandLine.csproj">
-      <BuildType Solution="*|x64" Project="?" />
-      <BuildType Solution="*|x86" Project="?" />
-      <Platform Solution="*|x64" Project="?" />
-      <Platform Solution="*|x86" Project="?" />
-      <Build Solution="*|x64" Project="false" />
-      <Build Solution="*|x86" Project="false" />
-    </Project>
-    <Project Path="IoT.Protocol/OOs.Common/OOs.Common/OOs.Common.csproj">
-      <BuildType Solution="*|x64" Project="?" />
-      <BuildType Solution="*|x86" Project="?" />
-      <Platform Solution="*|x64" Project="?" />
-      <Platform Solution="*|x86" Project="?" />
-      <Build Solution="*|x64" Project="false" />
-      <Build Solution="*|x86" Project="false" />
-    </Project>
+    <Project Path="IoT.Protocol/OOs.Common/OOs.Common.CommandLine/OOs.Common.CommandLine.csproj" />
+    <Project Path="IoT.Protocol/OOs.Common/OOs.Common.CommandLine.Generators/OOs.Common.CommandLine.Generators.csproj" />
+    <Project Path="IoT.Protocol/OOs.Common/OOs.Common/OOs.Common.csproj" />
     <Project Path="IoT.Protocol/OOs.Common/OOs.Extensions.Configuration/OOs.Extensions.Configuration.csproj" />
   </Folder>
   <Folder Name="/Samples/">
     <Project Path="Samples/Yeelight.Control/Yeelight.Control.csproj" />
   </Folder>
-  <Project Path="IoT.Device.Lumi/IoT.Device.Lumi.csproj">
-    <BuildType Project="?" />
-    <Platform Project="?" />
-    <Build Project="false" />
-  </Project>
-  <Project Path="IoT.Device.Upnp.Umi/IoT.Device.Upnp.Umi.csproj">
-    <BuildType Project="?" />
-    <Platform Project="?" />
-    <Build Project="false" />
-  </Project>
-  <Project Path="IoT.Device.Upnp/IoT.Device.Upnp.csproj">
-    <BuildType Project="?" />
-    <Platform Project="?" />
-    <Build Project="false" />
-  </Project>
+  <Project Path="IoT.Device.Lumi/IoT.Device.Lumi.csproj" />
+  <Project Path="IoT.Device.Upnp.Umi/IoT.Device.Upnp.Umi.csproj" />
+  <Project Path="IoT.Device.Upnp/IoT.Device.Upnp.csproj" />
   <Project Path="IoT.Device.Yeelight/IoT.Device.Yeelight.csproj" />
-  <Project Path="IoT.Device/IoT.Device.csproj">
-    <BuildType Project="?" />
-    <Platform Project="?" />
-    <Build Project="false" />
-  </Project>
+  <Project Path="IoT.Device/IoT.Device.csproj" />
 </Solution>
