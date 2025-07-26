@@ -1,0 +1,7 @@
+<Project>
+  <ItemGroup>
+    <CompilerVisibleProperty Include="LibraryInitGeneratorNamespaceName" />
+    <CompilerVisibleProperty Include="LibraryInitGeneratorClassName" />
+    <CompilerVisibleProperty Include="LibraryInitGeneratorInitMethodName" />
+  </ItemGroup>
+</Project>

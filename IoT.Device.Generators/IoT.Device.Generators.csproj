@@ -23,7 +23,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="True" PackagePath="analyzers/dotnet/cs" Visible="False" />
+    <None Condition=" '$(IncludeBuildOutput)' == 'false' " Include="$(OutputPath)$(AssemblyName).dll"
+      Pack="True" PackagePath="analyzers/dotnet/$(AnalyzerLanguage)" Visible="False" />
+    <Content Include="$(MSBuildProjectName).props" PackagePath="build/$(PackageId)%(Extension)" />
   </ItemGroup>
 
 </Project>

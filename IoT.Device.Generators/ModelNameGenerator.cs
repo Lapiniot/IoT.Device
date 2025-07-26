@@ -124,7 +124,7 @@ public class ModelNameGenerator : IIncrementalGenerator
                 return;
             }
 
-            if (!Parser.TryGetExportAttribute(implType, out var attribute, out _, cancellationToken))
+            if (!Parser.TryGetExportAttribute(implType, out AttributeData? attribute, out _, cancellationToken))
                 // weird situation, should be impossible to get here, but just skip so far
                 return;
 
