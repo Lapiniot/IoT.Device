@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.Text;
 using static Microsoft.CodeAnalysis.TypedConstantKind;
 using static Microsoft.CodeAnalysis.SpecialType;
 using Parser = IoT.Device.Generators.ExportAttributeSyntaxParser;
-using Generator = IoT.Device.Generators.ModelNameSyntaxGenerator;
+using Generator = IoT.Device.Generators.ModelNameCodeEmitter;
 
 #pragma warning disable RS2008 // Enable analyzer release tracking
 
@@ -146,7 +146,7 @@ public class ModelNameGenerator : IIncrementalGenerator
                 _ => "unknown"
             };
 
-            var code = Generator.GenerateAugmentationClass(implType.Name, implType.ContainingNamespace.ToDisplayString(), modelName);
+            var code = Generator.Emit(implType.Name, implType.ContainingNamespace.ToDisplayString(), modelName);
             context.AddSource($"{implType.ToDisplayString()}.g.cs", SourceText.From(code, Encoding.UTF8));
         });
     }

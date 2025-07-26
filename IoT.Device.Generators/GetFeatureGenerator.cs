@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using static Microsoft.CodeAnalysis.SymbolDisplayFormat;
 using Parser = IoT.Device.Generators.SupportsFeatureSyntaxParser;
-using Generator = IoT.Device.Generators.GetFeatureSyntaxGenerator;
+using Generator = IoT.Device.Generators.GetFeatureCodeEmitter;
 
 #pragma warning disable RS2008 // Enable analyzer release tracking
 
@@ -241,7 +241,7 @@ public class GetFeatureGenerator : IIncrementalGenerator
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            var code = Generator.GenerateAugmentation(targetType.Name, targetType.ContainingNamespace.ToDisplayString(), features, invokeBaseImpl, cancellationToken);
+            var code = Generator.Emit(targetType.Name, targetType.ContainingNamespace.ToDisplayString(), features, invokeBaseImpl, cancellationToken);
             ctx.AddSource($"{targetType.ToDisplayString()}.g.cs", SourceText.From(code, Encoding.UTF8));
         });
     }

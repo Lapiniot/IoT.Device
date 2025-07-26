@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using static Microsoft.CodeAnalysis.SymbolDisplayFormat;
-using Generator = IoT.Device.Generators.LibraryInitSyntaxGenerator;
+using Generator = IoT.Device.Generators.LibraryInitCodeEmitter;
 using Parser = IoT.Device.Generators.ExportAttributeSyntaxParser;
 
 #pragma warning disable RS2008 // Enable analyzer release tracking
@@ -45,7 +45,7 @@ public class LibraryInitGenerator : IIncrementalGenerator
             var config = options.GlobalOptions;
             const string prefix = "build_property.library_init_generator_";
 
-            var code = Generator.GenerateLibInitClass(assemblyName!,
+            var code = Generator.Emit(assemblyName!,
                 config.TryGetValue($"{prefix}class_name", out var value) && value is not "" ? value : "Library",
                 config.TryGetValue($"{prefix}init_method_name", out value) && value is not "" ? value : "Init",
                 GetExportDescriptors(targets, compilation, ctx.CancellationToken));

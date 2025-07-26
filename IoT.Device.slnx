@@ -15,6 +15,7 @@
   <Folder Name="/Samples/">
     <Project Path="Samples/Yeelight.Control/Yeelight.Control.csproj" />
   </Folder>
+  <Project Path="IoT.Device.Generators/IoT.Device.Generators.csproj" />
   <Project Path="IoT.Device.Lumi/IoT.Device.Lumi.csproj" />
   <Project Path="IoT.Device.Upnp.Umi/IoT.Device.Upnp.Umi.csproj" />
   <Project Path="IoT.Device.Upnp/IoT.Device.Upnp.csproj" />
