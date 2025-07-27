@@ -3,10 +3,11 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
-using static Microsoft.CodeAnalysis.TypedConstantKind;
-using static Microsoft.CodeAnalysis.SpecialType;
-using Parser = IoT.Device.Generators.ExportAttributeSyntaxParser;
 using Generator = IoT.Device.Generators.ModelNameCodeEmitter;
+using Parser = IoT.Device.Generators.ExportAttributeSyntaxParser;
+using SourceContext = (string NamespaceName, string TypeName, string ModelName,
+    Microsoft.CodeAnalysis.Accessibility Accessibility,
+    IoT.Device.Generators.DiagnosticContext? Diagnostic);
 
 #pragma warning disable RS2008 // Enable analyzer release tracking
 
@@ -15,6 +16,9 @@ namespace IoT.Device.Generators;
 [Generator]
 public class ModelNameGenerator : IIncrementalGenerator
 {
+    private static readonly SymbolDisplayFormat? format = SymbolDisplayFormat.FullyQualifiedFormat.
+        WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle.Omitted);
+
     private static readonly DiagnosticDescriptor NoPartialWarning = new("MNGEN001",
         "Generation warning",
         "Class is marked for export and has abstract property 'ModelName' that can be generated from the relevant ExportAttribute.ModelName, " +
@@ -23,131 +27,130 @@ public class ModelNameGenerator : IIncrementalGenerator
 
     private static readonly DiagnosticDescriptor AbstractClassNotSupportedWarning = new("MNGEN002",
         "Generation warning",
-        "Using ExportAttribute with abstract classes is meaningless, consider using it with purpose for concrete final classes",
+        "Abstract class is marked with ExportAttribute which makes no sense at all, consider using it with purpose for concrete final classes",
         nameof(ModelNameGenerator), DiagnosticSeverity.Warning, true);
-
-    private static readonly SyntaxTargetOnlyComparer<ClassDeclarationSyntax> SyntaxTargetOnlyComparer = new();
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
         var targets = context.SyntaxProvider.CreateSyntaxProvider(
-                static (syntaxNode, _) => Parser.IsSyntaxTargetForGeneration(syntaxNode),
-                static (context, ct) => Parser.GetSemanticTargetForGeneration((ClassDeclarationSyntax)context.Node, context.SemanticModel, ct))
-            .Where(static target => target is not null);
+            predicate: static (syntaxNode, _) => syntaxNode is ClassDeclarationSyntax { AttributeLists.Count: > 0 },
+            transform: GetSourceGenerationContext)
+            .Where(static m => m is { TypeName: not null } or { Diagnostic: not null });
 
-        var combined = targets.Combine(context.CompilationProvider).WithComparer(SyntaxTargetOnlyComparer);
-
-        context.RegisterSourceOutput(combined, static (context, source) =>
+        context.RegisterSourceOutput(targets, static (context, source) =>
         {
-            var (target, compilation) = source;
-            var cancellationToken = context.CancellationToken;
+            var (namespaceName, typeName, modelName, accessibility, diagnostic) = source;
 
-            cancellationToken.ThrowIfCancellationRequested();
-
-            if (target is null ||
-                compilation.GetSemanticModel(target.SyntaxTree) is not { } model ||
-                model.GetDeclaredSymbol(target, cancellationToken) is not { } implType)
+            if (diagnostic is
+                {
+                    Descriptor: var descriptor,
+                    Location:
+                    {
+                        FilePath: var filePath,
+                        SourceSpan: var span,
+                        LineSpan: var lineSpan
+                    }
+                })
             {
+                context.ReportDiagnostic(Diagnostic.Create(descriptor, Location.Create(filePath, span, lineSpan)));
                 return;
             }
 
-            var shouldSkip = false;
+            var code = Generator.Emit(typeName, namespaceName, modelName, accessibility);
+            var fileName = !string.IsNullOrEmpty(namespaceName)
+                ? namespaceName + "." + typeName
+                : typeName;
+            context.AddSource($"{fileName}.g.cs", SourceText.From(code, Encoding.UTF8));
+        });
+    }
+
+    private static SourceContext GetSourceGenerationContext(GeneratorSyntaxContext context, CancellationToken token)
+    {
+        if (context.SemanticModel.GetDeclaredSymbol(context.Node, token) is INamedTypeSymbol implType)
+        {
+            if (!Parser.TryGetExportAttribute(implType, out var targetType, out string? model, token))
+            {
+                goto Skip;
+            }
 
             foreach (var member in implType.GetMembers("ModelName"))
             {
                 if (member is IPropertySymbol)
+                {
                     // Class already contains ModelName property defined, skip generation
-                    return;
+                    goto Skip;
+                }
             }
 
-            shouldSkip = true;
+            token.ThrowIfCancellationRequested();
+
             var type = implType;
             while ((type = type!.BaseType) is { })
             {
-                cancellationToken.ThrowIfCancellationRequested();
-                var shouldBreak = false;
-
                 foreach (var member in type.GetMembers("ModelName"))
                 {
-                    cancellationToken.ThrowIfCancellationRequested();
+                    token.ThrowIfCancellationRequested();
 
                     if (member is IPropertySymbol
                         {
-                            IsAbstract: var isAbstract, IsSealed: var isSealed, IsReadOnly: true,
-                            Type.SpecialType: System_String,
+                            IsAbstract: var isAbstract, IsVirtual: var isVirtual, IsSealed: var isSealed,
+                            IsReadOnly: true, Type.SpecialType: SpecialType.System_String,
                             GetMethod.DeclaredAccessibility: Accessibility.Public
                         })
                     {
-                        if (isAbstract)
-                        {
-                            shouldSkip = false;
-                            shouldBreak = true;
-                            break;
-                        }
-
                         if (isSealed)
                         {
-                            shouldBreak = true;
-                            break;
+                            // One of the type's ancestors has sealed ModelName property,
+                            // thus there is no way to define new override, just skip such type
+                            goto Skip;
+                        }
+
+                        if (isAbstract || isVirtual)
+                        {
+                            // Found type's ancestor which defines abstract or virtual ModelName property,
+                            // suitable for override, just stop scan and go to the next check
+                            goto CheckType;
                         }
                     }
                 }
-
-                if (shouldBreak) break;
             }
 
-            // None of class base types has readonly abstract property ModelName, which we can override
-            if (shouldSkip) return;
+            // No suitable ModelName property found for override during ancestor types traversal loop
+            goto Skip;
 
-            shouldSkip = true;
+        CheckType:
+            token.ThrowIfCancellationRequested();
+
+            var target = (ClassDeclarationSyntax)context.Node;
+
+            if (implType.IsAbstract)
+            {
+                return default(SourceContext) with
+                {
+                    Diagnostic = new(AbstractClassNotSupportedWarning, LocationContext.Create(target.GetLocation()))
+                };
+            }
 
             foreach (var item in target.Modifiers)
             {
                 if (item.IsKind(SyntaxKind.PartialKeyword))
                 {
-                    shouldSkip = false;
-                    break;
+                    goto Success;
                 }
             }
 
-            if (shouldSkip)
+            return default(SourceContext) with
             {
-                // Class is not partial, thus no chance to extend via code generation
-                context.ReportDiagnostic(Diagnostic.Create(NoPartialWarning, target.GetLocation()));
-                return;
+                Diagnostic = new(NoPartialWarning, LocationContext.Create(target.GetLocation()))
             }
+        ;
 
-            if (implType.IsAbstract)
-            {
-                // Abstract classes are not supported too
-                context.ReportDiagnostic(Diagnostic.Create(AbstractClassNotSupportedWarning, target.GetLocation()));
-                return;
-            }
+        Success:
+            return (implType.ContainingNamespace.ToDisplayString(format),
+                implType.Name, model!, implType.DeclaredAccessibility, Diagnostic: null);
+        }
 
-            if (!Parser.TryGetExportAttribute(implType, out AttributeData? attribute, out _, cancellationToken))
-                // weird situation, should be impossible to get here, but just skip so far
-                return;
-
-            var modelName = attribute switch
-            {
-                // ModelName named argument specified explicitly, take it
-                {
-                    NamedArguments: [{ Key: "ModelName", Value: { Kind: Primitive, Type.SpecialType: System_String, Value: string value } }]
-                } => value,
-                // Attribute constructor has second string type argument, take it
-                {
-                    ConstructorArguments: [_, { Kind: Primitive, Type.SpecialType: System_String, Value: string value }, ..]
-                } => value,
-                // Attribute constructor has only first argument of type string which is also modelId by convention, use it
-                {
-                    ConstructorArguments: [{ Kind: Primitive, Type.SpecialType: System_String, Value: string value }, ..]
-                } => value,
-                // Fallback to a very unlikely situation
-                _ => "unknown"
-            };
-
-            var code = Generator.Emit(implType.Name, implType.ContainingNamespace.ToDisplayString(), modelName);
-            context.AddSource($"{implType.ToDisplayString()}.g.cs", SourceText.From(code, Encoding.UTF8));
-        });
+    Skip:
+        return default;
     }
 }
