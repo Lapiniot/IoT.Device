@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.Text;
 
 namespace IoT.Device.Generators;
@@ -7,7 +8,7 @@ internal record struct ConditionData(string FieldName, IReadOnlyCollection<strin
 internal static class GetFeatureCodeEmitter
 {
     public static string Emit(string className, string namespaceName,
-        Dictionary<string, ConditionData> model, bool invokeBaseImpl,
+        ImmutableArray<FeatureContext> model, bool invokeBaseImpl,
         CancellationToken cancellationToken)
     {
         var sb = new StringBuilder();
@@ -31,14 +32,17 @@ internal static class GetFeatureCodeEmitter
             {
 
         """);
-        foreach (var pair in model)
+
+        for (int i = 0; i < model.Length; i++)
         {
+            var (type, implType) = model[i];
+
             sb.Append("""
                     private 
             """);
-            sb.Append(pair.Key);
-            sb.Append(' ');
-            sb.Append(pair.Value.FieldName);
+            sb.Append(!string.IsNullOrEmpty(implType) ? implType : type);
+            sb.Append(" feature");
+            sb.Append(i);
             sb.AppendLine(";");
         }
 
@@ -58,44 +62,30 @@ internal static class GetFeatureCodeEmitter
 
         """);
 
-        foreach (var pair in model)
+        for (int i = 0; i < model.Length; i++)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            var (type, implType) = model[i];
 
-            var data = pair.Value;
-
-            sb.Append("""
-                        if(
-            """);
-            var first = true;
-
-            foreach (var featureType in data.FeatureTypes)
+            if (implType is { Length: > 0 })
             {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                if (!first)
-                {
-                    sb.Append("""
-                     ||
-                                    
-                    """);
-                }
-
-                sb.Append("type == typeof(");
-                sb.Append(featureType);
-                sb.Append(')');
-
-                first = false;
+                sb.Append($$"""
+                            if(type == typeof({{implType}}) || 
+                                type == typeof({{type}}))
+                
+                """);
+            }
+            else
+            {
+                sb.Append($$"""
+                            if(type == typeof({{type}}))
+                
+                """);
             }
 
-            sb.Append("""
-            )
+            sb.Append($$"""
                         {
-                            return (
-            """);
-            sb.Append(data.FieldName);
-            sb.Append("""
-             ??= new(this)) as T;
+                            return (feature{{i}} ??= new(this)) as T;
                         }
 
 

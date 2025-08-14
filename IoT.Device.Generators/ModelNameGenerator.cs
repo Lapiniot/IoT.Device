@@ -3,8 +3,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
-using Generator = IoT.Device.Generators.ModelNameCodeEmitter;
-using Parser = IoT.Device.Generators.ExportAttributeSyntaxParser;
 using SourceContext = (string NamespaceName, string TypeName, string ModelName,
     Microsoft.CodeAnalysis.Accessibility Accessibility,
     IoT.Device.Generators.DiagnosticContext? Diagnostic);
@@ -16,7 +14,7 @@ namespace IoT.Device.Generators;
 [Generator]
 public class ModelNameGenerator : IIncrementalGenerator
 {
-    private static readonly SymbolDisplayFormat? format = SymbolDisplayFormat.FullyQualifiedFormat.
+    private static readonly SymbolDisplayFormat? OmitGlobalFormat = SymbolDisplayFormat.FullyQualifiedFormat.
         WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle.Omitted);
 
     private static readonly DiagnosticDescriptor NoPartialWarning = new("MNGEN001",
@@ -41,22 +39,13 @@ public class ModelNameGenerator : IIncrementalGenerator
         {
             var (namespaceName, typeName, modelName, accessibility, diagnostic) = source;
 
-            if (diagnostic is
-                {
-                    Descriptor: var descriptor,
-                    Location:
-                    {
-                        FilePath: var filePath,
-                        SourceSpan: var span,
-                        LineSpan: var lineSpan
-                    }
-                })
+            if (diagnostic is { } value)
             {
-                context.ReportDiagnostic(Diagnostic.Create(descriptor, Location.Create(filePath, span, lineSpan)));
+                context.ReportDiagnostic(value.ToDiagnostic());
                 return;
             }
 
-            var code = Generator.Emit(typeName, namespaceName, modelName, accessibility);
+            var code = ModelNameCodeEmitter.Emit(typeName, namespaceName, modelName, accessibility);
             var fileName = !string.IsNullOrEmpty(namespaceName)
                 ? namespaceName + "." + typeName
                 : typeName;
@@ -68,7 +57,7 @@ public class ModelNameGenerator : IIncrementalGenerator
     {
         if (context.SemanticModel.GetDeclaredSymbol(context.Node, token) is INamedTypeSymbol implType)
         {
-            if (!Parser.TryGetExportAttribute(implType, out var targetType, out string? model, token))
+            if (!ExportAttributeSyntaxHelper.TryGetExportAttribute(implType, out _, out string? model, token))
             {
                 goto Skip;
             }
@@ -146,8 +135,8 @@ public class ModelNameGenerator : IIncrementalGenerator
         ;
 
         Success:
-            return (implType.ContainingNamespace.ToDisplayString(format),
-                implType.Name, model!, implType.DeclaredAccessibility, Diagnostic: null);
+            return (implType.ContainingNamespace.ToDisplayString(OmitGlobalFormat),
+                implType.Name, model, implType.DeclaredAccessibility, Diagnostic: null);
         }
 
     Skip:

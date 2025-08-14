@@ -3,9 +3,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
-using static Microsoft.CodeAnalysis.SymbolDisplayFormat;
-using Generator = IoT.Device.Generators.LibraryInitCodeEmitter;
-using Parser = IoT.Device.Generators.ExportAttributeSyntaxParser;
 
 #pragma warning disable RS2008 // Enable analyzer release tracking
 
@@ -22,11 +19,11 @@ public class LibraryInitGenerator : IIncrementalGenerator
             static (node, _) => node is ClassDeclarationSyntax { AttributeLists.Count: > 0 },
             static (context, ct) =>
                 context.SemanticModel.GetDeclaredSymbol(context.Node, ct) is INamedTypeSymbol implType &&
-                Parser.TryGetExportAttribute(implType, out var targetType, out string? model, ct)
+                ExportAttributeSyntaxHelper.TryGetExportAttribute(implType, out var targetType, out string? model, ct)
                     ? new(
-                        TargetType: targetType!.ToDisplayString(FullyQualifiedFormat),
-                        ImplType: implType.ToDisplayString(FullyQualifiedFormat),
-                        ModelName: model!)
+                        targetType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
+                        implType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
+                        model)
                     : default)
             .Where(m => m is { ImplType: not null });
 
@@ -35,7 +32,7 @@ public class LibraryInitGenerator : IIncrementalGenerator
         context.RegisterSourceOutput(combined, static (ctx, source) =>
         {
             var ((namespaceName, className, methodName), targets) = source;
-            var code = Generator.Emit(namespaceName, className, methodName, targets);
+            var code = LibraryInitCodeEmitter.Emit(namespaceName, className, methodName, targets);
             ctx.AddSource("LibraryInit.g.cs", SourceText.From(code, Encoding.UTF8));
         });
     }

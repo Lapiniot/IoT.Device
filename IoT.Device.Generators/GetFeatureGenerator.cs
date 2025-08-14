@@ -1,11 +1,14 @@
+using System.Collections.Immutable;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
-using static Microsoft.CodeAnalysis.SymbolDisplayFormat;
-using Parser = IoT.Device.Generators.SupportsFeatureSyntaxParser;
-using Generator = IoT.Device.Generators.GetFeatureCodeEmitter;
+using SourceGenerationContext =
+(
+    IoT.Device.Generators.FeatureSourceContext? Context,
+    IoT.Device.Generators.DiagnosticContext? Diagnostic
+);
 
 #pragma warning disable RS2008 // Enable analyzer release tracking
 
@@ -14,235 +17,156 @@ namespace IoT.Device.Generators;
 [Generator]
 public class GetFeatureGenerator : IIncrementalGenerator
 {
-    private static readonly DiagnosticDescriptor NoPartialWarning = new("GFGEN001",
+    private static readonly SymbolDisplayFormat? OmitGlobalFormat = SymbolDisplayFormat.FullyQualifiedFormat.
+        WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle.Omitted);
+
+    private static readonly DiagnosticDescriptor NoPartialError = new("GFGEN001",
         "Generation error",
-        "Class is marked with 'SupportsFeatureAttribute', but declaration has no 'partial' modifier keyword, so it cannot be augmented by the generator",
+        "Class is marked with 'SupportsFeatureAttribute', but declaration has no 'partial' modifier keyword, so it cannot be augmented with generated code",
         nameof(GetFeatureGenerator), DiagnosticSeverity.Error, true);
 
-    private static readonly DiagnosticDescriptor GetFeatureDefinedWarning = new("GFGEN003",
+    private static readonly DiagnosticDescriptor GetFeatureDefinedError = new("GFGEN003",
         "Generation error",
         "Class is marked with 'SupportsFeatureAttribute', but declaration already has GetFeature<T>() method defined",
         nameof(GetFeatureGenerator), DiagnosticSeverity.Error, true);
 
-    private static readonly DiagnosticDescriptor CannotOverrideWarning = new("GFGEN004",
+    private static readonly DiagnosticDescriptor CannotOverrideSealedError = new("GFGEN004",
         "Generation error",
-        "Class is marked with 'SupportsFeatureAttribute', but abstract GetFeature<T>() method is sealed and cannot be overriden by code-gen",
+        "Class is marked with 'SupportsFeatureAttribute', but abstract GetFeature<T>() method is sealed and cannot be overriden in the code generated",
         nameof(GetFeatureGenerator), DiagnosticSeverity.Error, true);
 
-    private static readonly SyntaxTargetOnlyComparer<ClassDeclarationSyntax> SyntaxTargetOnlyComparer = new();
+    private static readonly DiagnosticDescriptor NoAbstractGetFeatureDefinedError = new("GFGEN005",
+        "Generation error",
+        "Class is marked with 'SupportsFeatureAttribute', but doesn't inherit from the type with abstract or virtual GetFeature<T>() method defined",
+        nameof(GetFeatureGenerator), DiagnosticSeverity.Error, true);
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
         var targetsProvider = context.SyntaxProvider.CreateSyntaxProvider(
-                static (syntaxNode, _) => Parser.IsSyntaxTargetForGeneration(syntaxNode),
-                static (context, ct) => Parser.GetSemanticTargetForGeneration((ClassDeclarationSyntax)context.Node, context.SemanticModel, ct))
-            .Where(symbol => symbol is not null);
+                static (node, _) => node is ClassDeclarationSyntax { AttributeLists.Count: > 0 },
+                static (context, ct) =>
+                {
+                    var node = (ClassDeclarationSyntax)context.Node;
+                    var symbol = context.SemanticModel.GetDeclaredSymbol(node, ct);
+                    if (symbol is INamedTypeSymbol typeSymbol)
+                    {
+                        var builder = ImmutableArray.CreateBuilder<FeatureContext>();
+                        foreach (var attribute in typeSymbol.GetAttributes())
+                        {
+                            if (SupportsFeatureSyntaxHelper.IsFeatureAttribute(attribute) &&
+                                SupportsFeatureSyntaxHelper.TryGetFeatureType(attribute,
+                                    out var featureType, out var featureImplType))
+                            {
+                                builder.Add(new(
+                                    featureType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
+                                    featureImplType?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)));
+                            }
+                        }
 
-        var combined = targetsProvider.Combine(context.CompilationProvider).WithComparer(SyntaxTargetOnlyComparer);
+                        if (builder.Count == 0)
+                        {
+                            goto Skip;
+                        }
+
+                        foreach (var modifier in node.Modifiers)
+                        {
+                            if (modifier.IsKind(SyntaxKind.PartialKeyword))
+                            {
+                                goto CheckGetFeaturePresense;
+                            }
+                        }
+
+                        // There was no 'partial' modifier specified, generate diagnostic and skip
+                        return default(SourceGenerationContext) with
+                        {
+                            Diagnostic = new(NoPartialError, LocationContext.Create(node.GetLocation()))
+                        };
+
+                    CheckGetFeaturePresense:
+
+                        foreach (var member in typeSymbol.GetMembers("GetFeature"))
+                        {
+                            if (member is IMethodSymbol { IsGenericMethod: true, TypeArguments.Length: 1, Parameters.Length: 0 })
+                            {
+                                return default(SourceGenerationContext) with
+                                {
+                                    Diagnostic = new(GetFeatureDefinedError, LocationContext.Create(node.GetLocation()))
+                                };
+                            }
+                        }
+
+                        bool shouldCallBaseImpl = false;
+                        var type = typeSymbol;
+                        while ((type = type!.BaseType) is not null)
+                        {
+                            foreach (var member in type.GetMembers("GetFeature"))
+                            {
+                                if (member is IMethodSymbol
+                                    {
+                                        IsGenericMethod: true,
+                                        TypeArguments.Length: 1,
+                                        Parameters.Length: 0,
+                                        IsSealed: var isSealed,
+                                        IsAbstract: var isAbstract,
+                                        IsVirtual: var isVirtual,
+                                        IsOverride: var isOverride
+                                    })
+                                {
+                                    if (isSealed)
+                                    {
+                                        return default(SourceGenerationContext) with
+                                        {
+                                            Diagnostic = new(CannotOverrideSealedError, LocationContext.Create(node.GetLocation()))
+                                        };
+                                    }
+                                    else if (isOverride || isAbstract || isVirtual)
+                                    {
+                                        shouldCallBaseImpl = !isAbstract;
+                                        goto Success;
+                                    }
+                                }
+                            }
+
+                            foreach (var attribute in type.GetAttributes())
+                            {
+                                if (SupportsFeatureSyntaxHelper.IsFeatureAttribute(attribute))
+                                {
+                                    shouldCallBaseImpl = true;
+                                    goto Success;
+                                }
+                            }
+                        }
+
+                        return default(SourceGenerationContext) with
+                        {
+                            Diagnostic = new(NoAbstractGetFeatureDefinedError, LocationContext.Create(node.GetLocation()))
+                        };
+
+                    Success:
+                        return (new(typeSymbol.Name, typeSymbol.ContainingNamespace.ToDisplayString(OmitGlobalFormat),
+                            shouldCallBaseImpl, builder.ToImmutable()), null);
+                    }
+
+                Skip:
+                    return default;
+                })
+            .Where(ctx => ctx.Context is not null || ctx.Diagnostic is not null);
+
+        var combined = targetsProvider.Combine(context.CompilationProvider);
 
         context.RegisterSourceOutput(combined, (ctx, source) =>
         {
-            var (target, compilation) = source;
-            var cancellationToken = ctx.CancellationToken;
-            var comparer = SymbolEqualityComparer.Default;
-
-            var featureBaseType = compilation.GetTypeByMetadataName("IoT.Device.DeviceFeature`1");
-            var supportsFeatureAttributeBaseType = compilation.GetTypeByMetadataName("IoT.Device.SupportsFeatureAttribute");
-            var objectType = compilation.ObjectType;
-
-            if (target is null ||
-                compilation.GetSemanticModel(target.SyntaxTree) is not { } semanticModel ||
-                semanticModel.GetDeclaredSymbol(target, cancellationToken) is not { } targetType)
+            var ((sourceContext, diagnostic), _) = source;
+            if (diagnostic is { } value)
             {
+                ctx.ReportDiagnostic(value.ToDiagnostic());
                 return;
             }
 
-            #region Check target class is partial
+            var (typeName, namespaceName, shouldCallBaseImpl, features) = sourceContext!.Value;
 
-            var skipHere = true;
-
-            foreach (var modifier in target.Modifiers)
-            {
-                if (!modifier.IsKind(SyntaxKind.PartialKeyword)) continue;
-                skipHere = false;
-                break;
-            }
-
-            if (skipHere)
-            {
-                // Class is not partial, thus no chance to extend via code generation
-                ctx.ReportDiagnostic(Diagnostic.Create(NoPartialWarning, target.GetLocation()));
-                return;
-            }
-
-            #endregion
-
-            cancellationToken.ThrowIfCancellationRequested();
-
-            #region Check target has no implicetely defined GetFeature<T>() method
-
-            skipHere = false;
-            foreach (var member in targetType.GetMembers("GetFeature"))
-            {
-                if (member is not IMethodSymbol { IsGenericMethod: true, TypeArguments.Length: 1, Parameters.Length: 0 })
-                    continue;
-
-                skipHere = true;
-                break;
-            }
-
-            if (skipHere)
-            {
-                // Class already has GetFeature method explicitly defined by override
-                ctx.ReportDiagnostic(Diagnostic.Create(GetFeatureDefinedWarning, target.GetLocation()));
-                return;
-            }
-
-            #endregion
-
-            cancellationToken.ThrowIfCancellationRequested();
-
-            #region Check GetFeature<T>() is available for override
-
-            var type = targetType;
-            skipHere = false;
-            while (!(type = type.BaseType)!.Equals(objectType, comparer))
-            {
-                var stopHere = false;
-                foreach (var member in type.GetMembers("GetFeature"))
-                {
-                    if (member is not IMethodSymbol { IsGenericMethod: true, TypeArguments.Length: 1, Parameters.Length: 0, IsOverride: true, IsSealed: true })
-                        continue;
-
-                    skipHere = stopHere = true;
-                    break;
-                }
-
-                if (stopHere) break;
-            }
-
-            if (skipHere)
-            {
-                // Class has GetFeature<T>() overriden and sealed
-                ctx.ReportDiagnostic(Diagnostic.Create(CannotOverrideWarning, target.GetLocation()));
-                return;
-            }
-
-            #endregion
-
-            cancellationToken.ThrowIfCancellationRequested();
-
-            #region Extract all SupportsFeatureAttribute<TFeature>/SupportsFeatureAttribute<TFeature,TImpl>
-
-            var attributes = targetType.GetAttributes();
-            var features = new Dictionary<string, ConditionData>(attributes.Length, StringComparer.Ordinal);
-            var fields = new HashSet<string>(StringComparer.Ordinal);
-
-            foreach (var attribute in attributes)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                var attributeClass = attribute.AttributeClass;
-                var constructedFrom = attributeClass!.ConstructedFrom;
-
-                if (constructedFrom.BaseType?.Equals(supportsFeatureAttributeBaseType, comparer) == false)
-                {
-                    continue;
-                }
-
-                #pragma warning disable IDE0055
-                var implType = attributeClass.TypeArguments switch
-                {
-                    [var value] => value,
-                    [_, var value] => value,
-                    _ => throw new NotSupportedException()
-                };
-                #pragma warning restore IDE0055
-
-                var fullTypeName = implType.ToDisplayString(FullyQualifiedFormat);
-
-                if (!features.TryGetValue(fullTypeName, out var data))
-                {
-                    var name = implType.Name;
-                    name = $"{char.ToLowerInvariant(name[0])}{name.Substring(1)}Feature";
-
-                    var fieldName = name;
-                    var index = 1;
-                    while (!fields.Add(fieldName)) fieldName = $"{name}{index++}";
-
-                    data = new(fieldName, new HashSet<string>(StringComparer.Ordinal));
-                    features.Add(fullTypeName, data);
-                }
-
-                var featureType = attributeClass.TypeArguments[0];
-                var featureTypes = (HashSet<string>)data.FeatureTypes;
-
-                while (featureType is INamedTypeSymbol { BaseType.ConstructedFrom: { } cf } && cf.Equals(featureBaseType, comparer) == false)
-                {
-                    cancellationToken.ThrowIfCancellationRequested();
-
-                    featureTypes.Add(featureType.ToDisplayString(FullyQualifiedFormat));
-
-                    foreach (var @interface in featureType.AllInterfaces)
-                    {
-                        featureTypes.Add(@interface.ToDisplayString(FullyQualifiedFormat));
-                    }
-
-                    featureType = featureType.BaseType;
-                }
-            }
-
-            if (features.Count == 0)
-                // No relevant SupportsFeatureAttribute has been found. Strange, but skip this code-gen target
-                return;
-
-            #endregion
-
-            #region Detect whether we need to call base.GetDerived<T>() from our generated override
-
-            var invokeBaseImpl = false;
-            type = targetType;
-            while (!(type = type.BaseType)!.Equals(objectType, comparer))
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                foreach (var member in type.GetMembers("GetFeature"))
-                {
-                    if (member is not IMethodSymbol { IsGenericMethod: true, TypeArguments.Length: 1, Parameters.Length: 0, IsOverride: true })
-                        continue;
-
-                    invokeBaseImpl = true;
-                    break;
-                }
-
-                if (invokeBaseImpl) break;
-
-                cancellationToken.ThrowIfCancellationRequested();
-
-                foreach (var attribute in type.GetAttributes())
-                {
-                    cancellationToken.ThrowIfCancellationRequested();
-
-                    var constructedFrom = attribute.AttributeClass!.ConstructedFrom;
-
-                    if (constructedFrom.BaseType?.Equals(supportsFeatureAttributeBaseType, comparer) == false)
-                    {
-                        continue;
-                    }
-
-                    invokeBaseImpl = true;
-                    break;
-                }
-
-                if (invokeBaseImpl) break;
-            }
-
-            #endregion
-
-            cancellationToken.ThrowIfCancellationRequested();
-
-            var code = Generator.Emit(targetType.Name, targetType.ContainingNamespace.ToDisplayString(), features, invokeBaseImpl, cancellationToken);
-            ctx.AddSource($"{targetType.ToDisplayString()}.g.cs", SourceText.From(code, Encoding.UTF8));
+            var code = GetFeatureCodeEmitter.Emit(typeName, namespaceName, features, shouldCallBaseImpl, ctx.CancellationToken);
+            ctx.AddSource($"{typeName}.g.cs", SourceText.From(code, Encoding.UTF8));
         });
     }
 }

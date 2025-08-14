@@ -1,8 +1,9 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 
 namespace IoT.Device.Generators;
 
-public static class ExportAttributeSyntaxParser
+public static class ExportAttributeSyntaxHelper
 {
     private const string ExportAttributeName = "ExportAttribute";
     private const string AssemblyName = "IoT.Device";
@@ -10,7 +11,8 @@ public static class ExportAttributeSyntaxParser
     private const string IoTNsName = "IoT";
 
     public static bool TryGetExportAttribute(INamedTypeSymbol symbol,
-        out ITypeSymbol? targetType, out string? modelName,
+        [NotNullWhen(true)] out ITypeSymbol? targetType,
+        [NotNullWhen(true)] out string? modelName,
         CancellationToken cancellationToken)
     {
         foreach (var attribute in symbol.GetAttributes())
