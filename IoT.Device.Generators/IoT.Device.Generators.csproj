@@ -1,12 +1,14 @@
-<Project Sdk="Microsoft.NET.Sdk" TreatAsLocalProperty="PublishTrimmed;TargetFrameworks;TargetFramework">
+<Project Sdk="Microsoft.NET.Sdk" TreatAsLocalProperty="PublishTrimmed;IsAotCompatible;TargetFrameworks;TargetFramework">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <IsRoslynComponent>true</IsRoslynComponent>
     <AnalyzerLanguage>cs</AnalyzerLanguage>
     <IsTrimmable>false</IsTrimmable>
+    <IsAotCompatible>false</IsAotCompatible>
     <PublishTrimmed>false</PublishTrimmed>
     <Nullable>enable</Nullable>
-    <Version>1.9.0</Version>
+    <Version>1.10.0</Version>
     <Title>IoT.Device Code Generators</Title>
     <Description>Provides boilerplate code auto-generation support for IoT things extensibility framework based on IoT.Device.DeviceFactory&lt;T&gt;.</Description>
     <IncludeBuildOutput>false</IncludeBuildOutput>
@@ -15,13 +17,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers">
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" VersionOverride="4.14.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" VersionOverride="4.14.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Bcl.HashCode" VersionOverride="6.0.0" />
-    <PackageReference Include="Microsoft.Bcl.Memory" VersionOverride="9.0.6" />
+    <PackageReference Include="Microsoft.Bcl.Memory" VersionOverride="9.0.8" />
   </ItemGroup>
 
   <ItemGroup>
