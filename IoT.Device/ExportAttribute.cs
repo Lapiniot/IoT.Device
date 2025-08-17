@@ -1,6 +1,6 @@
 ﻿namespace IoT.Device;
 
-[AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true)]
+[AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
 public abstract class ExportAttribute<T, TImpl> : Attribute
     where T : class
     where TImpl : class, T
