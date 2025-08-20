@@ -13,6 +13,7 @@
   <ItemGroup>
     <Using Include="IoT.Device.Yeelight.Features" />
     <Using Include="IoT.Protocol.Yeelight" />
+    <Using Include="IoT.Device.Generators" />
   </ItemGroup>
 
 </Project>

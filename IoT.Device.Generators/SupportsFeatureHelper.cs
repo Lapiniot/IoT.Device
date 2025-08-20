@@ -3,17 +3,17 @@ using Microsoft.CodeAnalysis;
 
 namespace IoT.Device.Generators;
 
-internal static class SupportsFeatureSyntaxHelper
+internal static class SupportsFeatureHelper
 {
     public static bool IsFeatureAttribute(AttributeData attribute) => attribute is
     {
         AttributeClass:
         {
             IsGenericType: true,
-            BaseType:
+            Name: "SupportsFeatureAttribute",
+            ContainingNamespace:
             {
-                Name: "SupportsFeatureAttribute",
-                ContainingAssembly.Name: "IoT.Device",
+                Name: "Generators",
                 ContainingNamespace:
                 {
                     Name: "Device",

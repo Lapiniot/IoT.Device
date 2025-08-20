@@ -1,14 +1,12 @@
-namespace IoT.Device.Yeelight;
+using IoT.Device.Yeelight;
 
-[AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-public sealed class SupportsFeatureAttribute<TFeature> :
-    Device.SupportsFeatureAttribute<TFeature, TFeature>
+namespace IoT.Device.Generators;
+
+internal sealed partial class SupportsFeatureAttribute<TFeature>
     where TFeature : YeelightDeviceFeature
 { }
 
-[AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-public sealed class SupportsFeatureAttribute<TFeature, TFeatureImpl> :
-    Device.SupportsFeatureAttribute<TFeature, TFeatureImpl>
+internal sealed partial class SupportsFeatureAttribute<TFeature, TFeatureImpl>
     where TFeature : YeelightDeviceFeature
     where TFeatureImpl : TFeature
 { }
