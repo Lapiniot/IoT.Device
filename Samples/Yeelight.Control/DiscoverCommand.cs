@@ -1,6 +1,6 @@
 ﻿using IoT.Protocol.Upnp;
 using IoT.Protocol.Yeelight;
-using OOs.Policies;
+using OOs.Resilience;
 
 namespace Yeelight.Control;
 

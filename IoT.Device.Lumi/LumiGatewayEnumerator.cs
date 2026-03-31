@@ -1,6 +1,6 @@
 using IoT.Protocol;
 using IoT.Protocol.Lumi;
-using OOs.Policies;
+using OOs.Resilience;
 
 namespace IoT.Device.Lumi;
 

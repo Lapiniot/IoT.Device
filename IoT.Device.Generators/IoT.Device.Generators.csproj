@@ -9,7 +9,6 @@
     <IsAotCompatible>false</IsAotCompatible>
     <PublishTrimmed>false</PublishTrimmed>
     <Nullable>enable</Nullable>
-    <Version>1.10.1</Version>
     <Title>IoT.Device Code Generators</Title>
     <Description>Provides boilerplate code auto-generation support for IoT things extensibility framework based on IoT.Device.DeviceFactory&lt;T&gt;.</Description>
     <IncludeBuildOutput>false</IncludeBuildOutput>
@@ -18,13 +17,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" VersionOverride="5.0.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" VersionOverride="4.14.0">
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" VersionOverride="5.3.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" VersionOverride="5.3.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Bcl.HashCode" VersionOverride="6.0.0" />
-    <PackageReference Include="Microsoft.Bcl.Memory" VersionOverride="10.0.2" />
+    <PackageReference Include="Microsoft.Bcl.Memory" VersionOverride="10.0.5" />
   </ItemGroup>
 
   <ItemGroup>
