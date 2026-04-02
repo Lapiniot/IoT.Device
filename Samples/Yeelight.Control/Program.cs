@@ -12,7 +12,9 @@ try
                 Console.WriteLine("Press any key to exit.");
                 Console.WriteLine();
                 var runTask = DiscoverCommand.RunAsync(new ReportSsdpReplyObserver(), cts.Token);
+#pragma warning disable CA2025 // Do not pass 'IDisposable' instances into unawaited tasks
                 var cancelTask = CancelOnUserInputAsync(cts);
+#pragma warning restore CA2025 // Do not pass 'IDisposable' instances into unawaited tasks
                 await Task.WhenAny(runTask, cancelTask).ConfigureAwait(false);
                 await runTask.ConfigureAwait(false);
             }
@@ -36,7 +38,9 @@ try
                 Console.WriteLine("Listening for device prop change notifications...");
                 Console.WriteLine("Press any key to exit.");
                 var runTask = MonitorCommand.RunAsync(address, new ReportPropChangeObserver(), cts.Token);
+#pragma warning disable CA2025 // Do not pass 'IDisposable' instances into unawaited tasks
                 var cancelTask = CancelOnUserInputAsync(cts);
+#pragma warning restore CA2025 // Do not pass 'IDisposable' instances into unawaited tasks
                 await Task.WhenAny(runTask, cancelTask).ConfigureAwait(false);
                 await runTask.ConfigureAwait(false);
             }
@@ -61,9 +65,9 @@ static async Task CancelOnUserInputAsync(CancellationTokenSource cts)
     await cts.CancelAsync().ConfigureAwait(false);
 }
 
-static string GetOption(IReadOnlyDictionary<string, string?> options, string name, string promptText)
+static string GetOption(IReadOnlyDictionary<string, string> options, string name, string promptText)
 {
-    var option = options.TryGetValue(name, out var value) ? value as string : null;
+    var option = options.TryGetValue(name, out var value) ? value : null;
     while (string.IsNullOrEmpty(option))
     {
         Console.Write(promptText);

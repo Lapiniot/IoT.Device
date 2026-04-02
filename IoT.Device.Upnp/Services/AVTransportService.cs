@@ -1,6 +1,5 @@
 namespace IoT.Device.Upnp.Services;
 
-[CLSCompliant(false)]
 [ExportService(AVTransport)]
 public sealed class AVTransportService(SoapControlEndpoint endpoint, Uri controlUri) : SoapActionInvoker(endpoint, controlUri, AVTransport), IUpnpService, IUpnpServiceFactory<AVTransportService>
 {

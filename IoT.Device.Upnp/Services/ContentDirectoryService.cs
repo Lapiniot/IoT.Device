@@ -8,7 +8,6 @@ public enum BrowseMode
     BrowseMetadata
 }
 
-[CLSCompliant(false)]
 [ExportService(ContentDirectory)]
 public sealed class ContentDirectoryService(SoapControlEndpoint endpoint, Uri controlUri) :
     SoapActionInvoker(endpoint, controlUri, ContentDirectory),

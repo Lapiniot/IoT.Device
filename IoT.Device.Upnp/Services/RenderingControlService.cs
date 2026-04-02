@@ -1,6 +1,5 @@
 namespace IoT.Device.Upnp.Services;
 
-[CLSCompliant(false)]
 [ExportService(RenderingControl)]
 public sealed class RenderingControlService(SoapControlEndpoint endpoint, Uri controlUri) : SoapActionInvoker(endpoint, controlUri, RenderingControl), IUpnpService, IUpnpServiceFactory<RenderingControlService>
 {

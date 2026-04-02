@@ -4,7 +4,6 @@ using IoT.Protocol.Upnp.DIDL;
 
 namespace IoT.Device.Upnp;
 
-[CLSCompliant(false)]
 public static class UpnpUtils
 {
     public static async Task<string> GetUpdateIdAsync(ContentDirectoryService service, string itemId, CancellationToken cancellationToken)
