@@ -15,7 +15,6 @@
     "IoT.Protocol/IoT.Protocol.Upnp.Tests": true,
     "IoT.Protocol/OOs.Common/.github": true,
     "IoT.Protocol/OOs.Common/OOs.Common.Benchmarks": true,
-    "IoT.Protocol/OOs.Common/OOs.Common.CommandLine.Generators": true,
     "IoT.Protocol/OOs.Common/OOs.Common.Net": true,
     "IoT.Protocol/OOs.Common/OOs.Common.Net.Http": true,
     "IoT.Protocol/OOs.Common/OOs.Common.Net.Http.Tests": true,
@@ -23,5 +22,6 @@
     "IoT.Protocol/OOs.Common/OOs.Extensions.Diagnostics": true,
     "IoT.Protocol/OOs.Common/OOs.Extensions.Hosting": true
   },
-  "dotnet.defaultSolution": "IoT.Device.slnx"
+  "dotnet.defaultSolution": "IoT.Device.slnx",
+  "csharp.debug.console": "integratedTerminal"
 }
